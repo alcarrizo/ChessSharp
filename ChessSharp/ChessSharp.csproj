@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -55,6 +56,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -86,6 +92,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -93,6 +103,42 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black rook.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black  bishop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black king.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black knight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black pawn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black queen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\white bishop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\white king.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\white knight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\white pawn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\white queen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\white rook.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
