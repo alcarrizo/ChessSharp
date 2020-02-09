@@ -1,0 +1,17 @@
+﻿<Window x:Class="ChessSharp.GameLobby"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChessSharp"
+        mc:Ignorable="d"
+        Title="GameLobby" Height="450" Width="800">
+    <Grid>
+        <DockPanel x:Name="dockToolBar" HorizontalAlignment="Left" Height="40" LastChildFill="False" VerticalAlignment="Top" Width="792">
+            <Button x:Name="logoutButton" Content="Logout" Height="40"  Width="75" DockPanel.Dock="Right" Click="logoutButton_Click"/>
+            <Image Height="40" VerticalAlignment="Top" Width="100"/>
+            <TextBlock x:Name="titleText" Height="40" TextWrapping="Wrap" Text="Welcome to ChessSharp! Hope you enjoy your stay." VerticalAlignment="Top" Width="319"/>
+        </DockPanel>
+        <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="615,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="gameButton_Click_1"/>
+    </Grid>
+</Window>
