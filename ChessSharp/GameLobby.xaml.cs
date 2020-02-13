@@ -19,21 +19,101 @@ namespace ChessSharp
     /// </summary>
     public partial class GameLobby : Window
     {
+        
         public GameLobby()
         {
             InitializeComponent();
+            newList();
         }
 
-        private void gameButton_Click_1(object sender, RoutedEventArgs e)
+        private void newList()
         {
-            ChessGame cg = new ChessGame();
-            cg.Show();
-            this.Close();
+            //throw new NotImplementedException();
         }
 
-        private void logoutButton_Click(object sender, RoutedEventArgs e)
-        {
+        private bool gameCreated = false;
 
+        private void GameButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            ShowMessageBox_Click(sender, e);
+            
+            if (gameCreated == true)
+            {
+                gameList.Items.Add("");
+            }
+
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            string msgtext = "Are you sure you want to logout?";
+            string txt = "Logout Window";
+            MessageBoxButton button = MessageBoxButton.YesNo;
+            MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    MainWindow mw = new MainWindow();
+                    mw.Show();
+                    this.Close();
+                    break;
+                case MessageBoxResult.No:
+                    break;
+            }
+        }
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+        }
+        
+        public class GameList
+        {
+            public string username { get; set; }
+            public int totalPlayers { get; set; }
+        }
+
+
+        private void ShowMessageBox_Click(object sender, RoutedEventArgs e)
+        {
+            gameCreated = false;
+            string msgtext = "Are you sure you want to create a game?";
+            string txt = "Create Game Window";
+            MessageBoxButton button = MessageBoxButton.YesNo;
+            MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    gameCreated = true;
+                    ChessGame cg = new ChessGame();
+                    cg.Show();
+                    
+                    break;
+                case MessageBoxResult.No:
+                    break;
+            }
+
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            
+            string msgtext = "Are you sure you want to join this game?";
+            string txt = "Join Game Window";
+            MessageBoxButton button = MessageBoxButton.YesNo;
+            MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    gameCreated = true;
+                    ChessGame cg = new ChessGame();
+                    cg.Show();
+
+                    break;
+                case MessageBoxResult.No:
+                    break;
+            }
         }
     }
 }

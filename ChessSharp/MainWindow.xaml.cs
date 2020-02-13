@@ -25,6 +25,11 @@ namespace ChessSharp
             InitializeComponent();
         }
 
-       
+        private void testButton_Click(object sender, RoutedEventArgs e)
+        {
+            GameLobby gl = new GameLobby();
+            gl.Show();
+            this.Close();
+        }
     }
 }

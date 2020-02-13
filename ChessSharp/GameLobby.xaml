@@ -8,10 +8,37 @@
         Title="GameLobby" Height="450" Width="800">
     <Grid>
         <DockPanel x:Name="dockToolBar" HorizontalAlignment="Left" Height="40" LastChildFill="False" VerticalAlignment="Top" Width="792">
-            <Button x:Name="logoutButton" Content="Logout" Height="40"  Width="75" DockPanel.Dock="Right" Click="logoutButton_Click"/>
+            <Button x:Name="logoutButton" Content="Logout" Height="40"  Width="75" DockPanel.Dock="Right" Click="LogoutButton_Click"/>
             <Image Height="40" VerticalAlignment="Top" Width="100"/>
             <TextBlock x:Name="titleText" Height="40" TextWrapping="Wrap" Text="Welcome to ChessSharp! Hope you enjoy your stay." VerticalAlignment="Top" Width="319"/>
         </DockPanel>
-        <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="615,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="gameButton_Click_1"/>
+        <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="615,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="GameButton_Click_1"/>
+        <ListView Name="gameList" Margin="74,92,102,27">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Joinable">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Join Game" Click="Button_Click"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Creator">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock  Text="h" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Players">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="h" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>
