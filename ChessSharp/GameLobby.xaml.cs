@@ -24,11 +24,11 @@ namespace ChessSharp
         public GameLobby()
         {
             InitializeComponent();
-            newList();
+            NewList();
             
         }
 
-        private void newList()
+        private void NewList()
         {
             gameLists = new ObservableCollection<GameList>();
             lbUsers.DataContext = gameLists;
@@ -41,7 +41,7 @@ namespace ChessSharp
             ShowMessageBox_Click(sender, e);
             if (gameCreated == true)
             {
-                gameLists.Add(new GameList() {username="test2", totalPlayers = "" + 1 + "/2" });
+                gameLists.Add(new GameList() {username= loginPage.username, totalPlayers = "" + 1 + "/2" });
             }
             
 
