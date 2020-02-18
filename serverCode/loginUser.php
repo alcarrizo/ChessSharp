@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "test";
+$database = "player";
 
 
 $conn = mysqli_connect($servername, $username, $password, $database);
@@ -14,7 +14,7 @@ if (!$conn) {
 $json = file_get_contents('php://input');
 $data = json_decode($json);
 
-$sql = "SELECT username, password FROM testtable";
+$sql = "SELECT username, password FROM playerlogininfo";
 $result = mysqli_query($conn, $sql);
 
 $status = False;

@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "test";
+$database = "player";
 
 
 $conn = mysqli_connect($servername, $username, $password, $database);
@@ -17,7 +17,7 @@ $data = json_decode($json);
 
 $hashed_password = password_hash($data->password, PASSWORD_DEFAULT);
 
-$sql = "INSERT INTO testtable (username, password)
+$sql = "INSERT INTO playerlogininfo (username, password)
 VALUES ('$data->username', '$hashed_password')";
 
 if (mysqli_query($conn, $sql)) {
