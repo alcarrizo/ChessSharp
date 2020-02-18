@@ -1,0 +1,62 @@
+﻿<Page x:Class="ChessSharp.loginPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ChessSharp"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="280"
+      Title="loginPage">
+    <Page.Resources>
+        <Style x:Key="MyButton" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <Border BorderThickness="7" CornerRadius="5" Padding="2"
+        HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Border.BorderBrush>
+            <SolidColorBrush Color="Black" Opacity="0.3"/>
+        </Border.BorderBrush>
+        <Grid Height="350" Width="240">
+            <Grid.Background>
+                <SolidColorBrush Color="White"/>
+            </Grid.Background>
+
+            <Button x:Name="LoginButton" Content="Login" Style="{StaticResource MyButton}" HorizontalAlignment="Center"  
+                    VerticalAlignment="Center" Width="120" Margin="0,104,120,211"
+                    Height="35" BorderBrush="White" Background="White" FontWeight="Light" Click="LoginButton_Click"/>
+            <Button x:Name="NewUserButton" Content="New User" Style="{StaticResource MyButton}" HorizontalAlignment="Center" 
+                    VerticalAlignment="Center" Width="120" Margin="120,104,0,211"
+                    Height="35" BorderBrush="White" Background="White" FontWeight="Light" Click="NewUserButton_Click" />
+
+            <Rectangle Fill="LightGray"  HorizontalAlignment="Left" Height="105" Margin="0,-1,0,0"  VerticalAlignment="Top" Width="240"/>
+            <Grid x:Name="loginBar" Width="120" Height="2" HorizontalAlignment="Left" Margin="0,134,0,211" Background="Gray"></Grid>
+            <Grid x:Name="newUserBar" Width="120" Height="2" HorizontalAlignment="Left" Margin="120,134,0,211" Background="LightGray"></Grid>
+            <TextBox x:Name="Username_tb" HorizontalAlignment="Left" Height="23" Margin="10,170,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="220"/>
+            <Label x:Name="Username_Label" Content="Username" HorizontalAlignment="Left" Margin="10,144,0,0" VerticalAlignment="Top"/>
+            <Label x:Name="Password_Label" Content="Password" HorizontalAlignment="Left" Margin="10,193,0,0" VerticalAlignment="Top"/>
+            <Button x:Name="Signin_Button" Content="Sign in" Foreground="White" Background="#037bfc" HorizontalAlignment="Left" Margin="0,305,0,0" VerticalAlignment="Top" Width="240" Height="45" Click="Signin_Button_Click"/>
+            <Label x:Name="Age_Label" Content="Age" HorizontalAlignment="Left" Margin="10,242,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
+            <TextBox x:Name="Age_tb" HorizontalAlignment="Left" Height="23" Margin="10,268,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="220" Visibility="Hidden"/>
+            <PasswordBox x:Name="Password_tb" HorizontalAlignment="Left" Height="23" Margin="10,219,0,0"  VerticalAlignment="Top" Width="220"/>
+        </Grid>
+    </Border>
+</Page>
