@@ -49,15 +49,18 @@ namespace ChessSharp
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            string msgtext = "Are you sure you want to logout?";
+            
+            String name = loginPage.username;
+            string msgtext = "Are you sure you want to logout," + name + " ?";
             string txt = "Logout Window";
             MessageBoxButton button = MessageBoxButton.YesNo;
             MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
             switch (result)
             {
                 case MessageBoxResult.Yes:
-                   // MainWindow mw = new MainWindow();
-                   // mw.Show();
+                    this.CloseAllWindows();
+                    LoginWindow mw = new LoginWindow();
+                    mw.Show();
                     this.Close();
                     break;
                 case MessageBoxResult.No:
@@ -65,8 +68,14 @@ namespace ChessSharp
             }
         }
 
-        
-        
+        private void CloseAllWindows()
+        {
+            for (int intCounter = App.Current.Windows.Count - 1; intCounter > 0; intCounter--)
+                App.Current.Windows[intCounter].Close();
+        }
+
+
+
         public class GameList
         {
             public string username { get; set; }
