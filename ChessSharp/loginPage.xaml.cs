@@ -13,13 +13,13 @@ namespace ChessSharp
     /// <summary>
     /// Interaction logic for loginPage.xaml
     /// </summary>
-    public partial class loginPage : Page
+    public partial class LoginPage : Page
     {
 
         private dynamic content;
         public static String username;
 
-        public loginPage()
+        public LoginPage()
         {
 
             InitializeComponent();
@@ -51,7 +51,7 @@ namespace ChessSharp
         {
             if (!(string.IsNullOrEmpty(Username_tb.Text) || string.IsNullOrEmpty(Password_tb.Password)))
             {
-                loginPage.username = Username_tb.Text;
+                LoginPage.username = Username_tb.Text;
                 if (loginBar.Background == Brushes.Gray)  //Check for Sign in 
                 {
                     GetData();
@@ -130,7 +130,7 @@ namespace ChessSharp
             //https:// docs.microsoft.com/en-us/dotnet/framework/network-programming/how-to-send-data-using-the-webrequest-class
 
 
-            var request = (HttpWebRequest)WebRequest.Create("http://localhost/serverCode/sendData.php");
+            var request = (HttpWebRequest)WebRequest.Create("http://localhost/serverCode/createUser.php");
             request.ContentType = "application/json";
             request.Method = "POST";
 
@@ -158,7 +158,7 @@ namespace ChessSharp
 
         private void GetData()
         {
-            var request = (HttpWebRequest)WebRequest.Create("http://localhost/serverCode/retrieveData.php");
+            var request = (HttpWebRequest)WebRequest.Create("http://localhost/serverCode/loginUser.php");
             request.ContentType = "application/json";
             request.Method = "POST";
 

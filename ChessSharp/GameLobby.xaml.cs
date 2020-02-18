@@ -41,7 +41,7 @@ namespace ChessSharp
             ShowMessageBox_Click(sender, e);
             if (gameCreated == true)
             {
-                gameLists.Add(new GameList() {username= loginPage.username, totalPlayers = "" + 1 + "/2" });
+                gameLists.Add(new GameList() {username= LoginPage.username, totalPlayers = "" + 1 + "/2" });
             }
             
 
@@ -50,7 +50,7 @@ namespace ChessSharp
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             
-            String name = loginPage.username;
+            String name = LoginPage.username;
             string msgtext = "Are you sure you want to logout," + name + " ?";
             string txt = "Logout Window";
             MessageBoxButton button = MessageBoxButton.YesNo;
