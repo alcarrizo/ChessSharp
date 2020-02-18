@@ -40,6 +40,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -59,6 +60,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Queen.cs" />
+    <Compile Include="Resource1.Designer.cs" />
+    <Compile Include="Rook.cs" />
     <Page Include="ChessGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -79,12 +83,19 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Bishop.cs" />
     <Compile Include="ChessGame.xaml.cs">
       <DependentUpon>ChessGame.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GameBoard.cs" />
     <Compile Include="GameLobby.xaml.cs">
       <DependentUpon>GameLobby.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GameView.cs" />
+    <Compile Include="ImageSelector.cs" />
+    <Compile Include="IPiece.cs" />
+    <Compile Include="King.cs" />
+    <Compile Include="Knight.cs" />
     <Compile Include="loginPage.xaml.cs">
       <DependentUpon>loginPage.xaml</DependentUpon>
     </Compile>
@@ -93,6 +104,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pawn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -110,6 +122,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resource1.resx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

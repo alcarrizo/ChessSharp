@@ -1,11 +1,41 @@
-﻿<Window
+﻿<Window x:Class="ChessSharp.ChessGame"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ChessSharp"
-        xmlns:Properties="clr-namespace:ChessSharp.Properties" x:Class="ChessSharp.ChessGame"
         mc:Ignorable="d"
-        Title="ChessGame" Height="450" Width="800">
-    <Grid/>
+        Title="MainWindow" Height="800" Width="800" ContentRendered="Window_ContentRendered" Background="Beige">
+    <Grid>
+        <Border BorderBrush="Black" BorderThickness="5" Width="570px" Height="570px" VerticalAlignment ="Center" HorizontalAlignment="Center">
+            <Canvas Name ="GameArea" Width="560px" Height="560px" ClipToBounds="True" VerticalAlignment ="Center" HorizontalAlignment="Center">
+                <Grid Name="cBoard"  Background="Transparent" Panel.ZIndex="4" Height="560px" Width="560px" MouseDown="Grid_MouseDown" RenderTransformOrigin="0.5,0.5">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70px"></ColumnDefinition>
+                        <ColumnDefinition Width="70px"></ColumnDefinition>
+                        <ColumnDefinition Width="70px"></ColumnDefinition>
+                        <ColumnDefinition Width="70px"></ColumnDefinition>
+                        <ColumnDefinition Width="70px"></ColumnDefinition>
+                        <ColumnDefinition Width="70px"></ColumnDefinition>
+                        <ColumnDefinition Width="70px"></ColumnDefinition>
+                        <ColumnDefinition Width="70px"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70px"></RowDefinition>
+                        <RowDefinition Height="70px"></RowDefinition>
+                        <RowDefinition Height="70px"></RowDefinition>
+                        <RowDefinition Height="70px"></RowDefinition>
+                        <RowDefinition Height="70px"></RowDefinition>
+                        <RowDefinition Height="70px"></RowDefinition>
+                        <RowDefinition Height="70px"></RowDefinition>
+                        <RowDefinition Height="70px"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+
+
+                </Grid>
+
+            </Canvas>
+        </Border>
+    </Grid>
 </Window>
