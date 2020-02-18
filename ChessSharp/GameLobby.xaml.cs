@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -19,16 +20,18 @@ namespace ChessSharp
     /// </summary>
     public partial class GameLobby : Window
     {
-        
+        public ObservableCollection<GameList> gameLists;
         public GameLobby()
         {
             InitializeComponent();
             newList();
+            
         }
 
         private void newList()
         {
-            //throw new NotImplementedException();
+            gameLists = new ObservableCollection<GameList>();
+            lbUsers.DataContext = gameLists;
         }
 
         private bool gameCreated = false;
@@ -36,11 +39,11 @@ namespace ChessSharp
         private void GameButton_Click_1(object sender, RoutedEventArgs e)
         {
             ShowMessageBox_Click(sender, e);
-            
             if (gameCreated == true)
             {
-                gameList.Items.Add("");
+                gameLists.Add(new GameList() {username="test2", totalPlayers = "" + 1 + "/2" });
             }
+            
 
         }
 
@@ -53,8 +56,8 @@ namespace ChessSharp
             switch (result)
             {
                 case MessageBoxResult.Yes:
-                    MainWindow mw = new MainWindow();
-                    mw.Show();
+                   // MainWindow mw = new MainWindow();
+                   // mw.Show();
                     this.Close();
                     break;
                 case MessageBoxResult.No:
@@ -62,15 +65,12 @@ namespace ChessSharp
             }
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
-        }
+        
         
         public class GameList
         {
             public string username { get; set; }
-            public int totalPlayers { get; set; }
+            public string totalPlayers { get; set; }
         }
 
 
