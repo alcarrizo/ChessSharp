@@ -50,13 +50,13 @@
             <Rectangle Fill="LightGray"  HorizontalAlignment="Left" Height="105" Margin="0,-1,0,0"  VerticalAlignment="Top" Width="240"/>
             <Grid x:Name="loginBar" Width="120" Height="2" HorizontalAlignment="Left" Margin="0,134,0,211" Background="Gray"></Grid>
             <Grid x:Name="newUserBar" Width="120" Height="2" HorizontalAlignment="Left" Margin="120,134,0,211" Background="LightGray"></Grid>
-            <TextBox x:Name="Username_tb" HorizontalAlignment="Left" Height="23" Margin="10,170,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="220"/>
+            <TextBox x:Name="Username_tb" MaxLength="26" HorizontalAlignment="Left" Height="23" Margin="10,170,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="220"/>
             <Label x:Name="Username_Label" Content="Username" HorizontalAlignment="Left" Margin="10,144,0,0" VerticalAlignment="Top"/>
             <Label x:Name="Password_Label" Content="Password" HorizontalAlignment="Left" Margin="10,193,0,0" VerticalAlignment="Top"/>
             <Button x:Name="Signin_Button" Content="Sign in" Foreground="White" Background="#037bfc" HorizontalAlignment="Left" Margin="0,305,0,0" VerticalAlignment="Top" Width="240" Height="45" Click="Signin_Button_Click"/>
             <Label x:Name="Age_Label" Content="Age" HorizontalAlignment="Left" Margin="10,242,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
             <TextBox x:Name="Age_tb" HorizontalAlignment="Left" Height="23" Margin="10,268,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="220" Visibility="Hidden"/>
-            <PasswordBox x:Name="Password_tb" HorizontalAlignment="Left" Height="23" Margin="10,219,0,0"  VerticalAlignment="Top" Width="220"/>
+            <PasswordBox x:Name="Password_tb" MaxLength="26" HorizontalAlignment="Left" Height="23" Margin="10,219,0,0"  VerticalAlignment="Top" Width="220"/>
         </Grid>
     </Border>
 </Page>

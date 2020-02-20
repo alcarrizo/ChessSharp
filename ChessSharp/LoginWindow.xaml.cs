@@ -21,33 +21,55 @@ namespace ChessSharp
     /// </summary>
     public partial class LoginWindow : Window
     {
+       public static bool testing = false;
+
         public LoginWindow()
         {
-            WebRequest request = WebRequest.Create("http://localhost/index.php");
-            request.Credentials = CredentialCache.DefaultCredentials;
-            try
-            {
-                using (WebResponse response = request.GetResponse())
-                {
-                    InitializeComponent();//Load Webpage
-                }
+
+
+            if (testing){
+                InitializeComponent();
+                    var btn1 = new Button { Content = "bypass" };
+
+                    //add event handler 1
+                    btn1.Click += ClickHandler1;
+                    sp.Children.Add(btn1);
+                    LoginPage.username = "Dev";
+
             }
-            catch (WebException e)
-            {
-                using (WebResponse response = e.Response)
+            else{
+                WebRequest request = WebRequest.Create("http://localhost/index.php");
+                request.Credentials = CredentialCache.DefaultCredentials;
+                try
                 {
-                    string msgtext = "Chess# Server is not running!";
-                    string txt = "Server Down";
-                    MessageBoxButton button = MessageBoxButton.OK;
-                    MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, msgtext, txt, button);
-                    switch (result)
+                    using (WebResponse response = request.GetResponse())
                     {
-                        case MessageBoxResult.OK:
-                            break;
+                        InitializeComponent();//Load Webpage
                     }
-                    Application.Current.Shutdown();
+                }
+                catch (WebException e)
+                {
+                    using (WebResponse response = e.Response)
+                    {
+                        string msgtext = "Chess# Server is not running!";
+                        string txt = "Server Down";
+                        MessageBoxButton button = MessageBoxButton.OK;
+                        MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, msgtext, txt, button);
+                        switch (result)
+                        {
+                            case MessageBoxResult.OK:
+                                break;
+                        }
+                        Application.Current.Shutdown();
+                    }
                 }
             }
+        }
+
+        private void ClickHandler1(object sender, RoutedEventArgs e)
+        {
+
+            ((LoginWindow)App.Current.MainWindow).ShowLobby(); //Change to lobby screen
         }
 
         public void ShowLobby()

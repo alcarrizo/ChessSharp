@@ -19,12 +19,16 @@ namespace ChessSharp
         private dynamic content;
         public static String username;
 
+
         public LoginPage()
         {
 
             InitializeComponent();
 
+
         }
+
+       
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {

@@ -9,6 +9,6 @@
 
     <Grid>
         <Frame Name="Login" NavigationUIVisibility="Hidden" Source="loginPage.xaml" />
-        
+        <StackPanel x:Name="sp" Height="50" Width="50" Margin="88,120,654,249"/>
     </Grid>
 </Window>
