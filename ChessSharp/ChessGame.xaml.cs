@@ -37,6 +37,8 @@ namespace ChessSharp
             board = new GameBoard();
             view = new GameView(board, cBoard);
 
+
+
             view.Update();
         }
 

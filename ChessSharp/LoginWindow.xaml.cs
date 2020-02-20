@@ -21,7 +21,7 @@ namespace ChessSharp
     /// </summary>
     public partial class LoginWindow : Window
     {
-       public static bool testing = false;
+       public static bool testing = true;
 
         public LoginWindow()
         {

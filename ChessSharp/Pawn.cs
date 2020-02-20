@@ -26,49 +26,56 @@ namespace ChessSharp
 
 
 
-        public bool ValidMove(int startX, int startY, int endX, int endY, IPiece[,] Board) 
+        public bool ValidMove(int startX, int startY, int endX, int endY, IPiece[,] Board)
         {
             double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
             int moveSize = 1;
 
             // checks if the white piece is moving in a valid way
-            if (slope == 0 && endX > startX && Board[endX, endY] == null || slope == 1  && Capture(startX, startY, endX,endY,Board))
+            if (white)
             {
-                if (firstMove == true)
+                if (slope == 0 && endX > startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board))
                 {
-                    moveSize = 2;
-                    firstMove = false;
-                }
-                if (Math.Abs((double)endX - (double)startX) <= moveSize && ValidPath(startX, startY, endX, endY, Board))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
+                    if (firstMove == true)
+                    {
+                        moveSize = 2;
+                        firstMove = false;
+                    }
+                    if (Math.Abs((double)endX - (double)startX) <= moveSize && ValidPath(startX, startY, endX, endY, Board))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
             // does the same as the above if but from the perspective of the black piece because it moves in the opposite direction
-            else if (slope == 0 && endX < startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board))
+            else
             {
-                if (firstMove == true)
+                if (slope == 0 && endX < startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board))
                 {
-                    moveSize = 2;
-                    firstMove = false;
-                }
-                if (Math.Abs((double)endX - (double)startX) <= moveSize && ValidPath(startX, startY, endX, endY, Board))
-                {
-                    return true;
+                    if (firstMove == true)
+                    {
+                        moveSize = 2;
+                        firstMove = false;
+                    }
+                    if (Math.Abs((double)endX - (double)startX) <= moveSize && ValidPath(startX, startY, endX, endY, Board))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
                     return false;
                 }
             }
-            else
-            {
-                return false;
-            }
+            return false; // if none of the above is true it is an invalid move
         }
 
         public bool Capture(int startX, int startY, int endX, int endY, IPiece[,] Board)
