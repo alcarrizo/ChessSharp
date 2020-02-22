@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Shapes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ChessSharp
 {
@@ -61,7 +65,7 @@ namespace ChessSharp
             }
         }
 
-        public void Move(int startX, int startY, int endX, int endY)
+        public void Move(int startX, int startY, int endX, int endY, Grid Highlights)
         {
 
             if (Board[startX, startY].ValidMove(startX, startY, endX, endY, Board))
@@ -85,44 +89,123 @@ namespace ChessSharp
                 Board[endX, endY] = Board[startX, startY];
                 Board[startX, startY] = null;
 
-                if (Board[endX, endY].Color == true)
+                if (!AllyKinginCheck(startX, startY, endX, endY, temp, Highlights))
                 {
-                    if (KingInCheck(whiteKingX, whiteKingY, Board))
-                    {
-                        Board[startX, startY] = Board[endX, endY];
-                        Board[endX, endY] = temp;
-                        if (Board[startX, startY].Type == Type.KING)
-                        {
-
-                            whiteKingX = startX;
-                            whiteKingY = startY;
-
-                        }
-                    }
+                    EnemyKinginCheck(endX, endY, Highlights);
                 }
 
-                else if (Board[endX, endY].Color == false)
+            }
+
+        }
+
+        private bool AllyKinginCheck(int startX, int startY, int endX, int endY, Piece temp, Grid Highlights)
+        {
+            Rectangle rect;
+            int index;
+
+            if (Board[endX, endY].Color == true)
+            {
+                if (KingInCheck(whiteKingX, whiteKingY, Board))
                 {
-                    if (KingInCheck(blackKingX, blackKingY, Board))
+                    Board[startX, startY] = Board[endX, endY];
+                    Board[endX, endY] = temp;
+                    if (Board[startX, startY].Type == Type.KING)
                     {
-                        Board[startX, startY] = Board[endX, endY];
-                        Board[endX, endY] = temp;
 
-                        if (Board[startX, startY].Type == Type.KING)
-                        {
+                        whiteKingX = startX;
+                        whiteKingY = startY;
 
-                            blackKingX = startX;
-                            blackKingY = startY;
-
-                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    index = (8 * whiteKingX) + whiteKingY;
+                    rect = (Rectangle)Highlights.Children[index];
+                    if (rect.Fill == Brushes.Red)
+                    {
+                        rect.Fill = Brushes.Transparent;
                     }
                 }
 
             }
 
-            // MessageBox.Show("test","Promotion",MessageBoxButton.YesNoCancel );
+            else if (Board[endX, endY].Color == false)
+            {
+                if (KingInCheck(blackKingX, blackKingY, Board))
+                {
+                    Board[startX, startY] = Board[endX, endY];
+                    Board[endX, endY] = temp;
 
+                    if (Board[startX, startY].Type == Type.KING)
+                    {
+
+                        blackKingX = startX;
+                        blackKingY = startY;
+
+                    }
+                    return true;
+                }
+                else
+                {
+                    index = (8 * blackKingX) + blackKingY;
+                    rect = (Rectangle)Highlights.Children[index];
+                    if (rect.Fill == Brushes.Red)
+                    {
+                        rect.Fill = Brushes.Transparent;
+                    }
+                }
+
+
+
+            }
+            return false;
         }
+
+        private void EnemyKinginCheck(int endX, int endY, Grid Highlights)
+        {
+            Rectangle rect;
+            int index;
+            if (Board[endX, endY].Color == true)
+            {
+                index = (8 * blackKingX) + blackKingY;
+                if (KingInCheck(blackKingX, blackKingY, Board))
+                {
+                    rect = (Rectangle)Highlights.Children[index];
+                    rect.Fill = Brushes.Red;
+
+                }
+                else
+                {
+                    rect = (Rectangle)Highlights.Children[index];
+                    if (rect.Fill == Brushes.Red)
+                    {
+                        rect.Fill = Brushes.Transparent;
+                    }
+
+                }
+            }
+
+            if (Board[endX, endY].Color == false)
+            {
+                index = (8 * whiteKingX) + whiteKingY;
+                if (KingInCheck(whiteKingX, whiteKingY, Board))
+                {
+
+                    rect = (Rectangle)Highlights.Children[index];
+                    rect.Fill = Brushes.Red;
+                }
+                else
+                {
+                    rect = (Rectangle)Highlights.Children[index];
+                    if (rect.Fill == Brushes.Red)
+                    {
+                        rect.Fill = Brushes.Transparent;
+                    }
+                }
+            }
+        }
+
 
         public Piece[,] Board { get; private set; }
 
@@ -178,6 +261,7 @@ namespace ChessSharp
         }
 
     }
+
 
 
 
