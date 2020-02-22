@@ -65,7 +65,7 @@ namespace ChessSharp
                 {
                     Width = SpaceSize,
                     Height = SpaceSize,
-                    Fill = nextIsOdd ? Brushes.White : Brushes.Gray
+                    Fill = nextIsOdd ? Brushes.Gray : Brushes.White
                 };
                 GameArea.Children.Add(rect);
                 Canvas.SetTop(rect, nextY);

@@ -6,22 +6,20 @@ using System.Threading.Tasks;
 
 namespace ChessSharp
 {
-    class Rook : IPiece
+    class Rook : Piece
     {
-        private Type type;
-        private bool white;
-        private string name;
 
-        public Rook(bool c)
+        public Rook(bool c, int x)
         {
-            type = Type.ROOK;
-            white = c;
-            if (white)
-                name = "white_rook";
+            Id = x;
+            Type = Type.ROOK;
+            Color = c;
+            if (Color)
+                Name = "white_rook";
             else
-                name = "black_rook";
+                Name = "black_rook";
         }
-        public bool ValidMove(int startX, int startY, int endX, int endY, IPiece[,] Board) 
+        public override bool ValidMove(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
             double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
 
@@ -42,7 +40,7 @@ namespace ChessSharp
             }
         }
 
-        public bool ValidPath(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public override bool ValidPath(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
             int changeX = 1;
             int changeY = 1;
@@ -79,18 +77,6 @@ namespace ChessSharp
             return true;
         }
 
-        Type IPiece.GetType()
-        {
-            return type;
-        }
-        public bool GetColor()
-        {
-            return white;
-        }
 
-        public string GetName()
-        {
-            return name;
-        }
     }
 }

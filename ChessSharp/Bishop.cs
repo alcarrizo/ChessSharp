@@ -6,22 +6,21 @@ using System.Threading.Tasks;
 
 namespace ChessSharp
 {
-    class Bishop : IPiece
+    class Bishop : Piece
     {
-        private Type type;
-        private bool white;
-        private string name;
 
-        public Bishop(bool c)
+
+        public Bishop(bool c, int x)
         {
-            type = Type.BISHOP;
-            white = c;
-            if (white)
-                name = "white_bishop";
+            Id = x;
+            Type = Type.BISHOP;
+            Color = c;
+            if (Color)
+                Name = "white_bishop";
             else
-                name = "black_bishop";
+                Name = "black_bishop";
         }
-        public bool ValidMove(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public override bool ValidMove(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
             double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
 
@@ -35,13 +34,13 @@ namespace ChessSharp
             }
         }
 
-        public bool ValidPath(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public override bool ValidPath(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
             //if(endY < startY || endX < startX)
             //{
             int changeX = 1;
             int changeY = 1;
-            if(startX > endX)
+            if (startX > endX)
             {
                 changeX = -1;
             }
@@ -61,18 +60,5 @@ namespace ChessSharp
             return true;
         }
 
-        Type IPiece.GetType()
-        {
-            return type;
-        }
-        public bool GetColor()
-        {
-            return white;
-        }
-
-        public string GetName()
-        {
-            return name;
-        }
     }
 }

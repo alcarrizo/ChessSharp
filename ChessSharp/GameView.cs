@@ -41,33 +41,33 @@ namespace ChessSharp
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (Board.Board[i,j] == null)
+                    if (Board.Board[i, j] == null)
                         image = GetImage(Board.Board[i, j], false);
                     else
-                        image = GetImage(Board.Board[i, j], Board.Board[i, j].GetColor());
-                    Grid.SetZIndex(image,4);
+                        image = GetImage(Board.Board[i, j], Board.Board[i, j].Color);
+                    Grid.SetZIndex(image, 4);
                     Grid.SetColumn(image, i);
                     Grid.SetRow(image, j);
-                   
+
                     image.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5); // sets the rotation point of the image to the center of the image
                     image.RenderTransform = ro;         // Applies the relevant rotation
-                  
+
                     Grid.Children.Add(image);
                 }
             }
         }
 
-        private Image GetImage(IPiece piece, bool white)
+        private Image GetImage(Piece piece, bool white)
         {
             Image image = new Image();
 
-            if(piece == null)
+            if (piece == null)
             {
                 image.Source = Images.Get("empty");
             }
             else
             {
-                image.Source = Images.Get(piece.GetName());
+                image.Source = Images.Get(piece.Name);
             }
 
             return image;
