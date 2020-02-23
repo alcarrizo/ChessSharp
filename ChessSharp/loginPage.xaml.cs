@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Web.Script.Serialization;
@@ -16,8 +14,8 @@ namespace ChessSharp
     public partial class LoginPage : Page
     {
 
-        private dynamic content;
-        public static String username;
+        private dynamic PlayerLoginInfo;
+        private String username;
 
 
         public LoginPage()
@@ -28,14 +26,12 @@ namespace ChessSharp
 
         }
 
-       
-
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if(loginBar.Background != Brushes.Gray)
+            if (loginBar.Background != Brushes.Gray)
             {
                 ClearAllTextBoxes();
-                SigninInfo();
+                DisplaySigninInfo();
             }
 
         }
@@ -45,90 +41,54 @@ namespace ChessSharp
             if (newUserBar.Background != Brushes.Gray)
             {
                 ClearAllTextBoxes();
-                SignupInfo();
+                DisplaySignupInfo();
             }
 
         }
 
-       
+
         private void Signin_Button_Click(object sender, RoutedEventArgs e)
         {
             if (!(string.IsNullOrEmpty(Username_tb.Text) || string.IsNullOrEmpty(Password_tb.Password)))
             {
-                LoginPage.username = Username_tb.Text;
-                if (loginBar.Background == Brushes.Gray)  //Check for Sign in 
-                {
-                    GetData();
-                    if (content["login"] == 1)
-                    {
-                        ((LoginWindow)App.Current.MainWindow).ShowLobby(); //Change to lobby screen
-                    }
-                    else
-                    {
-                        string msgtext = "Username/Password incorrect!";
-                        string txt = "Invalid";
-                        MessageBoxButton button = MessageBoxButton.OK;
-                        MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
-                        switch (result)
-                        {
-                            case MessageBoxResult.OK:
-                                break;
-                        }
-                    }
-                }
-                else   //Check for sign up
-                {
-                    GetData();
-                    if (content["username"] == 0) //check if username is not already in database
-                    {
-
-                        SendData();
-                        SigninInfo();
-                    }
-                    else
-                    {
-                        string msgtext = "Username already Taken!";
-                        string txt = "Invalid Username";
-                        MessageBoxButton button = MessageBoxButton.OK;
-                        MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
-                        switch (result)
-                        {
-                            case MessageBoxResult.OK:
-                                break;
-                        }
-
-                    }
-                }
-
+                CheckForSignIn();
             }
             ClearAllTextBoxes();
         }
 
-        private void SigninInfo()
+        private void CheckForSignIn()
         {
-            loginBar.Background = Brushes.Gray;
-            newUserBar.Background = Brushes.LightGray;
-            Age_Label.Visibility = Visibility.Hidden;
-            Age_tb.Visibility = Visibility.Hidden;
-            Signin_Button.Content = "Sign In";
+            username = Username_tb.Text;
+            if (loginBar.Background == Brushes.Gray)  //Check for Sign in 
+            {
+                CheckPlayerInfo();
+                if (PlayerLoginInfo["login"] == 1)
+                {
+                    ((LoginWindow)App.Current.MainWindow).ShowLobby(); //Change to lobby screen
+                }
+                else
+                {
+                    DisplayInvalidLoginMB();
+                }
+            }
+            else   //Check for sign up
+            {
+                CheckPlayerInfo();
+                if (PlayerLoginInfo["username"] == 0) //check if username is not already in database
+                {
+
+                    SendPlayerInfo();
+                    DisplaySigninInfo();
+                }
+                else
+                {
+                    DisplayInvalidUsernameMB();
+                }
+            }
         }
 
-        private void SignupInfo()
-        {
-            loginBar.Background = Brushes.LightGray;
-            newUserBar.Background = Brushes.Gray;
-            Age_Label.Visibility = Visibility.Visible;
-            Age_tb.Visibility = Visibility.Visible;
-            Signin_Button.Content = "Sign up";
-        }
-
-        private void ClearAllTextBoxes()
-        { 
-            Age_tb.Text = "";
-            Username_tb.Text = "";
-            Password_tb.Password = "";
-        }
-        private void SendData()
+      
+        private void SendPlayerInfo()
         {
             //https:// stackoverflow.com/questions/9145667/how-to-post-json-to-a-server-using-c
             //https:// docs.microsoft.com/en-us/dotnet/framework/network-programming/how-to-send-data-using-the-webrequest-class
@@ -160,7 +120,7 @@ namespace ChessSharp
 
         }
 
-        private void GetData()
+        private void CheckPlayerInfo()
         {
             var request = (HttpWebRequest)WebRequest.Create("http://localhost/serverCode/loginUser.php");
             request.ContentType = "application/json";
@@ -182,12 +142,68 @@ namespace ChessSharp
 
             using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
-                var result = streamReader.ReadToEnd(); 
+                var result = streamReader.ReadToEnd();
                 dynamic jsonStr = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
 
-                content = jsonStr;
+                PlayerLoginInfo = jsonStr;
             }
             response.Close();
+        }
+
+        public String getUsername()
+        {
+            return username;
+        }
+
+        private void DisplayInvalidLoginMB()
+        {
+            string msgtext = "Username/Password incorrect!";
+            string txt = "Invalid";
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
+            switch (result)
+            {
+                case MessageBoxResult.OK:
+                    break;
+            }
+        }
+
+        private void DisplayInvalidUsernameMB()
+        {
+            string msgtext = "Username already Taken!";
+            string txt = "Invalid Username";
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
+            switch (result)
+            {
+                case MessageBoxResult.OK:
+                    break;
+            }
+        }
+
+        private void DisplaySigninInfo()
+        {
+            loginBar.Background = Brushes.Gray;
+            newUserBar.Background = Brushes.LightGray;
+            Age_Label.Visibility = Visibility.Hidden;
+            Age_tb.Visibility = Visibility.Hidden;
+            Signin_Button.Content = "Sign In";
+        }
+
+        private void DisplaySignupInfo()
+        {
+            loginBar.Background = Brushes.LightGray;
+            newUserBar.Background = Brushes.Gray;
+            Age_Label.Visibility = Visibility.Visible;
+            Age_tb.Visibility = Visibility.Visible;
+            Signin_Button.Content = "Sign up";
+        }
+
+        private void ClearAllTextBoxes()
+        {
+            Age_tb.Text = "";
+            Username_tb.Text = "";
+            Password_tb.Password = "";
         }
     }
 }
