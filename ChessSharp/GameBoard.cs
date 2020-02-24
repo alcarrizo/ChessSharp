@@ -295,7 +295,7 @@ namespace ChessSharp
                 for (int j = -1; j < 2; j++)
                 {
 
-                    if (kingX + i >= 0 && kingX + i <= width && kingY + j >= 0 && kingY + j <= height)
+                    if (kingX + i >= 0 && kingX + i < width && kingY + j >= 0 && kingY + j < height)
                     {
 
                         if (!Capture(kingX + i, kingY + j, Board[kingX, kingY].Color) && !AllyPieces(kingX, kingY, kingX + i, kingY + j)
