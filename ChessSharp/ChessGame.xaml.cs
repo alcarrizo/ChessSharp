@@ -32,6 +32,7 @@ namespace ChessSharp
 
             // How to change the rotation of the grid
             RotateTransform ro = new RotateTransform(-90);
+            //RotateTransform ro = new RotateTransform(0);
 
             cBoard.RenderTransform = ro;
             Highlights.RenderTransform = ro;
@@ -141,7 +142,7 @@ namespace ChessSharp
 
                 if (startX != endX || startY != endY)
                 {
-                    if (!board.AllyPieces(startX, startY, endX, endY))
+                    if (!board.AllyPieces(startX, startY, endX, endY) && !board.AllyKinginCheck(startX, startY, endX, endY, Highlights))
                     {
                         board.Move(startX, startY, endX, endY, Highlights);
                     }
@@ -154,10 +155,5 @@ namespace ChessSharp
 
         }
 
-        private void Highlights_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Rectangle rect = (Rectangle)e.Source;
-            rect.Fill = Brushes.Blue;
-        }
     }
 }
