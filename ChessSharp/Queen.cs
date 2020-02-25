@@ -6,26 +6,21 @@ using System.Threading.Tasks;
 
 namespace ChessSharp
 {
-    class Queen : IPiece
+    class Queen : Piece
     {
-        private Type type;
-        private bool white;
-        private string name;
-        public Queen(bool c)
+
+        public Queen(bool c, int x)
         {
-            type = Type.QUEEN;
-            white = c;
-            if (white)
-                name = "white_queen";
+            Id = x;
+            Type = Type.QUEEN;
+            Color = c;
+            if (Color)
+                Name = "white_queen";
             else
-                name = "black_queen";
-        }
-        public void Move(int startX, int startY, int endX, int endY, IPiece[,] board)
-        {
-            throw new NotImplementedException();
+                Name = "black_queen";
         }
 
-        public bool ValidMove(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public override bool ValidMove(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
             double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
 
@@ -46,7 +41,7 @@ namespace ChessSharp
             }
         }
 
-        public bool ValidPath(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public override bool ValidPath(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
             double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
 
@@ -87,18 +82,6 @@ namespace ChessSharp
 
         }
 
-        Type IPiece.GetType()
-        {
-            return type;
-        }
-        public bool GetColor()
-        {
-            return white;
-        }
 
-        public string GetName()
-        {
-            return name;
-        }
     }
 }

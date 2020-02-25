@@ -6,35 +6,35 @@ using System.Threading.Tasks;
 
 namespace ChessSharp
 {
-    class Pawn : IPiece
+    class Pawn : Piece
     {
-        private Type type;
-        private bool firstMove;
-        private bool white;
-        private string name;
 
-        public Pawn(bool c)
+        private bool firstMove;
+
+
+        public Pawn(bool c, int x)
         {
-            type = Type.PAWN;
-            white = c;
+            Id = x;
+            Type = Type.PAWN;
+            Color = c;
             firstMove = true;
-            if (white)
-                name = "white_pawn";
+            if (Color)
+                Name = "white_pawn";
             else
-                name = "black_pawn";
+                Name = "black_pawn";
         }
 
 
 
-        public bool ValidMove(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public override bool ValidMove(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
             double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
             int moveSize = 1;
 
             // checks if the white piece is moving in a valid way
-            if (white)
+            if (Color)
             {
-                if (slope == 0 && endX > startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board))
+                if (slope == 0 && endX > startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board) && endX > startX)
                 {
                     if (firstMove == true)
                     {
@@ -54,7 +54,7 @@ namespace ChessSharp
             // does the same as the above if but from the perspective of the black piece because it moves in the opposite direction
             else
             {
-                if (slope == 0 && endX < startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board))
+                if (slope == 0 && endX < startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board) && endX < startX)
                 {
                     if (firstMove == true)
                     {
@@ -77,17 +77,26 @@ namespace ChessSharp
             }
             return false; // if none of the above is true it is an invalid move
         }
-
-        public bool Capture(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public bool Capture(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
-            if(Board[endX,endY] == null || Math.Abs(endX-startX) > 1 && Math.Abs(endY - startY) > 1)
+            if(Color == true)
             {
-                return false;
+                if (Board[endX, endY] == null || endX - startX > 1 && endY - startY > 1)
+                {
+                    return false;
+                }
+            }
+            if (Color == false)
+            {
+                if (Board[endX, endY] == null || endX - startX < -1 && endY - startY < -1)
+                {
+                    return false;
+                }
             }
             return true;
         }
 
-        public bool ValidPath(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public override bool ValidPath(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
             int changeX = 1;
             if (startX > endX)
@@ -95,7 +104,7 @@ namespace ChessSharp
                 changeX = -1;
             }
 
-            while (endX != (startX + changeX) )
+            while (endX != (startX + changeX))
             {
                 startX += changeX;
                 if (Board[startX, startY] != null)
@@ -106,19 +115,6 @@ namespace ChessSharp
             return true;
         }
 
-        Type IPiece.GetType()
-        {
-            return type;
-        }
 
-        public bool GetColor()
-        {
-            return white;
-        }
-
-        public string GetName()
-        {
-            return name;
-        }
     }
 }

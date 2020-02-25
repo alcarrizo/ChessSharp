@@ -8,31 +8,52 @@
     <Grid>
         <Border BorderBrush="Black" BorderThickness="5" Width="570px" Height="570px" VerticalAlignment ="Center" HorizontalAlignment="Center">
             <Canvas Name ="GameArea" Width="560px" Height="560px" ClipToBounds="True" VerticalAlignment ="Center" HorizontalAlignment="Center">
-                <Grid Name="cBoard"  Background="Transparent" Panel.ZIndex="4" Height="560px" Width="560px" MouseDown="Grid_MouseDown" RenderTransformOrigin="0.5,0.5">
+                <Grid Background="Transparent" Panel.ZIndex="2" Height="560px" Width="560px">
+                    <Grid  Name="Highlights"  Background="Transparent" Panel.ZIndex="3" RenderTransformOrigin="0.5,0.5" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                        </Grid.RowDefinitions>
+                    </Grid>
+                    <Grid Name="cBoard"  Background="Transparent" Panel.ZIndex="4" MouseDown="Grid_MouseDown"  RenderTransformOrigin="0.5,0.5">
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="70px"></ColumnDefinition>
-                        <ColumnDefinition Width="70px"></ColumnDefinition>
-                        <ColumnDefinition Width="70px"></ColumnDefinition>
-                        <ColumnDefinition Width="70px"></ColumnDefinition>
-                        <ColumnDefinition Width="70px"></ColumnDefinition>
-                        <ColumnDefinition Width="70px"></ColumnDefinition>
-                        <ColumnDefinition Width="70px"></ColumnDefinition>
-                        <ColumnDefinition Width="70px"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="70px"></RowDefinition>
-                        <RowDefinition Height="70px"></RowDefinition>
-                        <RowDefinition Height="70px"></RowDefinition>
-                        <RowDefinition Height="70px"></RowDefinition>
-                        <RowDefinition Height="70px"></RowDefinition>
-                        <RowDefinition Height="70px"></RowDefinition>
-                        <RowDefinition Height="70px"></RowDefinition>
-                        <RowDefinition Height="70px"></RowDefinition>
-                    </Grid.RowDefinitions>
-
-
-
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                            <ColumnDefinition Width="70px"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                            <RowDefinition Height="70px"></RowDefinition>
+                        </Grid.RowDefinitions>
+                    </Grid>
                 </Grid>
 
             </Canvas>

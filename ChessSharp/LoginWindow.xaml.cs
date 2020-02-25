@@ -26,18 +26,24 @@ namespace ChessSharp
         public LoginWindow()
         {
 
+            ServerOnlineCheck();
 
-            if (testing){
-                InitializeComponent();
-                    var btn1 = new Button { Content = "bypass" };
+        }
 
-                    //add event handler 1
-                    btn1.Click += ClickHandler1;
-                    sp.Children.Add(btn1);
-                    LoginPage.username = "Dev";
+        private void ServerOnlineCheck()
+        {
+            InitializeComponent();
+            if (testing)
+            {
+                var bypassButton = new Button { Content = "bypass" };
+
+                //add event handler 1
+                bypassButton.Click += ClickHandler1;
+                sp.Children.Add(bypassButton);
 
             }
-            else{
+            else
+            {
                 WebRequest request = WebRequest.Create("http://localhost/index.php");
                 request.Credentials = CredentialCache.DefaultCredentials;
                 try
@@ -66,6 +72,7 @@ namespace ChessSharp
             }
         }
 
+
         private void ClickHandler1(object sender, RoutedEventArgs e)
         {
 
@@ -78,8 +85,6 @@ namespace ChessSharp
             GameLobby gl = new GameLobby();
             gl.Show();
             this.Close();
-            //Login.Navigate(new System.Uri("lobby.xaml",
-            //UriKind.RelativeOrAbsolute));
         }
     }
 }

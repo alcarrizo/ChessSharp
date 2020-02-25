@@ -6,21 +6,20 @@ using System.Threading.Tasks;
 
 namespace ChessSharp
 {
-    class Knight : IPiece
+    class Knight : Piece
     {
-        private Type type;
-        private bool white;
-        private string name;
-        public Knight(bool c)
+
+        public Knight(bool c, int x)
         {
-            type = Type.KNIGHT;
-            white = c;
-            if (white)
-                name = "white_knight";
+            Id = x;
+            Type = Type.KNIGHT;
+            Color = c;
+            if (Color)
+                Name = "white_knight";
             else
-                name = "black_knight";
+                Name = "black_knight";
         }
-        public bool ValidMove(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public override bool ValidMove(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
             double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
 
@@ -41,23 +40,9 @@ namespace ChessSharp
             }
         }
 
-        public bool ValidPath(int startX, int startY, int endX, int endY, IPiece[,] Board)
+        public override bool ValidPath(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
-            throw new NotImplementedException();
-        }
-
-        Type IPiece.GetType()
-        {
-            return type;
-        }
-        public bool GetColor()
-        {
-            return white;
-        }
-
-        public string GetName()
-        {
-            return name;
+            return Board[startX, startX].Color != Board[endX, endX].Color;
         }
     }
 }

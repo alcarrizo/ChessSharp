@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-
 namespace ChessSharp
 {
     /// <summary>
@@ -25,6 +24,7 @@ namespace ChessSharp
         private GameBoard board;
         private GameView view;
 
+
         public ChessGame()
         {
 
@@ -32,12 +32,13 @@ namespace ChessSharp
 
             // How to change the rotation of the grid
             RotateTransform ro = new RotateTransform(-90);
+            //RotateTransform ro = new RotateTransform(0);
+
             cBoard.RenderTransform = ro;
+            Highlights.RenderTransform = ro;
 
             board = new GameBoard();
             view = new GameView(board, cBoard);
-
-
 
             view.Update();
         }
@@ -46,10 +47,25 @@ namespace ChessSharp
         {
 
             DrawGameArea();
+            SetUpHighlights();
 
 
 
+        }
 
+        private void SetUpHighlights()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Rectangle rect = new Rectangle();
+                    rect.Fill = Brushes.Transparent;
+                    Grid.SetColumn(rect, i);
+                    Grid.SetRow(rect, j);
+                    Highlights.Children.Add(rect);
+                }
+            }
         }
 
         private void DrawGameArea()
@@ -65,7 +81,7 @@ namespace ChessSharp
                 {
                     Width = SpaceSize,
                     Height = SpaceSize,
-                    Fill = nextIsOdd ? Brushes.White : Brushes.Gray
+                    Fill = nextIsOdd ? Brushes.Gray : Brushes.White
                 };
                 GameArea.Children.Add(rect);
                 Canvas.SetTop(rect, nextY);
@@ -91,42 +107,46 @@ namespace ChessSharp
         private int startY;
         private int endX;
         private int endY;
-
+        private int startBlockIndex;
+        private Brush brush;
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
-            //int tempx;
-            //int tempy = Grid.GetColumn(e.GetPosition);
-
-            //if(e.Source == Image.UidProperty)
-
             Image g = (Image)e.Source;
-            /* if(board.CheckNull(Grid.GetColumn(g),Grid.GetRow(g)))
-             {
 
-             }*/
+
+
             if (clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g)))
             {
+                startBlockIndex = cBoard.Children.IndexOf(g);
                 clicked = true;
                 startX = Grid.GetColumn(g);
                 startY = Grid.GetRow(g);
 
+                Rectangle rect = (Rectangle)Highlights.Children[startBlockIndex];
+
+                brush = rect.Fill;
+
+                rect.Fill = Brushes.Teal;
             }
             else if (clicked)
             {
+
                 clicked = false;
                 endX = Grid.GetColumn(g);
                 endY = Grid.GetRow(g);
 
+                Rectangle rect = (Rectangle)Highlights.Children[startBlockIndex];
+                rect.Fill = brush;
+
                 if (startX != endX || startY != endY)
                 {
-                    if (!board.AllyPieces(startX, startY, endX, endY))
+                    if (!board.AllyPieces(startX, startY, endX, endY) && !board.AllyKinginCheck(startX, startY, endX, endY, Highlights))
                     {
-                        board.Move(startX, startY, endX, endY);
+                        board.Move(startX, startY, endX, endY, Highlights);
                     }
                 }
-
 
                 view.Update();
 
@@ -134,5 +154,6 @@ namespace ChessSharp
             }
 
         }
+
     }
 }

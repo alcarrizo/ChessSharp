@@ -60,6 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Piece.cs" />
     <Compile Include="Queen.cs" />
     <Compile Include="Resource1.Designer.cs" />
     <Compile Include="Rook.cs" />
@@ -93,7 +94,6 @@
     </Compile>
     <Compile Include="GameView.cs" />
     <Compile Include="ImageSelector.cs" />
-    <Compile Include="IPiece.cs" />
     <Compile Include="King.cs" />
     <Compile Include="Knight.cs" />
     <Compile Include="loginPage.xaml.cs">
