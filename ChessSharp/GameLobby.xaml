@@ -13,8 +13,8 @@
             <Image Height="40" VerticalAlignment="Top" Width="100"/>
             <TextBlock x:Name="titleText" Height="40" TextWrapping="Wrap" Text="Welcome to ChessSharp! Hope you enjoy your stay." VerticalAlignment="Top" Width="319"/>
         </DockPanel>
-        <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="615,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="GameButton_Click_1"/>
-        <ListView IsSynchronizedWithCurrentItem="True" Name="lbUsers" ItemsSource="{Binding}"  Margin="0,92,102,44">
+        <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="532,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="GameButton_Click_1"/>
+        <ListView IsSynchronizedWithCurrentItem="True" Name="lbUsers" ItemsSource="{Binding}"  Margin="0,92,177,44">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Creator">
@@ -25,7 +25,7 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="Players">
+                    <GridViewColumn Header="Players" Width="75">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=totalPlayers}"/>

@@ -42,6 +42,7 @@ namespace ChessSharp
             if (gameCreated == true)
             {
                 gameLists.Add(new GameList() {username= LoginPage.username, totalPlayers = "" + 1 + "/2" });
+                
             }
             
 
