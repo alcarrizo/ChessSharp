@@ -412,8 +412,6 @@ namespace ChessSharp
             return stopped;
         }
 
-
-
         internal bool AllyPieces(int startX, int startY, int endX, int endY)
         {
             if (Board[endX, endY] == null)

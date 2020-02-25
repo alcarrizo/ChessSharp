@@ -34,7 +34,7 @@ namespace ChessSharp
             // checks if the white piece is moving in a valid way
             if (Color)
             {
-                if (slope == 0 && endX > startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board))
+                if (slope == 0 && endX > startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board) && endX > startX)
                 {
                     if (firstMove == true)
                     {
@@ -54,7 +54,7 @@ namespace ChessSharp
             // does the same as the above if but from the perspective of the black piece because it moves in the opposite direction
             else
             {
-                if (slope == 0 && endX < startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board))
+                if (slope == 0 && endX < startX && Board[endX, endY] == null || slope == 1 && Capture(startX, startY, endX, endY, Board) && endX < startX)
                 {
                     if (firstMove == true)
                     {
@@ -77,12 +77,21 @@ namespace ChessSharp
             }
             return false; // if none of the above is true it is an invalid move
         }
-
         public bool Capture(int startX, int startY, int endX, int endY, Piece[,] Board)
         {
-            if (Board[endX, endY] == null || Math.Abs(endX - startX) > 1 && Math.Abs(endY - startY) > 1)
+            if(Color == true)
             {
-                return false;
+                if (Board[endX, endY] == null || endX - startX > 1 && endY - startY > 1)
+                {
+                    return false;
+                }
+            }
+            if (Color == false)
+            {
+                if (Board[endX, endY] == null || endX - startX < -1 && endY - startY < -1)
+                {
+                    return false;
+                }
             }
             return true;
         }
