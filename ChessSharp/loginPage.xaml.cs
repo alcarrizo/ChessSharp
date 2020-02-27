@@ -15,7 +15,7 @@ namespace ChessSharp
     {
 
         private dynamic PlayerLoginInfo;
-        private String username;
+        public static string username;
 
 
         public LoginPage()
@@ -58,12 +58,13 @@ namespace ChessSharp
 
         private void CheckForSignIn()
         {
-            username = Username_tb.Text;
+
             if (loginBar.Background == Brushes.Gray)  //Check for Sign in 
             {
                 CheckPlayerInfo();
                 if (PlayerLoginInfo["login"] == 1)
                 {
+                    username = Username_tb.Text;
                     ((LoginWindow)App.Current.MainWindow).ShowLobby(); //Change to lobby screen
                 }
                 else
@@ -148,11 +149,6 @@ namespace ChessSharp
                 PlayerLoginInfo = jsonStr;
             }
             response.Close();
-        }
-
-        public String getUsername()
-        {
-            return username;
         }
 
         private void DisplayInvalidLoginMB()

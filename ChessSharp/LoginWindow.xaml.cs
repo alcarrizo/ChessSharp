@@ -1,18 +1,6 @@
-﻿using ChessSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ChessSharp
 {
@@ -35,6 +23,7 @@ namespace ChessSharp
             InitializeComponent();
             if (testing)
             {
+                LoginPage.username = "Dev";
                 var bypassButton = new Button { Content = "bypass" };
 
                 //add event handler 1

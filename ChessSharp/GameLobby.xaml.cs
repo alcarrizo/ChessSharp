@@ -39,8 +39,12 @@ namespace ChessSharp
         private void GameButton_Click_1(object sender, RoutedEventArgs e)
         {
             ShowMessageBox_Click(sender, e);
-            LoginPage login = new LoginPage();
-            String name = login.getUsername();
+            string name = LoginPage.username;
+            LobbytoServer game = new LobbytoServer();
+            if (!LoginWindow.testing)
+            {
+                game.SendGameID(name);
+            }
             if (gameCreated == true)
             {
                 gameLists.Add(new GameList() {username= name, totalPlayers = "" + 1 + "/2" });
@@ -51,8 +55,7 @@ namespace ChessSharp
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            LoginPage login = new LoginPage();
-            String name = login.getUsername();
+            string name = LoginPage.username;
             string msgtext = "Are you sure you want to logout," + name + " ?";
             string txt = "Logout Window";
             MessageBoxButton button = MessageBoxButton.YesNo;
