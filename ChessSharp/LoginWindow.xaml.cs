@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace ChessSharp
 {
@@ -9,7 +11,7 @@ namespace ChessSharp
     /// </summary>
     public partial class LoginWindow : Window
     {
-       public static bool testing = true;
+       public static bool testing = false;
 
         public LoginWindow()
         {
@@ -33,7 +35,7 @@ namespace ChessSharp
             }
             else
             {
-                WebRequest request = WebRequest.Create("http://localhost/index.php");
+                WebRequest request = WebRequest.Create("https://chesssharp.000webhostapp.com");
                 request.Credentials = CredentialCache.DefaultCredentials;
                 try
                 {
@@ -65,12 +67,12 @@ namespace ChessSharp
         private void ClickHandler1(object sender, RoutedEventArgs e)
         {
 
-            ((LoginWindow)App.Current.MainWindow).ShowLobby(); //Change to lobby screen
+            ShowLobby(); //Change to lobby screen
         }
 
         public void ShowLobby()
         {
-
+           
             GameLobby gl = new GameLobby();
             gl.Show();
             this.Close();

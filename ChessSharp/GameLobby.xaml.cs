@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ChessSharp
 {
@@ -25,7 +14,7 @@ namespace ChessSharp
         {
             InitializeComponent();
             NewList();
-            
+
         }
 
         private void NewList()
@@ -39,17 +28,6 @@ namespace ChessSharp
         private void GameButton_Click_1(object sender, RoutedEventArgs e)
         {
             ShowMessageBox_Click(sender, e);
-            string name = LoginPage.username;
-            LobbytoServer game = new LobbytoServer();
-            if (!LoginWindow.testing)
-            {
-                game.SendGameID(name);
-            }
-            if (gameCreated == true)
-            {
-                gameLists.Add(new GameList() {username= name, totalPlayers = "" + 1 + "/2" });
-            }
-            
 
         }
 
@@ -85,6 +63,7 @@ namespace ChessSharp
         {
             public string username { get; set; }
             public string totalPlayers { get; set; }
+
         }
 
 
@@ -99,9 +78,10 @@ namespace ChessSharp
             {
                 case MessageBoxResult.Yes:
                     gameCreated = true;
+                    CreateGame();
                     ChessGame cg = new ChessGame();
                     cg.Show();
-                    
+
                     break;
                 case MessageBoxResult.No:
                     break;
@@ -112,7 +92,6 @@ namespace ChessSharp
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
             string msgtext = "Are you sure you want to join this game?";
             string txt = "Join Game Window";
             MessageBoxButton button = MessageBoxButton.YesNo;
@@ -128,6 +107,29 @@ namespace ChessSharp
                 case MessageBoxResult.No:
                     break;
             }
+        }
+
+
+
+
+
+
+        private void CreateGame()
+        {
+            ServerFunctions SV = new ServerFunctions();
+            string name = LoginPage.username;
+
+            dynamic dynamicD = SV.SetGameID(name);
+            gameLists.Add(new GameList() { username = name, totalPlayers = dynamicD["playerCount"] + "/2" });
+
+
+        }
+
+        public void GameLobby_Closing(object sender, CancelEventArgs e)
+        {
+            ServerFunctions SV = new ServerFunctions();
+            SV.SignOutUser();
+
         }
     }
 }

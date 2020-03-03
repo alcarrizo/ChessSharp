@@ -60,13 +60,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Game.cs" />
-    <Compile Include="LobbytoServer.cs" />
     <Compile Include="Piece.cs" />
-    <Compile Include="Player.cs" />
     <Compile Include="Queen.cs" />
     <Compile Include="Resource1.Designer.cs" />
     <Compile Include="Rook.cs" />
+    <Compile Include="ServerFunctions.cs" />
     <Page Include="ChessGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -95,6 +93,7 @@
     <Compile Include="GameLobby.xaml.cs">
       <DependentUpon>GameLobby.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GameView.cs" />
     <Compile Include="ImageSelector.cs" />
     <Compile Include="King.cs" />
     <Compile Include="Knight.cs" />

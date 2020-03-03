@@ -1,9 +1,10 @@
 <?php
 
 $servername = "localhost";
-$username = "root";
-$password = "";
-$database = "player";
+$username = "id12764393_webbdev";
+$password = "AgentP00$";
+$database = "id12764393_players";
+
 
 
 $conn = mysqli_connect($servername, $username, $password, $database);
