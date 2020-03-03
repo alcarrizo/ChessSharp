@@ -93,7 +93,6 @@
     <Compile Include="GameLobby.xaml.cs">
       <DependentUpon>GameLobby.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GameView.cs" />
     <Compile Include="ImageSelector.cs" />
     <Compile Include="King.cs" />
     <Compile Include="Knight.cs" />
