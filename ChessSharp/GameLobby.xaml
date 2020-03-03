@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChessSharp"
         mc:Ignorable="d"
-        Title="GameLobby" Height="450" Width="800">
+        Title="Chess#" Height="450" Width="800" Closing="GameLobby_Closing" WindowStartupLocation="CenterScreen">
     
     <Grid>
         <DockPanel x:Name="dockToolBar" HorizontalAlignment="Left" Height="40" LastChildFill="False" VerticalAlignment="Top" Width="792">

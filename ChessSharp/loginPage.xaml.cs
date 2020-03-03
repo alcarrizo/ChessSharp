@@ -58,13 +58,15 @@ namespace ChessSharp
 
         private void CheckForSignIn()
         {
-
+            string username1 = Username_tb.Text.ToLower();
+            ServerFunctions SV = new ServerFunctions();
+            PlayerLoginInfo = SV.CheckPlayerInfo(username1, Password_tb.Password);
             if (loginBar.Background == Brushes.Gray)  //Check for Sign in 
             {
-                CheckPlayerInfo();
-                if (PlayerLoginInfo["login"] == 1)
+                
+                if (PlayerLoginInfo["login"] == "true")
                 {
-                    username = Username_tb.Text;
+                    username = Username_tb.Text.ToLower();
                     ((LoginWindow)App.Current.MainWindow).ShowLobby(); //Change to lobby screen
                 }
                 else
@@ -74,11 +76,10 @@ namespace ChessSharp
             }
             else   //Check for sign up
             {
-                CheckPlayerInfo();
-                if (PlayerLoginInfo["username"] == 0) //check if username is not already in database
+                if (PlayerLoginInfo["username"] == "false") //check if username is not already in database
                 {
 
-                    SendPlayerInfo();
+                    SV.SendPlayerInfo(username1, Password_tb.Password);
                     DisplaySigninInfo();
                 }
                 else
@@ -88,68 +89,7 @@ namespace ChessSharp
             }
         }
 
-      
-        private void SendPlayerInfo()
-        {
-            //https:// stackoverflow.com/questions/9145667/how-to-post-json-to-a-server-using-c
-            //https:// docs.microsoft.com/en-us/dotnet/framework/network-programming/how-to-send-data-using-the-webrequest-class
-
-
-            var request = (HttpWebRequest)WebRequest.Create("http://localhost/serverCode/createUser.php");
-            request.ContentType = "application/json";
-            request.Method = "POST";
-
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            {
-                string json = new JavaScriptSerializer().Serialize(new
-                {
-                    username = Username_tb.Text,
-                    password = Password_tb.Password
-                });
-
-                streamWriter.Write(json);
-            }
-
-            WebResponse response = request.GetResponse();
-            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
-
-            using (var streamReader = new StreamReader(response.GetResponseStream()))
-            {
-                var result = streamReader.ReadToEnd();
-            }
-            response.Close();
-
-        }
-
-        private void CheckPlayerInfo()
-        {
-            var request = (HttpWebRequest)WebRequest.Create("http://localhost/serverCode/loginUser.php");
-            request.ContentType = "application/json";
-            request.Method = "POST";
-
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            {
-                string json = new JavaScriptSerializer().Serialize(new
-                {
-                    username = Username_tb.Text,
-                    password = Password_tb.Password
-                });
-
-                streamWriter.Write(json);
-            }
-
-            WebResponse response = request.GetResponse();
-            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
-
-            using (var streamReader = new StreamReader(response.GetResponseStream()))
-            {
-                var result = streamReader.ReadToEnd();
-                dynamic jsonStr = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
-
-                PlayerLoginInfo = jsonStr;
-            }
-            response.Close();
-        }
+    
 
         private void DisplayInvalidLoginMB()
         {
