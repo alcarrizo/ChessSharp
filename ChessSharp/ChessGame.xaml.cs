@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Point = System.Drawing.Point;
 
 namespace ChessSharp
 {
@@ -22,8 +23,12 @@ namespace ChessSharp
     {
         const int SpaceSize = 70;
         private GameBoard board;
-        private GameView view;
+        private Grid PromoteGrid;
 
+        private Player p1 = new Player("Player1", true);
+        private Player p2 = new Player("Player2", false);
+        private Player currPlay;
+        private RotateTransform ro;
 
         public ChessGame()
         {
@@ -31,16 +36,19 @@ namespace ChessSharp
             InitializeComponent();
 
             // How to change the rotation of the grid
-            RotateTransform ro = new RotateTransform(-90);
+            ro = new RotateTransform(180);
             //RotateTransform ro = new RotateTransform(0);
 
-            cBoard.RenderTransform = ro;
-            Highlights.RenderTransform = ro;
 
-            board = new GameBoard();
-            view = new GameView(board, cBoard);
+            //cBoard.RenderTransform = ro;
+            //Highlights.RenderTransform = ro;
 
-            view.Update();
+            board = new GameBoard(cBoard, ro);
+            //view = new GameView(board, cBoard);
+            FullScreen.RenderTransform = ro;
+            board.Update(FullScreen);
+
+            currPlay = p1;
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -48,8 +56,6 @@ namespace ChessSharp
 
             DrawGameArea();
             SetUpHighlights();
-
-
 
         }
 
@@ -103,10 +109,8 @@ namespace ChessSharp
         }
 
         private bool clicked = false;
-        private int startX;
-        private int startY;
-        private int endX;
-        private int endY;
+        private Point start;
+        private Point end;
         private int startBlockIndex;
         private Brush brush;
 
@@ -117,12 +121,12 @@ namespace ChessSharp
 
 
 
-            if (clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g)))
+            if (clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g)) && board.ControlPiece(new Point(Grid.GetColumn(g), Grid.GetRow(g)), currPlay))
             {
                 startBlockIndex = cBoard.Children.IndexOf(g);
                 clicked = true;
-                startX = Grid.GetColumn(g);
-                startY = Grid.GetRow(g);
+                start.X = Grid.GetColumn(g);
+                start.Y = Grid.GetRow(g);
 
                 Rectangle rect = (Rectangle)Highlights.Children[startBlockIndex];
 
@@ -134,26 +138,131 @@ namespace ChessSharp
             {
 
                 clicked = false;
-                endX = Grid.GetColumn(g);
-                endY = Grid.GetRow(g);
+                end.X = Grid.GetColumn(g);
+                end.Y = Grid.GetRow(g);
 
                 Rectangle rect = (Rectangle)Highlights.Children[startBlockIndex];
                 rect.Fill = brush;
 
-                if (startX != endX || startY != endY)
+                if (start.X != end.X || start.Y != end.Y)
                 {
-                    if (!board.AllyPieces(startX, startY, endX, endY) && !board.AllyKinginCheck(startX, startY, endX, endY, Highlights))
+                    bool move = false;
+                    move = board.Move(start, end, Highlights, currPlay);
+
+                    if (move == true && board.IsPawn(end) && (end.Y == 7 || end.Y == 0))
                     {
-                        board.Move(startX, startY, endX, endY, Highlights);
+                        PromoteGrid = CreatePromoteGrid();
+                        PromoteGrid.RenderTransform = FullScreen.RenderTransform;
+                        PromoteGrid.RenderTransformOrigin = FullScreen.RenderTransformOrigin;
+                        FullScreen.Children.Add(PromoteGrid);
+                        cBoard.IsHitTestVisible = false;
+                        board.EnemyChecks(end, Highlights);
                     }
+                    else if (move == true)
+                    {
+
+
+                        if (currPlay.Equals(p1))
+                        {
+                            currPlay = p2;
+                            ro = new RotateTransform(0);
+                            FullScreen.RenderTransform = ro;
+                        }
+                        else
+                        {
+                            currPlay = p1;
+                            ro = new RotateTransform(180);
+                            FullScreen.RenderTransform = ro;
+                        }
+                        board.EnemyChecks(end, Highlights);
+                        
+                    }
+                    board.Update(FullScreen);
                 }
-
-                view.Update();
-
-
             }
-
         }
 
+
+        private static Grid CreatePromoteGrid()
+        {
+            Grid temp = new Grid();
+            temp.Background = Brushes.Transparent;
+            temp.VerticalAlignment = VerticalAlignment.Center;
+            temp.HorizontalAlignment = HorizontalAlignment.Center;
+            ColumnDefinition col1 = new ColumnDefinition();
+            col1.Width = new GridLength(75);
+            RowDefinition row1 = new RowDefinition();
+            row1.Height = new GridLength(70);
+            RowDefinition row2 = new RowDefinition();
+            row2.Height = new GridLength(70);
+            RowDefinition row3 = new RowDefinition();
+            row3.Height = new GridLength(70);
+            RowDefinition row4 = new RowDefinition();
+            row4.Height = new GridLength(70);
+            temp.ShowGridLines = true;
+            temp.RowDefinitions.Add(row1);
+            temp.RowDefinitions.Add(row2);
+            temp.RowDefinitions.Add(row3);
+            temp.RowDefinitions.Add(row4);
+            temp.ColumnDefinitions.Add(col1);
+            Panel.SetZIndex(temp, 10);
+
+
+            Button b1 = new Button();
+            b1.Content = "Queen";
+            b1.HorizontalAlignment = HorizontalAlignment.Center;
+            b1.Width = 70;
+            Button b2 = new Button();
+            b2.Content = "Knight";
+            b2.HorizontalAlignment = HorizontalAlignment.Center;
+            b2.Width = 70;
+            Grid.SetRow(b2, 1);
+            Button b3 = new Button();
+            b3.Content = "Rook";
+            b3.HorizontalAlignment = HorizontalAlignment.Center;
+            b3.Width = 70;
+            Grid.SetRow(b3, 2);
+            Button b4 = new Button();
+            b4.Content = "Bishop";
+            b4.HorizontalAlignment = HorizontalAlignment.Center;
+            b4.Width = 70;
+            Grid.SetRow(b4, 3);
+
+            temp.Children.Add(b1);
+            temp.Children.Add(b2);
+            temp.Children.Add(b3);
+            temp.Children.Add(b4);
+
+            return temp;
+        }
+
+        private void Promotion(object sender, RoutedEventArgs e)
+        {
+
+
+            Button temp = (Button)e.Source;
+            string name = (string)temp.Content;
+
+            board.ChangePiece(end, name);
+            board.EnemyChecks(end, Highlights);
+
+            if (currPlay.Equals(p1))
+            {
+                currPlay = p2;
+                ro = new RotateTransform(0);
+                FullScreen.RenderTransform = ro;
+            }
+            else
+            {
+                currPlay = p1;
+                ro = new RotateTransform(180);
+                FullScreen.RenderTransform = ro;
+            }
+            board.Update(FullScreen);
+            FullScreen.Children.Remove(PromoteGrid);
+            cBoard.IsHitTestVisible = true;
+
+
+        }
     }
 }

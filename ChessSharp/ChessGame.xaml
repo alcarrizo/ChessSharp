@@ -4,11 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="800" ContentRendered="Window_ContentRendered" Background="Beige">
-    <Grid>
+        Title="MainWindow" Height="800" Width="800" ContentRendered="Window_ContentRendered" Background="Beige" ButtonBase.Click="Promotion">
+    <Grid Name ="FullScreen" RenderTransformOrigin="0.5,0.5" >
         <Border BorderBrush="Black" BorderThickness="5" Width="570px" Height="570px" VerticalAlignment ="Center" HorizontalAlignment="Center">
-            <Canvas Name ="GameArea" Width="560px" Height="560px" ClipToBounds="True" VerticalAlignment ="Center" HorizontalAlignment="Center">
+            <Canvas Name ="GameArea" Width="560px" Height="560px"  ClipToBounds="True" VerticalAlignment ="Center" HorizontalAlignment="Center">
                 <Grid Background="Transparent" Panel.ZIndex="2" Height="560px" Width="560px">
+
                     <Grid  Name="Highlights"  Background="Transparent" Panel.ZIndex="3" RenderTransformOrigin="0.5,0.5" >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="70px"></ColumnDefinition>
@@ -55,7 +56,6 @@
                         </Grid.RowDefinitions>
                     </Grid>
                 </Grid>
-
             </Canvas>
         </Border>
     </Grid>

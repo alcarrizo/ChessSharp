@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Point = System.Drawing.Point;
+using System.Windows.Input;
 
 namespace ChessSharp
 {
@@ -15,42 +17,37 @@ namespace ChessSharp
         int height = 8;
         int width = 8;
 
-        // keeps track of the position for the kings, used to check if any move puts the king in check
-        int whiteKingX;
-        int whiteKingY;
-        int blackKingX;
-        int blackKingY;
-        public GameBoard()
+        public GameBoard(Grid grid, RotateTransform ro)
         {
             this.Board = new Piece[height, width];
             Board[0, 0] = new Rook(true, 1);
-            Board[0, 1] = new Knight(true, 1);
-            Board[0, 2] = new Bishop(true, 1);
-            Board[0, 3] = new Queen(true, 1);
-            Board[0, 4] = new King(true, 1);
-            Board[0, 5] = new Bishop(true, 2);
-            Board[0, 6] = new Knight(true, 2);
-            Board[0, 7] = new Rook(true, 2);
+            Board[1, 0] = new Knight(true, 1);
+            Board[2, 0] = new Bishop(true, 1);
+            Board[3, 0] = new King(true, 1);
+            Board[4, 0] = new Queen(true, 1);
+            Board[5, 0] = new Bishop(true, 2);
+            Board[6, 0] = new Knight(true, 2);
+            Board[7, 0] = new Rook(true, 2);
             for (int i = 0; i < width; i++)
             {
-                Board[1, i] = new Pawn(true, i);
-                Board[height - 2, i] = new Pawn(false, i + 8);
+                Board[i, 1] = new Pawn(true, i);
+                Board[i, height - 2] = new Pawn(false, i + 8);
             }
-            Board[height - 1, 0] = new Rook(false, 3);
-            Board[height - 1, 1] = new Knight(false, 3);
-            Board[height - 1, 2] = new Bishop(false, 3);
-            Board[height - 1, 3] = new Queen(false, 2);
-            Board[height - 1, 4] = new King(false, 2);
-            Board[height - 1, 5] = new Bishop(false, 4);
-            Board[height - 1, 6] = new Knight(false, 4);
-            Board[height - 1, 7] = new Rook(false, 4);
+            Board[0, height - 1] = new Rook(false, 3);
+            Board[1, height - 1] = new Knight(false, 3);
+            Board[2, height - 1] = new Bishop(false, 3);
+            Board[3, height - 1] = new King(false, 2);
+            Board[4, height - 1] = new Queen(false, 2);
+            Board[5, height - 1] = new Bishop(false, 4);
+            Board[6, height - 1] = new Knight(false, 4);
+            Board[7, height - 1] = new Rook(false, 4);
 
-            whiteKingX = 0;
-            whiteKingY = 4;
-            blackKingX = height - 1;
-            blackKingY = 4;
+            Game = new Game(3, 0, 3, height - 1);
 
-
+            Grid = grid;
+            Images = new ImageSelector();
+            Ro = ro;
+            ID = 5;
 
         }
 
@@ -66,436 +63,116 @@ namespace ChessSharp
             }
         }
 
-        public void Move(int startX, int startY, int endX, int endY, Grid Highlights)
+        public bool ControlPiece(Point start, Player currPlay)
         {
-            bool mate = false;
+            return currPlay.Color == Board[start.X, start.Y].Color;
+        }
 
-            if (Board[startX, startY].ValidMove(startX, startY, endX, endY, Board))
+        public bool Move(Point start, Point end, Grid Highlights, Player currPlay)
+        {
+            bool move = false;
+            if (Game.Move(start, end, Board, Highlights))
             {
-                if (Board[startX, startY].Type == Type.KING)
-                {
-
-                    if (Board[startX, startY].Color == true)
-                    {
-                        whiteKingX = endX;
-                        whiteKingY = endY;
-                    }
-
-                    else if (Board[startX, startY].Color == false)
-                    {
-                        blackKingX = endX;
-                        blackKingY = endY;
-                    }
-                }
-
-                Board[endX, endY] = Board[startX, startY];
-                Board[startX, startY] = null;
-
-
-                if (EnemyKinginCheck(endX, endY, Highlights))
-                {
-                    checkPieces.Clear();
-                    FindCheckPieces(Board[endX, endY].Color);
-
-                    foreach (var point in checkPieces.ToList())
-                    {
-                        if (CheckMate((int)point.X, (int)point.Y, Highlights))
-                        {
-                            mate = true;
-                        }
-                    }
-                    if (mate == true)
-                    {
-                        MessageBox.Show("Checkmate");
-                    }
-                }
-
-
+                move = true;
             }
+            
+            return move;
+        }
 
+        public void EnemyChecks(Point end, Grid Highlights)
+        {
+            Game.EnemyChecks(end, Highlights, Board);
         }
 
 
-        public bool AllyKinginCheck(int startX, int startY, int endX, int endY, Grid Highlights)
+        public void ChangePiece(Point end, string name)
         {
-
-            Rectangle rect;
-            int index;
-
-            if (Board[startX, startY].Type == Type.KING)
+            name = name.ToUpper();
+            switch (name)
             {
-
-                if (Board[startX, startY].Color == true)
-                {
-                    whiteKingX = endX;
-                    whiteKingY = endY;
-                }
-
-                else if (Board[startX, startY].Color == false)
-                {
-                    blackKingX = endX;
-                    blackKingY = endY;
-                }
+                case "QUEEN":
+                    {
+                        Board[end.X, end.Y] = new Queen(Board[end.X, end.Y].Color, ID);
+                    }
+                    break;
+                case "ROOK":
+                    {
+                        Board[end.X, end.Y] = new Rook(Board[end.X, end.Y].Color, ID);
+                    }
+                    break;
+                case "KNIGHT":
+                    {
+                        Board[end.X, end.Y] = new Knight(Board[end.X, end.Y].Color, ID);
+                    }
+                    break;
+                case "BISHOP":
+                    {
+                        Board[end.X, end.Y] = new Bishop(Board[end.X, end.Y].Color, ID);
+                    }
+                    break;
             }
-
-            Piece temp = Board[endX, endY]; // keeps the piece that is being moved over to revert the pieces back if needed 
-            Board[endX, endY] = Board[startX, startY];
-            Board[startX, startY] = null;
-
-            if (Board[endX, endY].Color == true)
-            {
-                if (Capture(whiteKingX, whiteKingY, true))
-                {
-                    Board[startX, startY] = Board[endX, endY];
-                    Board[endX, endY] = temp;
-                    if (Board[startX, startY].Type == Type.KING)
-                    {
-
-                        whiteKingX = startX;
-                        whiteKingY = startY;
-
-                    }
-                    return true;
-                }
-                else
-                {
-
-                    Board[startX, startY] = Board[endX, endY];
-                    Board[endX, endY] = temp;
-                    if (Board[startX, startY].Type == Type.KING)
-                    {
-
-                        whiteKingX = startX;
-                        whiteKingY = startY;
-
-                    }
-
-                    index = (8 * whiteKingX) + whiteKingY;
-                    rect = (Rectangle)Highlights.Children[index];
-                    if (rect.Fill == Brushes.Red)
-                    {
-                        rect.Fill = Brushes.Transparent;
-                    }
-
-                    return false;
-                }
-
-            }
-
-            else if (Board[endX, endY].Color == false)
-            {
-                if (Capture(blackKingX, blackKingY, false))
-                {
-                    Board[startX, startY] = Board[endX, endY];
-                    Board[endX, endY] = temp;
-
-                    if (Board[startX, startY].Type == Type.KING)
-                    {
-
-                        blackKingX = startX;
-                        blackKingY = startY;
-
-                    }
-                    return true;
-                }
-                else
-                {
-
-                    Board[startX, startY] = Board[endX, endY];
-                    Board[endX, endY] = temp;
-                    if (Board[startX, startY].Type == Type.KING)
-                    {
-
-                        blackKingX = startX;
-                        blackKingY = startY;
-
-                    }
-
-                    index = (8 * blackKingX) + blackKingY;
-                    rect = (Rectangle)Highlights.Children[index];
-                    if (rect.Fill == Brushes.Red)
-                    {
-                        rect.Fill = Brushes.Transparent;
-                    }
-
-
-                    return false;
-                }
-
-
-
-            }
-
-
-            return false;
+            ID++;
         }
 
-        private bool EnemyKinginCheck(int endX, int endY, Grid Highlights)
+        public bool IsPawn(Point end)
         {
-            Rectangle rect;
-            int index;
-            int kingX = 0;
-            int kingY = 0;
-            if (Board[endX, endY].Color == true)
-            {
-                kingX = blackKingX;
-                kingY = blackKingY;
-            }
-            else
-            {
-                kingX = whiteKingX;
-                kingY = whiteKingY;
-            }
-
-            index = (8 * kingX) + kingY;
-            if (Capture(kingX, kingY, Board[kingX, kingY].Color))
-            {
-                rect = (Rectangle)Highlights.Children[index];
-                rect.Fill = Brushes.Red;
-
-                return true;
-            }
-            else
-            {
-                rect = (Rectangle)Highlights.Children[index];
-                if (rect.Fill == Brushes.Red)
-                {
-                    rect.Fill = Brushes.Transparent;
-                }
-
-            }
-            return false;
+            return Board[end.X, end.Y] is Pawn;
         }
 
-        private bool CheckMate(int x, int y, Grid Highlights)
+        public void Update(Grid FullScreen)
         {
-            bool checkmate = true;
+            Grid.Children.Clear();
 
-            int kingX = 0;
-            int kingY = 0;
-
-            if (StopCheck(x, y, Highlights))
-            {
-                checkmate = false;
-            }
-
-            if (Board[x, y].Color == true)
-            {
-                kingX = blackKingX;
-                kingY = blackKingY;
-            }
-            else
-            {
-                kingX = whiteKingX;
-                kingY = whiteKingY;
-            }
-
-            for (int i = -1; i < 2; i++)
-            {
-                for (int j = -1; j < 2; j++)
-                {
-
-                    if (kingX + i >= 0 && kingX + i < width && kingY + j >= 0 && kingY + j < height)
-                    {
-
-                        if (!Capture(kingX + i, kingY + j, Board[kingX, kingY].Color) && !AllyPieces(kingX, kingY, kingX + i, kingY + j)
-                        && Board[kingX, kingY].ValidMove(kingX, kingY, kingX + i, kingY + j, Board))
-                        {
-                            checkmate = false;
-                        }
-
-                    }
-                }
+            System.Windows.Controls.Image image = new System.Windows.Controls.Image();
 
 
-            }
-            return checkmate;
-        }
-        private bool StopCheck(int x, int y, Grid Highlights)
-        {
-            bool stopped = false;
-            Rectangle rect;
-            int index;
-            int kingX = 0;
-            int kingY = 0;
-
-            //checking if the king can capture the piece that is putting it in check
-            if (Board[x, y].Color == true)
-            {
-                kingX = blackKingX;
-                kingY = blackKingY;
-
-            }
-            else if (Board[x, y].Color == false)
-            {
-                kingX = whiteKingX;
-                kingY = whiteKingY;
-
-            }
-
-            if (Board[kingX, kingY].ValidMove(kingX, kingY, x, y, Board) && !AllyKinginCheck(kingX, kingY, x, y, Highlights))
-            {
-                stopped = true;
-            }
-
-            // checks if you can capture the piece that is putting the king in check
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (Board[i, j] != null && Board[i, j].Color != Board[x, y].Color && Board[i, j].ValidMove(i, j, x, y, Board) && !AllyKinginCheck(i, j, x, y, Highlights))
-                    {
-                        stopped = true;
+                    if (Board[i, j] == null)
+                        image = GetImage(Board[i, j], false);
+                    else
+                        image = GetImage(Board[i, j], Board[i, j].Color);
+                    // Grid.SetZIndex(image, 4);
+                    Grid.SetColumn(image, i);
+                    Grid.SetRow(image, j);
 
-                    }
+                    image.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5); // sets the rotation point of the image to the center of the image
+                    image.RenderTransform = FullScreen.RenderTransform;         // Applies the relevant rotation
+                    //image.RenderTransform += ro;         // Applies the relevant rotation
+
+
+                    Grid.Children.Add(image);
                 }
             }
-
-            if (Board[x, y].Type != Type.KNIGHT && stopped == false)
-            {
-                int yMove = 0; // x movement
-                int xMove = 0; // y movement
-                int tempX = x;
-                int tempY = y;
-
-                if (x > kingX)
-                {
-                    xMove = -1;
-                }
-                else if (x < kingX)
-                {
-                    xMove = 1;
-                }
-
-                // used to take into account the change in the y coordinate for the different movements when moving through the array
-                if (y > kingY)
-                {
-                    yMove = -1;
-                }
-                else if (y < kingY)
-                {
-                    yMove = 1;
-                }
-
-                while (tempX + xMove != kingX || tempY + yMove != kingY)
-                {
-                    tempX = tempX + xMove;
-                    tempY = tempY + yMove;
-                    for (int i = 0; i < 8; i++)
-                    {
-                        for (int j = 0; j < 8; j++)
-                        {
-                            if (Board[i, j] != null)
-                            {
-                                if (Board[i, j].Type != Type.KING && Board[i, j].Color != Board[x, y].Color && Board[i, j].ValidMove(i, j, tempX, tempY, Board) && !AllyKinginCheck(i, j, tempX, tempY, Highlights))
-                                {
-                                    stopped = true;
-
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-
-            }
-
-            // reapplies the red highlight on the king that got removed by AllyKingInCheck
-
-            index = (8 * kingX) + kingY;
-
-            rect = (Rectangle)Highlights.Children[index];
-            rect.Fill = Brushes.Red;
-
-
-            return stopped;
         }
 
-        internal bool AllyPieces(int startX, int startY, int endX, int endY)
+        private System.Windows.Controls.Image GetImage(Piece piece, bool white)
         {
-            if (Board[endX, endY] == null)
+            System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+
+            if (piece == null)
             {
-                return false;
+                image.Source = Images.Get("empty");
             }
             else
             {
-                return Board[startX, startY].Color == Board[endX, endY].Color;
+                image.Source = Images.Get(piece.Name);
             }
+
+            return image;
         }
 
-        private void FindCheckPieces(bool color)
-        {
-            int kingX = 0;
-            int kingY = 0;
-
-            if (color == true)
-            {
-                kingX = blackKingX;
-                kingY = blackKingY;
-            }
-            else
-            {
-                kingX = whiteKingX;
-                kingY = whiteKingY;
-            }
-            Capture(kingX, kingY, Board[kingX, kingY].Color);
-        }
-
-
-        public bool Capture(int x, int y, bool color)
-        {
-            bool check = false;
-            bool checkPiece;
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    checkPiece = false;
-                    if (Board[i, j] != null && Board[i, j].Color != color)
-                    {
-                        if (Board[i, j].Type == Type.PAWN)
-                        {
-                            double slope = Math.Abs((double)y - (double)j) / Math.Abs((double)x - (double)i);
-
-                            if (slope == 1 && Math.Abs(x - i) <= 1 && Math.Abs(y - j) <= 1)
-                            {
-                                if (Board[i, j].Color && x > i)
-                                {
-                                    check = true;
-                                    checkPiece = true;
-                                }
-                                else if (!Board[i, j].Color && x < i)
-                                {
-                                    check = true;
-                                    checkPiece = true;
-                                }
-                                if (checkPiece == true && Board[x, y] != null && Board[x, y].Type == Type.KING)
-                                {
-                                    checkPieces.Add(new Point(i, j));
-                                }
-                            }
-
-
-                        }
-                        else if (Board[i, j].ValidMove(i, j, x, y, Board))
-                        {
-                            check = true;
-                            if (Board[x, y] != null && Board[x, y].Type == Type.KING)
-                            {
-                                checkPieces.Add(new Point(i, j));
-                            }
-                        }
-                    }
-                }
-            }
-            return check;
-        }
 
         public Piece[,] Board { get; private set; }
+        public Game Game { get; private set; }
+        public Grid Grid { get; private set; }
+        public Grid Promote { get; set; }
+        public ImageSelector Images { get; private set; }
 
-        //holds the coordinates of the pieces putting the king in check
-        public List<Point> checkPieces = new List<Point>();
+        public int ID { get; private set; }
+        public RotateTransform Ro { get; private set; }
     }
 
 }

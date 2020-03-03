@@ -3,29 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace ChessSharp
 {
     class Knight : Piece
     {
-
         public Knight(bool c, int x)
         {
             Id = x;
-            Type = Type.KNIGHT;
             Color = c;
             if (Color)
                 Name = "white_knight";
             else
                 Name = "black_knight";
         }
-        public override bool ValidMove(int startX, int startY, int endX, int endY, Piece[,] Board)
+        public override bool ValidMove(Point start, Point end, Piece[,] Board)
         {
-            double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
+            double slope = (Math.Abs((double)end.Y - (double)start.Y) / Math.Abs((double)end.X - (double)start.X));
 
             if (slope == 0.5 || slope == 2)
             {
-                if (Math.Abs((double)endY - (double)startY) <= 2 && Math.Abs((double)endX - (double)startX) <= 2)
+                if (Math.Abs((double)end.Y - (double)start.Y) <= 2 && Math.Abs((double)end.X - (double)start.X) <= 2)
                 {
                     return true;
                 }
@@ -40,9 +39,9 @@ namespace ChessSharp
             }
         }
 
-        public override bool ValidPath(int startX, int startY, int endX, int endY, Piece[,] Board)
+        public override bool ValidPath(Point start, Point end, Piece[,] Board)
         {
-            return Board[startX, startX].Color != Board[endX, endX].Color;
+            return Board[start.X, start.Y].Color != Board[end.X, end.Y].Color;
         }
     }
 }

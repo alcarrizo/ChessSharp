@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace ChessSharp
 {
     class Queen : Piece
     {
-
         public Queen(bool c, int x)
         {
             Id = x;
-            Type = Type.QUEEN;
             Color = c;
             if (Color)
                 Name = "white_queen";
@@ -20,13 +19,13 @@ namespace ChessSharp
                 Name = "black_queen";
         }
 
-        public override bool ValidMove(int startX, int startY, int endX, int endY, Piece[,] Board)
+        public override bool ValidMove(Point start, Point end, Piece[,] Board)
         {
-            double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
+            double slope = Math.Abs((double)end.Y - (double)start.Y) / Math.Abs((double)end.X - (double)start.X);
 
-            if (slope == 0 || endX == startX || slope == 1)
+            if (slope == 0 || end.X == start.X || slope == 1)
             {
-                if (ValidPath(startX, startY, endX, endY, Board))
+                if (ValidPath(start, end, Board))
                 {
                     return true;
                 }
@@ -41,39 +40,39 @@ namespace ChessSharp
             }
         }
 
-        public override bool ValidPath(int startX, int startY, int endX, int endY, Piece[,] Board)
+        public override bool ValidPath(Point start, Point end, Piece[,] Board)
         {
-            double slope = Math.Abs((double)endY - (double)startY) / Math.Abs((double)endX - (double)startX);
+            double slope = Math.Abs((double)end.Y - (double)start.Y) / Math.Abs((double)end.X - (double)start.X);
 
             int changeX = 1;
             int changeY = 1;
 
             // used to take into account the change in the x coordinate for the different movements when moving through the array
-            if (startX > endX)
+            if (start.X > end.X)
             {
                 changeX = -1;
             }
-            else if (startX == endX)
+            else if (start.X == end.X)
             {
                 changeX = 0;
             }
 
             // used to take into account the change in the y coordinate for the different movements when moving through the array
-            if (startY > endY)
+            if (start.Y > end.Y)
             {
                 changeY = -1;
             }
-            else if (startY == endY)
+            else if (start.Y == end.Y)
             {
                 changeY = 0;
             }
 
 
-            while (endX != (startX + changeX) || endY != (startY + changeY))
+            while (end.X != (start.X + changeX) || end.Y != (start.Y + changeY))
             {
-                startY += changeY;
-                startX += changeX;
-                if (Board[startX, startY] != null)
+                start.Y += changeY;
+                start.X += changeX;
+                if (Board[start.X, start.Y] != null)
                 {
                     return false;
                 }
@@ -81,7 +80,5 @@ namespace ChessSharp
             return true;
 
         }
-
-
     }
 }
