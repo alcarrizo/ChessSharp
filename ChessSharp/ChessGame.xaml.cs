@@ -267,11 +267,14 @@ namespace ChessSharp
         }
 
 
-        public void Window_Closing(object sender, CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
+
             ServerFunctions SV = new ServerFunctions();
             SV.CloseGame();
 
+
         }
+
     }
 }
