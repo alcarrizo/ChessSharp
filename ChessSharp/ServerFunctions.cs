@@ -11,7 +11,8 @@ namespace ChessSharp
 {
     class ServerFunctions
     {
-        private string host = "https://chesssharp.000webhostapp.com";
+        //public static string host = "http://localhost/serverCodeXamppBackup";
+        public static string host = "https://chesssharp.000webhostapp.com";
 
 
         public void SendPlayerInfo(string userN, string passW)

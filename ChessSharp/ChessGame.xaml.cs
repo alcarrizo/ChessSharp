@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -262,6 +263,14 @@ namespace ChessSharp
             FullScreen.Children.Remove(PromoteGrid);
             cBoard.IsHitTestVisible = true;
 
+
+        }
+
+
+        public void Window_Closing(object sender, CancelEventArgs e)
+        {
+            ServerFunctions SV = new ServerFunctions();
+            SV.CloseGame();
 
         }
     }
