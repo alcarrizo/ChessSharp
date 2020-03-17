@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
+
 namespace ChessSharp
 {
     /// <summary>
@@ -67,6 +68,8 @@ namespace ChessSharp
 
         }
 
+        
+
 
         private void ShowMessageBox_Click(object sender, RoutedEventArgs e)
         {
@@ -91,8 +94,18 @@ namespace ChessSharp
 
         }
 
+        
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            // Creates a button and grabs the row index starting at 0
+            var btn = sender as Button;
+            var item = btn.CommandParameter as GameList;
+            var index = gameLists.IndexOf(item);
+
+            string creatorName = gameLists[index].username;
+            
+            
             string msgtext = "Are you sure you want to join this game?";
             string txt = "Join Game Window";
             MessageBoxButton button = MessageBoxButton.YesNo;
@@ -108,7 +121,6 @@ namespace ChessSharp
                 case MessageBoxResult.No:
                     break;
             }
-            
         }
 
 

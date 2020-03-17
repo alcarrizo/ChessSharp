@@ -35,7 +35,7 @@
                     <GridViewColumn Header="Joinable">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Join Game" Click="Button_Click"/>
+                                <Button Content="Join Game" CommandParameter="{Binding .}" Click="Button_Click"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

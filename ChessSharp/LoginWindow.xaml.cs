@@ -35,7 +35,8 @@ namespace ChessSharp
             }
             else
             {
-                WebRequest request = WebRequest.Create("https://chesssharp.000webhostapp.com");
+                
+                WebRequest request = WebRequest.Create(ServerFunctions.host);
                 request.Credentials = CredentialCache.DefaultCredentials;
                 try
                 {
