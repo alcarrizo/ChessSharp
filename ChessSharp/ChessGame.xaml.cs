@@ -28,8 +28,12 @@ namespace ChessSharp
 
         private Player p1 = new Player("Player1", true);
         private Player p2 = new Player("Player2", false);
+        private Player p3;
+        private Player p4;
         private Player currPlay;
         private RotateTransform ro;
+        private int ID;
+
 
         public ChessGame()
         {
@@ -51,6 +55,36 @@ namespace ChessSharp
 
             currPlay = p1;
         }
+
+        public ChessGame(String name, bool control, int ID)
+        {
+
+            
+            InitializeComponent();
+            this.ID = ID;
+            
+            // How to change the rotation of the grid
+            if (control == true)
+            {
+                ro = new RotateTransform(180);
+                p3 = new Player(name, control);
+            }
+            else
+            {
+                ro = new RotateTransform(0);
+                p4 = new Player(name, control);
+            }
+
+
+            board = new GameBoard(cBoard, ro);
+
+            FullScreen.RenderTransform = ro;
+            board.Update(FullScreen);
+
+            
+            currPlay = p1;
+        }
+
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
