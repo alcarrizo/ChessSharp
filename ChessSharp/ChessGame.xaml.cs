@@ -332,18 +332,7 @@ namespace ChessSharp
             return temp;
         }
 
-        private void SendMessage(Movement moveInfo)
-        {
-            ServerFunctions SV = new ServerFunctions();
-
-            // converts object into a json message
-            var result = Newtonsoft.Json.JsonConvert.SerializeObject(moveInfo);
-
-            //converts json message back into class
-            //Movement temp = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
-
-        }
-
+        
         private void Promotion(object sender, RoutedEventArgs e)
         {
 
@@ -386,6 +375,25 @@ namespace ChessSharp
 
 
         }
+
+        private void SendMessage(Movement moveInfo)
+        {
+            ServerFunctions SV = new ServerFunctions();
+
+            // converts object into a json message
+            var result = Newtonsoft.Json.JsonConvert.SerializeObject(moveInfo);
+
+            //converts json message back into class
+            //Movement temp = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
+
+        }
+
+        // function to make player wait for the server to send the information from the opponents move
+        private void WaitForOpponent()
+        {
+            //while ()
+        }
+
 
     }
 }
