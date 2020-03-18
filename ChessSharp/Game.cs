@@ -31,7 +31,7 @@ namespace ChessSharp
         }
 
 
-        public bool Move(Point start, Point end, Piece[,] Board, Grid Highlights)
+        public bool Move(Point start, Point end, Piece[,] Board, Grid Highlights, Movement moveInfo)
         {
             bool enPassant = false;
             bool move = false;
@@ -84,7 +84,7 @@ namespace ChessSharp
 
                 }
                 //checks if the player is trying to castle their king
-                else if (Board[start.X, start.Y] is King && IsCastling(start, end, Board))
+                else if (Board[start.X, start.Y] is King && IsCastling(start, end, Board, moveInfo))
                 {
                     move = true;
                     if (Board[start.X, start.Y].Color == true)
@@ -101,7 +101,7 @@ namespace ChessSharp
 
                 }
                 // checks for en passant
-                else if (Board[start.X, start.Y] is Pawn && IsEnPassant(start, end, Board))
+                else if (Board[start.X, start.Y] is Pawn && IsEnPassant(start, end, Board, moveInfo))
                 {
                     move = true;
                 }
@@ -126,7 +126,7 @@ namespace ChessSharp
             return move;
         }
 
-        private bool IsEnPassant(Point start, Point end, Piece[,] board)
+        private bool IsEnPassant(Point start, Point end, Piece[,] board, Movement moveInfo)
         {
             bool capture = false;
             Pawn temp;
@@ -139,6 +139,9 @@ namespace ChessSharp
                         temp = board[end.X, end.Y - 1] as Pawn;
                         if (temp.enPassant == true)
                         {
+                            moveInfo.pawnX = end.X;
+                            moveInfo.pawnY = end.Y - 1;
+
                             capture = true;
                             board[end.X, end.Y - 1] = null;
                         }
@@ -152,6 +155,9 @@ namespace ChessSharp
                         temp = board[end.X, end.Y + 1] as Pawn;
                         if (temp.enPassant == true)
                         {
+                            moveInfo.pawnX = end.X;
+                            moveInfo.pawnY = end.Y + 1;
+
                             capture = true;
                             board[end.X, end.Y + 1] = null;
                         }
@@ -161,7 +167,7 @@ namespace ChessSharp
             return capture;
         }
 
-        public bool IsCastling(Point start, Point end, Piece[,] Board)
+        public bool IsCastling(Point start, Point end, Piece[,] Board, Movement moveInfo)
         {
             bool castling = false;
             bool clearSpace = true;
@@ -193,6 +199,11 @@ namespace ChessSharp
                 }
                 if (clearSpace == true)
                 {
+                    moveInfo.rookStartX = width - 1;
+                    moveInfo.rookStartY = start.Y;
+                    moveInfo.rookEndX = end.X - 1;
+                    moveInfo.rookEndY = start.Y;
+
                     Board[end.X - 1, start.Y] = Board[width - 1, start.Y];
                     Board[width - 1, start.Y] = null;
                     castling = true;
@@ -200,6 +211,7 @@ namespace ChessSharp
                     tempKing.firstMove = false;
                 }
             }
+
             else if (start.X - end.X == 2 && start.Y == end.Y)
             {
                 if (Board[0, start.Y] != null && Board[0, start.Y] is Rook)
@@ -221,15 +233,17 @@ namespace ChessSharp
                     {
                         clearSpace = false;
                     }
-
-
-
                 }
 
 
                 if (clearSpace == true)
                 {
-                    Board[end.X + 1, start.Y] = Board[width - 1, start.Y];
+                    moveInfo.rookStartX = 0;
+                    moveInfo.rookStartY = start.Y;
+                    moveInfo.rookEndX = end.X + 1;
+                    moveInfo.rookEndY = start.Y;
+
+                    Board[end.X + 1, start.Y] = Board[0, start.Y];
                     Board[0, start.Y] = null;
                     castling = true;
                     tempRook.firstMove = false;
@@ -242,12 +256,14 @@ namespace ChessSharp
             return castling;
         }
 
-        public void EnemyChecks(Point end, Grid Highlights, Piece[,] Board)
+        public bool EnemyChecks(Point end, Grid Highlights, Piece[,] Board, Movement moveInfo)
         {
             bool mate = false;
 
             if (EnemyKinginCheck(end, Highlights, Board))
             {
+                moveInfo.check = true;
+
                 checkPieces.Clear();
                 FindCheckPieces(Board[end.X, end.Y].Color, Board);
 
@@ -255,17 +271,15 @@ namespace ChessSharp
                 {
                     if (CheckMate(point, Board, Highlights))
                     {
+                        moveInfo.checkMate = true;
                         mate = true;
                     }
                 }
-                if (mate == true)
-                {
-                    MessageBox.Show("Checkmate");
-                }
             }
 
-            //return mate;
+            return mate;
         }
+
 
 
         public bool AllyKinginCheck(Point start, Point end, Piece[,] Board, Grid Highlights)

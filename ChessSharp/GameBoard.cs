@@ -68,21 +68,22 @@ namespace ChessSharp
             return currPlay.Color == Board[start.X, start.Y].Color;
         }
 
-        public bool Move(Point start, Point end, Grid Highlights, Player currPlay)
+        public bool Move(Point start, Point end, Grid Highlights, Player currPlay, Movement moveInfo)
         {
+
             bool move = false;
-            if (Game.Move(start, end, Board, Highlights))
+            if (Game.Move(start, end, Board, Highlights, moveInfo))
             {
                 move = true;
             }
-            
             return move;
         }
 
-        public void EnemyChecks(Point end, Grid Highlights)
+        public bool EnemyChecks(Point end, Grid Highlights, Movement moveInfo)
         {
-            Game.EnemyChecks(end, Highlights, Board);
+            return Game.EnemyChecks(end, Highlights, Board, moveInfo);
         }
+
 
 
         public void ChangePiece(Point end, string name)

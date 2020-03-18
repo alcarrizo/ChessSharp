@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Point = System.Drawing.Point;
+using System.Web.Script.Serialization;
 
 namespace ChessSharp
 {
@@ -148,12 +149,13 @@ namespace ChessSharp
         private Point end;
         private int startBlockIndex;
         private Brush brush;
+        Movement moveInfo;
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
             Image g = (Image)e.Source;
-
+            moveInfo = new Movement();
 
 
             if (clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g)) && board.ControlPiece(new Point(Grid.GetColumn(g), Grid.GetRow(g)), currPlay))
@@ -182,41 +184,100 @@ namespace ChessSharp
                 if (start.X != end.X || start.Y != end.Y)
                 {
                     bool move = false;
-                    move = board.Move(start, end, Highlights, currPlay);
+                    move = board.Move(start, end, Highlights, currPlay, moveInfo);
 
-                    if (move == true && board.IsPawn(end) && (end.Y == 7 || end.Y == 0))
+                    if (move == true)
                     {
-                        PromoteGrid = CreatePromoteGrid();
-                        PromoteGrid.RenderTransform = FullScreen.RenderTransform;
-                        PromoteGrid.RenderTransformOrigin = FullScreen.RenderTransformOrigin;
-                        FullScreen.Children.Add(PromoteGrid);
-                        cBoard.IsHitTestVisible = false;
-                        board.EnemyChecks(end, Highlights);
-                    }
-                    else if (move == true)
-                    {
+                        moveInfo.startX = start.X;
+                        moveInfo.startY = start.Y;
+                        moveInfo.endX = end.X;
+                        moveInfo.endY = end.Y;
 
-
-                        if (currPlay.Equals(p1))
+                        if (board.IsPawn(end) && (end.Y == 7 || end.Y == 0))
                         {
-                            currPlay = p2;
-                            ro = new RotateTransform(0);
-                            FullScreen.RenderTransform = ro;
+                            moveInfo.promotion = true;
+                            PromoteGrid = CreatePromoteGrid();
+                            PromoteGrid.RenderTransform = FullScreen.RenderTransform;
+                            PromoteGrid.RenderTransformOrigin = FullScreen.RenderTransformOrigin;
+                            FullScreen.Children.Add(PromoteGrid);
+                            cBoard.IsHitTestVisible = false;
                         }
                         else
                         {
-                            currPlay = p1;
-                            ro = new RotateTransform(180);
-                            FullScreen.RenderTransform = ro;
+                            if (board.EnemyChecks(end, Highlights, moveInfo))
+                            {
+                                EndGame();
+                                SendMessage(moveInfo);
+                            }
+                            else
+                            {
+                                if (currPlay.Equals(p1))
+                                {
+                                    currPlay = p2;
+
+                                }
+                                else
+                                {
+                                    currPlay = p1;
+
+                                }
+
+                                if (currPlay.Color == true)
+                                {
+                                    ro = new RotateTransform(180);
+                                }
+                                else
+                                {
+                                    ro = new RotateTransform(0);
+                                }
+                                FullScreen.RenderTransform = ro;
+                                SendMessage(moveInfo);
+                            }
                         }
-                        board.EnemyChecks(end, Highlights);
-                        
                     }
+
+
                     board.Update(FullScreen);
+
                 }
             }
         }
 
+        // brings up the end game options
+        private void EndGame()
+        {
+            MessageBoxResult result = MessageBox.Show("Checkmate");
+            switch (result)
+            {
+                case MessageBoxResult.OK:
+                    {
+                        board = new GameBoard(cBoard, ro);
+                        ResetHighlights();
+
+                        currPlay = p1;
+                        //p1.Color = !p1.Color;
+                        //p2.Color = !p1.Color;
+                    }
+                    break;
+            }
+        }
+
+        private void ResetHighlights()
+        {
+            int index = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Rectangle rect = (Rectangle)Highlights.Children[index];
+                    if (rect.Fill == Brushes.Red)
+                    {
+                        rect.Fill = Brushes.Transparent;
+                    }
+                    index++;
+                }
+            }
+        }
 
         private static Grid CreatePromoteGrid()
         {
@@ -271,6 +332,18 @@ namespace ChessSharp
             return temp;
         }
 
+        private void SendMessage(Movement moveInfo)
+        {
+            ServerFunctions SV = new ServerFunctions();
+
+            // converts object into a json message
+            var result = Newtonsoft.Json.JsonConvert.SerializeObject(moveInfo);
+
+            //converts json message back into class
+            //Movement temp = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
+
+        }
+
         private void Promotion(object sender, RoutedEventArgs e)
         {
 
@@ -278,8 +351,13 @@ namespace ChessSharp
             Button temp = (Button)e.Source;
             string name = (string)temp.Content;
 
+            moveInfo.pawnEvolvesTo = name;
+
             board.ChangePiece(end, name);
-            board.EnemyChecks(end, Highlights);
+            if (board.EnemyChecks(end, Highlights, moveInfo))
+            {
+                EndGame();
+            }
 
             if (currPlay.Equals(p1))
             {
@@ -296,7 +374,6 @@ namespace ChessSharp
             board.Update(FullScreen);
             FullScreen.Children.Remove(PromoteGrid);
             cBoard.IsHitTestVisible = true;
-
 
         }
 
