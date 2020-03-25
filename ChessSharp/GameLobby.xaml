@@ -44,6 +44,7 @@
             
 
         </ListView>
-        
+        <Button x:Name="RefreshButton" Content="Refresh List" HorizontalAlignment="Left" Margin="457,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="RefreshButton_Click"/>
+
     </Grid>
 </Window>

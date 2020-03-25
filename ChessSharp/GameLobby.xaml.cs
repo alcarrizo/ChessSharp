@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -143,6 +144,12 @@ namespace ChessSharp
         {
             ServerFunctions SV = new ServerFunctions();
             SV.SignOutUser();
+
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            gameLists.Clear();
 
         }
     }
