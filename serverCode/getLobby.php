@@ -16,30 +16,28 @@ if (!$conn) {
 $json = file_get_contents('php://input');
 $data = json_decode($json);
 
+$information = array();
 
 $sql = "SELECT num,username,gameId,joinedUser,playerCount FROM playerlobby";
 $result = mysqli_query($conn, $sql);
 
 	if (mysqli_num_rows($result) > 0) {
 		while($row = mysqli_fetch_assoc($result)) {
-			if(strcmp($row["gameId"], $data->gameId) == 0){
-				if(strcmp($row["joinedUser"], 'null') == 0){
-				    $sql2 = "UPDATE playerlobby SET joinedUser='$data->username' Where gameId='$data->gameId'";
-					
-					mysqli_query($conn, $sql2);
-					$sql3 = "UPDATE playerlobby SET playerCount='2' Where gameId='$data->gameId'";
-					
-					mysqli_query($conn, $sql3);
-					
-				}else{
-					echo "Lobby Full!";
-				}
-			}else{
-			    echo "broken";
-			}
+			
+			$newdata =  array (
+				'num' => $row["num"],
+				'username' => $row["username"],
+				'gameId' => $row["gameId"],
+				'playerCount' => $row["playerCount"]
+				
+			);
+			
+			array_push($information, $newdata);
+			
 		}
-	}else{
-		echo "Error: sql not connected";
 	}
+	
+	echo json_encode($information);
+	
 mysqli_close($conn);
 ?>

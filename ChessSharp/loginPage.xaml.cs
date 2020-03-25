@@ -64,7 +64,7 @@ namespace ChessSharp
             if (loginBar.Background == Brushes.Gray)  //Check for Sign in 
             {
                 
-                if (PlayerLoginInfo["login"] == "true")
+                if (PlayerLoginInfo["login"] == true)
                 {
                     username = Username_tb.Text.ToLower();
                     ((LoginWindow)App.Current.MainWindow).ShowLobby(); //Change to lobby screen
@@ -76,7 +76,7 @@ namespace ChessSharp
             }
             else   //Check for sign up
             {
-                if (PlayerLoginInfo["username"] == "false") //check if username is not already in database
+                if (PlayerLoginInfo["username"] == false) //check if username is not already in database
                 {
 
                     SV.SendPlayerInfo(username1, Password_tb.Password);

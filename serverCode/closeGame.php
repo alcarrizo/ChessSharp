@@ -16,13 +16,16 @@ $json = file_get_contents('php://input');
 $data = json_decode($json);
 
 
-$sql = "SELECT username FROM playerlobby";
+$sql = "SELECT username,joinedUser FROM playerlobby";
 $result = mysqli_query($conn, $sql);
 
 if (mysqli_num_rows($result) > 0) {
 	while($row = mysqli_fetch_assoc($result)) {
 		$sql2 = "DELETE FROM playerlobby WHERE username = '$data->username'";
 		mysqli_query($conn, $sql2);
+		
+		$sql3 = "DELETE FROM playerlobby WHERE joinedUser = '$data->username'";
+		mysqli_query($conn, $sql3);
 	}
 }
 

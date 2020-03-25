@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -17,7 +17,15 @@ namespace ChessSharp
         {
             InitializeComponent();
             NewList();
+            ServerFunctions SV = new ServerFunctions();
+            dynamic games = SV.RefreshLobby();
 
+            Console.WriteLine(games.Count);
+            for (int i = 0; i < games.Count; i++)
+            {
+                gameLists.Add(new GameList() { username = games[i].username, totalPlayers = games[i].playerCount + "/2", gameId = games[i].gameId });
+
+            }
         }
 
         private void NewList()
@@ -66,6 +74,7 @@ namespace ChessSharp
         {
             public string username { get; set; }
             public string totalPlayers { get; set; }
+            public string gameId { get; set; }
 
         }
 
@@ -104,7 +113,7 @@ namespace ChessSharp
             var item = btn.CommandParameter as GameList;
             var index = gameLists.IndexOf(item);
 
-            string creatorName = gameLists[index].username;
+            string Id = gameLists[index].gameId;
             
             
             string msgtext = "Are you sure you want to join this game?";
@@ -115,6 +124,7 @@ namespace ChessSharp
             {
                 case MessageBoxResult.Yes:
                     gameCreated = true;
+                    JoinGame(Id);
                     ChessGame cg = new ChessGame();
                     cg.Show();
 
@@ -124,10 +134,13 @@ namespace ChessSharp
             }
         }
 
+        private void JoinGame(string id)
+        {
 
+            ServerFunctions SV = new ServerFunctions();
+            SV.JoinGameId(id, LoginPage.username);
 
-
-
+        }
 
         private void CreateGame()
         {
@@ -135,7 +148,7 @@ namespace ChessSharp
             string name = LoginPage.username;
 
             dynamic dynamicD = SV.SetGameID(name);
-            gameLists.Add(new GameList() { username = name, totalPlayers = dynamicD["playerCount"] + "/2" });
+            gameLists.Add(new GameList() { username = name, totalPlayers = dynamicD["playerCount"] + "/2", gameId = dynamicD["gameId"] });
 
 
         }
@@ -147,10 +160,18 @@ namespace ChessSharp
 
         }
 
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        private void Refresh_Click(object sender, RoutedEventArgs e)
         {
             gameLists.Clear();
+            ServerFunctions SV = new ServerFunctions();
+            dynamic games = SV.RefreshLobby();
 
+            Console.WriteLine(games.Count);
+            for (int i = 0; i < games.Count; i++)
+            {
+                gameLists.Add(new GameList() { username = games[i].username, totalPlayers = games[i].playerCount + "/2", gameId = games[i].gameId });
+
+            }
         }
     }
 }
