@@ -45,7 +45,7 @@ while($canCreate == 0){
 	}
 }
 
-$temp = "None";
+$temp = 'null';
 
 if($canCreate == 1){
 	$sql2 = "INSERT INTO playerlobby (username, gameId,joinedUser, playerCount)

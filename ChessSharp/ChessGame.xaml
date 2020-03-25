@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="800" ContentRendered="Window_ContentRendered" Background="Beige" ButtonBase.Click="Promotion" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="750" Width="750" ContentRendered="Window_ContentRendered" Background="Beige" ButtonBase.Click="Promotion" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
     <Grid Name ="FullScreen" RenderTransformOrigin="0.5,0.5" >
         <Border BorderBrush="Black" BorderThickness="5" Width="570px" Height="570px" VerticalAlignment ="Center" HorizontalAlignment="Center">
             <Canvas Name ="GameArea" Width="560px" Height="560px"  ClipToBounds="True" VerticalAlignment ="Center" HorizontalAlignment="Center">

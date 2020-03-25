@@ -371,8 +371,9 @@ namespace ChessSharp
         {
 
             ServerFunctions SV = new ServerFunctions();
-            SV.CloseGame();
-
+            SV.CloseGame(); 
+            GameLobby gl = new GameLobby();
+            gl.Show();
 
         }
 
