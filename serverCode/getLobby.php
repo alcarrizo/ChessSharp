@@ -18,14 +18,13 @@ $data = json_decode($json);
 
 $information = array();
 
-$sql = "SELECT num,username,gameId,joinedUser,playerCount FROM playerlobby";
+$sql = "SELECT username,gameId,joinedUser,playerCount FROM playerlobby";
 $result = mysqli_query($conn, $sql);
 
 	if (mysqli_num_rows($result) > 0) {
 		while($row = mysqli_fetch_assoc($result)) {
 			
 			$newdata =  array (
-				'num' => $row["num"],
 				'username' => $row["username"],
 				'gameId' => $row["gameId"],
 				'playerCount' => $row["playerCount"]

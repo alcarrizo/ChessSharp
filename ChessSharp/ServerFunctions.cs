@@ -138,9 +138,10 @@ namespace ChessSharp
             response.Close();
         }
 
-        public void JoinGameId(string id, string name)
+        public String JoinGameId(string id, string name)
         {
 
+            string temp = "";
             var request = (HttpWebRequest)WebRequest.Create(host + "/joinSession.php");
             request.ContentType = "application/json";
             request.Method = "POST";
@@ -161,13 +162,16 @@ namespace ChessSharp
             using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
                 var result = streamReader.ReadToEnd();
+                temp = result;
             }
+            Console.WriteLine(temp);
             response.Close();
+            return temp;
         }
 
-        public void CloseGame()
+        public void CloseGame(string gameId2)
         {
-            string name = LoginPage.username;
+            string username2 = LoginPage.username;
             var request = (HttpWebRequest)WebRequest.Create(host + "/closeGame.php");
             request.ContentType = "application/json";
             request.Method = "POST";
@@ -176,7 +180,8 @@ namespace ChessSharp
             {
                 string json = new JavaScriptSerializer().Serialize(new
                 {
-                    username = name
+                    username = username2,
+                    gameId = gameId2
                 });
 
                 streamWriter.Write(json);
@@ -215,6 +220,61 @@ namespace ChessSharp
 
 
 
+        }
+
+        public void SendMove(string json)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(host + "/sendMove.php");
+            request.ContentType = "application/json";
+            request.Method = "POST";
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                
+                streamWriter.Write(json);
+
+            }
+            WebResponse response = request.GetResponse();
+
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
+            {
+                var result = streamReader.ReadToEnd();
+            }
+            response.Close();
+        }
+
+        public dynamic GetMove()
+        {
+            string gameId2 = GameLobby.gameId;
+            string username2 = LoginPage.username;
+            var request = (HttpWebRequest)WebRequest.Create(host + "/getMove.php");
+            request.ContentType = "application/json";
+            request.Method = "POST";
+
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string json = new JavaScriptSerializer().Serialize(new
+                {
+                    username = username2,
+                    gameId = gameId2
+                });
+
+                streamWriter.Write(json);
+
+            }
+            WebResponse response = request.GetResponse();
+
+            dynamic temp = "";
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
+            {
+                var result = streamReader.ReadToEnd();
+                dynamic jsonStr = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+
+                temp = jsonStr;
+            }
+
+
+            response.Close();
+            return temp;
         }
     }
 }

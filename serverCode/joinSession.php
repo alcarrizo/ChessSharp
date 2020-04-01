@@ -17,7 +17,7 @@ $json = file_get_contents('php://input');
 $data = json_decode($json);
 
 
-$sql = "SELECT num,username,gameId,joinedUser,playerCount FROM playerlobby";
+$sql = "SELECT username,gameId,joinedUser,playerCount FROM playerlobby";
 $result = mysqli_query($conn, $sql);
 
 	if (mysqli_num_rows($result) > 0) {
@@ -30,9 +30,9 @@ $result = mysqli_query($conn, $sql);
 					$sql3 = "UPDATE playerlobby SET playerCount='2' Where gameId='$data->gameId'";
 					
 					mysqli_query($conn, $sql3);
-					
+					echo "Join";
 				}else{
-					echo "Lobby Full!";
+					echo "Full";
 				}
 			}else{
 			    echo "broken";

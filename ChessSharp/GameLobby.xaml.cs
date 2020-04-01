@@ -12,21 +12,30 @@ namespace ChessSharp
     /// </summary>
     public partial class GameLobby : Window
     {
+
+
+
         public ObservableCollection<GameList> gameLists;
+        public static string gameId;
+        public static bool logout = true;
+
         public GameLobby()
         {
+
             InitializeComponent();
             NewList();
             ServerFunctions SV = new ServerFunctions();
             dynamic games = SV.RefreshLobby();
 
-            Console.WriteLine(games.Count);
             for (int i = 0; i < games.Count; i++)
             {
                 gameLists.Add(new GameList() { username = games[i].username, totalPlayers = games[i].playerCount + "/2", gameId = games[i].gameId });
 
             }
         }
+
+
+
 
         private void NewList()
         {
@@ -95,6 +104,8 @@ namespace ChessSharp
                     CreateGame();
                     ChessGame cg = new ChessGame();
                     cg.Show();
+                    logout = false;
+                    this.Close();
 
                     break;
                 case MessageBoxResult.No:
@@ -114,8 +125,8 @@ namespace ChessSharp
             var index = gameLists.IndexOf(item);
 
             string Id = gameLists[index].gameId;
-            
-            
+            gameId = gameLists[index].gameId;
+
             string msgtext = "Are you sure you want to join this game?";
             string txt = "Join Game Window";
             MessageBoxButton button = MessageBoxButton.YesNo;
@@ -125,8 +136,6 @@ namespace ChessSharp
                 case MessageBoxResult.Yes:
                     gameCreated = true;
                     JoinGame(Id);
-                    ChessGame cg = new ChessGame();
-                    cg.Show();
 
                     break;
                 case MessageBoxResult.No:
@@ -138,7 +147,19 @@ namespace ChessSharp
         {
 
             ServerFunctions SV = new ServerFunctions();
-            SV.JoinGameId(id, LoginPage.username);
+            string s = SV.JoinGameId(id, LoginPage.username);
+
+            if (s == "Join")
+            {
+                ChessGame cg = new ChessGame();
+                cg.Show();
+                logout = false;
+                this.Close();
+            }
+            else
+            {
+                //Game is Full
+            }
 
         }
 
@@ -149,14 +170,17 @@ namespace ChessSharp
 
             dynamic dynamicD = SV.SetGameID(name);
             gameLists.Add(new GameList() { username = name, totalPlayers = dynamicD["playerCount"] + "/2", gameId = dynamicD["gameId"] });
-
+            gameId = dynamicD["gameId"];
 
         }
 
         public void GameLobby_Closing(object sender, CancelEventArgs e)
         {
             ServerFunctions SV = new ServerFunctions();
-            SV.SignOutUser();
+            if (logout == true)
+            {
+                SV.SignOutUser();
+            }
 
         }
 
@@ -166,7 +190,6 @@ namespace ChessSharp
             ServerFunctions SV = new ServerFunctions();
             dynamic games = SV.RefreshLobby();
 
-            Console.WriteLine(games.Count);
             for (int i = 0; i < games.Count; i++)
             {
                 gameLists.Add(new GameList() { username = games[i].username, totalPlayers = games[i].playerCount + "/2", gameId = games[i].gameId });

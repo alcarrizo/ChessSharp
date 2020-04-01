@@ -231,6 +231,8 @@ namespace ChessSharp
                                     ro = new RotateTransform(0);
                                 }
                                 FullScreen.RenderTransform = ro;
+                                moveInfo.username = LoginPage.username;
+                                moveInfo.gameId = GameLobby.gameId;
                                 SendMessage(moveInfo);
                             }
                         }
@@ -371,7 +373,7 @@ namespace ChessSharp
         {
 
             ServerFunctions SV = new ServerFunctions();
-            SV.CloseGame(); 
+            SV.CloseGame(GameLobby.gameId);
             GameLobby gl = new GameLobby();
             gl.Show();
 
@@ -382,8 +384,9 @@ namespace ChessSharp
             ServerFunctions SV = new ServerFunctions();
 
             // converts object into a json message
-            var result = Newtonsoft.Json.JsonConvert.SerializeObject(moveInfo);
-
+            string result = Newtonsoft.Json.JsonConvert.SerializeObject(moveInfo);
+            SV.SendMove(result);
+            //SV.GetMove();
             //converts json message back into class
             //Movement temp = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
 
@@ -392,7 +395,30 @@ namespace ChessSharp
         // function to make player wait for the server to send the information from the opponents move
         private void WaitForOpponent()
         {
+            ServerFunctions SV = new ServerFunctions();
+            //dynamic getMove = SV.GetMove();
             //while ()
+
+            /*            'ifcheck' => $row["ifcheck"], 
+						'checkMate' => $row["checkMate"],
+						'forfeit' => $row["forfeit"],
+						'askForDraw' => $row["askForDraw"],
+						'startX' => $row["startX"],
+						'startY' => $row["startY"],
+						'endX' => $row["endX"],
+						'endY' => $row["endY"],
+						'enPassant' => $row["enPassant"],
+						'pawnX' => $row["pawnX"],
+						'pawnY' => $row["pawnY"],
+						'castling' => $row["castling"],
+						'rookStartX' => $row["rookStartX"],
+						'rookStartY' => $row["rookStartY"],
+						'rookEndX' => $row["rookEndX"],
+						'rookEndY' => $row["rookEndY"],
+						'promotion' => $row["promotion"],
+						'pawnEvolvesTo' => $row["pawnEvolvesTo"],
+						'lastMove' => $row["lastMove"]
+            */
         }
 
 
