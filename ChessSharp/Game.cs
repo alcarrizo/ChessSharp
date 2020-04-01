@@ -658,9 +658,90 @@ namespace ChessSharp
         }
 
 
+        public void UpdateEnemyPieces(Movement moveInfo, Piece[,] Board, Grid Highlights)
+        {
+            //castling
+            if (moveInfo.castling == true)
+            {
+                Board[moveInfo.rookEndX, moveInfo.rookEndY] = Board[moveInfo.rookStartX, moveInfo.rookStartY];
+                Board[moveInfo.rookStartX, moveInfo.rookStartY] = null;
+
+                Board[moveInfo.endX, moveInfo.endY] = Board[moveInfo.startX, moveInfo.startY];
+                Board[moveInfo.startX, moveInfo.startY] = null;
+
+                if (Board[moveInfo.endX, moveInfo.endY].Color == true)
+                {
+                    whiteKing.X = moveInfo.endX;
+                    whiteKing.Y = moveInfo.endY;
+                }
+                else
+                {
+                    blackKing.X = moveInfo.endX;
+                    blackKing.Y = moveInfo.endY;
+                }
+            }
+            //enpassant
+            else if (moveInfo.enPassant == true)
+            {
+                Board[moveInfo.endX, moveInfo.endY] = Board[moveInfo.startX, moveInfo.startY];
+                Board[moveInfo.startX, moveInfo.startY] = null;
+
+                Board[moveInfo.pawnX, moveInfo.pawnY] = null;
+            }
+            //promotion
+            else if (moveInfo.promotion == true)
+            {
+                switch(moveInfo.pawnEvolvesTo)
+                {
+                    case "Queen":
+                        Board[moveInfo.endX, moveInfo.endY] = new Queen(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        break;
+                    case "Knight":
+                        Board[moveInfo.endX, moveInfo.endY] = new Knight(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        break;
+                    case "Bishop":
+                        Board[moveInfo.endX, moveInfo.endY] = new Bishop(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        break;
+                    case "Rook":
+                        Board[moveInfo.endX, moveInfo.endY] = new Rook(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        break;
+                }
+
+                Board[moveInfo.startX, moveInfo.startY] = null;
+            }
+            //regular move
+            else
+            {
+                Board[moveInfo.endX, moveInfo.endY] = Board[moveInfo.startX, moveInfo.startY];
+                Board[moveInfo.startX, moveInfo.startY] = null;
+            }
+
+            // checks
+            if (moveInfo.check == true)
+            {
+                Point king = new Point();
+                Rectangle rect = new Rectangle();
+                if(Board[moveInfo.endX, moveInfo.endY].Color == true)
+                {
+                    king = blackKing;
+                }
+                else
+                {
+                    king = whiteKing;
+                }
+
+                rect = (System.Windows.Shapes.Rectangle)Highlights.Children[(8 * king.X) + king.Y];
+                rect.Fill = System.Windows.Media.Brushes.Red;
+            }
+
+        }
+
+
         public List<Point> checkPieces = new List<Point>();
 
         public Pawn tempPawn { get; set; }
+
+
     }
 
 }

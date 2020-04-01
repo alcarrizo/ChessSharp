@@ -29,9 +29,9 @@ namespace ChessSharp
 
         private Player p1 = new Player("Player1", true);
         private Player p2 = new Player("Player2", false);
-        private Player p3;
-        private Player p4;
+        private Player player;
         private Player currPlay;
+        private bool currColor;
         private RotateTransform ro;
         private int ID;
 
@@ -57,23 +57,22 @@ namespace ChessSharp
             currPlay = p1;
         }
 
-        public ChessGame(String name, bool control, int ID)
+        public ChessGame(bool control)
         {
 
             
             InitializeComponent();
-            this.ID = ID;
             
-            // How to change the rotation of the grid
+            // changes the rotation of the grid depending on what pieces you control
             if (control == true)
             {
                 ro = new RotateTransform(180);
-                p3 = new Player(name, control);
+                player = new Player(LoginPage.username, control);
             }
             else
             {
                 ro = new RotateTransform(0);
-                p4 = new Player(name, control);
+                player = new Player(LoginPage.username, control);
             }
 
 
@@ -82,8 +81,13 @@ namespace ChessSharp
             FullScreen.RenderTransform = ro;
             board.Update(FullScreen);
 
-            
-            currPlay = p1;
+
+            //currPlay = p1;
+            currColor = true;
+            if(control == false)
+            {
+                WaitForOpponent();
+            }
         }
 
 
@@ -158,7 +162,8 @@ namespace ChessSharp
             moveInfo = new Movement();
 
 
-            if (clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g)) && board.ControlPiece(new Point(Grid.GetColumn(g), Grid.GetRow(g)), currPlay))
+
+            if (clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g)) && board.ControlPiece(new Point(Grid.GetColumn(g), Grid.GetRow(g)), player))
             {
                 startBlockIndex = cBoard.Children.IndexOf(g);
                 clicked = true;
@@ -173,7 +178,8 @@ namespace ChessSharp
             }
             else if (clicked)
             {
-
+                moveInfo.username = LoginPage.username;
+                moveInfo.gameId = GameLobby.gameId;
                 clicked = false;
                 end.X = Grid.GetColumn(g);
                 end.Y = Grid.GetRow(g);
@@ -211,28 +217,28 @@ namespace ChessSharp
                             }
                             else
                             {
-                                if (currPlay.Equals(p1))
-                                {
-                                    currPlay = p2;
+                                /* if (currPlay.Equals(p1))
+                                 {
+                                     currPlay = p2;
 
-                                }
-                                else
-                                {
-                                    currPlay = p1;
+                                 }
+                                 else
+                                 {
+                                     currPlay = p1;
 
-                                }
+                                 }
 
-                                if (currPlay.Color == true)
-                                {
-                                    ro = new RotateTransform(180);
-                                }
-                                else
-                                {
-                                    ro = new RotateTransform(0);
-                                }
-                                FullScreen.RenderTransform = ro;
-                                moveInfo.username = LoginPage.username;
-                                moveInfo.gameId = GameLobby.gameId;
+                                 if (currPlay.Color == true)
+                                 {
+                                     ro = new RotateTransform(180);
+                                 }
+                                 else
+                                 {
+                                     ro = new RotateTransform(0);
+                                 }
+                                 FullScreen.RenderTransform = ro;*/
+                                currColor = !currColor;
+                                WaitForOpponent();
                                 SendMessage(moveInfo);
                             }
                         }
@@ -257,6 +263,7 @@ namespace ChessSharp
                         ResetHighlights();
 
                         currPlay = p1;
+                        currColor = true;
                         //p1.Color = !p1.Color;
                         //p2.Color = !p1.Color;
                     }
@@ -348,9 +355,10 @@ namespace ChessSharp
             if (board.EnemyChecks(end, Highlights, moveInfo))
             {
                 EndGame();
+
             }
 
-            if (currPlay.Equals(p1))
+            /*if (currPlay.Equals(p1))
             {
                 currPlay = p2;
                 ro = new RotateTransform(0);
@@ -361,10 +369,14 @@ namespace ChessSharp
                 currPlay = p1;
                 ro = new RotateTransform(180);
                 FullScreen.RenderTransform = ro;
-            }
+            }*/
             board.Update(FullScreen);
             FullScreen.Children.Remove(PromoteGrid);
             cBoard.IsHitTestVisible = true;
+
+            SendMessage(moveInfo);
+            currColor = !currColor;
+            WaitForOpponent();
 
         }
 
@@ -393,10 +405,20 @@ namespace ChessSharp
         }
 
         // function to make player wait for the server to send the information from the opponents move
-        private void WaitForOpponent()
+        private async void WaitForOpponent()
         {
             ServerFunctions SV = new ServerFunctions();
-            //dynamic getMove = SV.GetMove();
+            dynamic getMove = await SV.GetMove();
+
+            Movement temp = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(getMove);
+
+            board.UpdateEnemyPieces(moveInfo, Highlights);
+            board.Update(FullScreen);
+
+            if(moveInfo.checkMate == true)
+            {
+                EndGame();
+            }
             //while ()
 
             /*            'ifcheck' => $row["ifcheck"], 
