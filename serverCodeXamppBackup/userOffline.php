@@ -1,9 +1,9 @@
 <?php
 
 $servername = "localhost";
-$username = "root";
-$password = "";
-$database = "player";
+$username = "id12764393_webbdev";
+$password = "AgentP00$";
+$database = "id12764393_players";
 
 
 $conn = mysqli_connect($servername, $username, $password, $database);
@@ -23,6 +23,17 @@ if (mysqli_num_rows($result) > 0) {
 		mysqli_query($conn, $sql2);
 	}
 }
+$sql3 = "SELECT username FROM playerlobby";
+$result = mysqli_query($conn, $sql3);
+
+if (mysqli_num_rows($result) > 0) {
+	while($row = mysqli_fetch_assoc($result)) {
+		$sql4 = "DELETE FROM playerlobby WHERE username = '$data->username'";
+		mysqli_query($conn, $sql4);
+	}
+}
+
+
 
 mysqli_close($conn);
 ?>

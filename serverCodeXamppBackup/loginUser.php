@@ -1,9 +1,9 @@
 <?php
 
 $servername = "localhost";
-$username = "root";
-$password = "";
-$database = "player";
+$username = "id12764393_webbdev";
+$password = "AgentP00$";
+$database = "id12764393_players";
 
 
 
@@ -19,9 +19,10 @@ $sql = "SELECT username, password FROM playerlogininfo";
 $result = mysqli_query($conn, $sql);
 
 
-$loginstatus = array('login' => false,'username' => false);
+$loginstatus = array('login' => false,'username' => false, 'playeronline' => false);
 $loginStatus["login"] = false;
 $loginStatus["username"] = false;
+$loginStatus["playeronline"] = false;
 
 if (mysqli_num_rows($result) > 0) {
 	while($row = mysqli_fetch_assoc($result)) {
@@ -34,12 +35,26 @@ if (mysqli_num_rows($result) > 0) {
     }
 }
 
+
+$sql = "SELECT username FROM onlineplayers";
+$result = mysqli_query($conn, $sql);
+
+if (mysqli_num_rows($result) > 0) {
+	while($row = mysqli_fetch_assoc($result)) {
+		if(strcmp($row["username"] ,$data->username)== 0){
+				$loginStatus["playeronline"] = true;
+			
+		}
+    }
+}
+
 	
-if($loginStatus["login"] == true){
+if($loginStatus["login"] == true and $loginStatus["playeronline"] == false){
     $sql = "INSERT INTO onlineplayers (username)
 		VALUES ('$data->username')";
 	mysqli_query($conn, $sql);
 }
+
 echo json_encode($loginStatus);
 
 mysqli_close($conn);

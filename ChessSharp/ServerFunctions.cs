@@ -11,7 +11,7 @@ namespace ChessSharp
 {
     class ServerFunctions
     {
-        //public static string host = "http://localhost/serverCodeXamppBackup";
+        //public static string host = "http://localhost/serverCode";
         public static string host = "https://chesssharp.000webhostapp.com";
 
 

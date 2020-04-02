@@ -26,7 +26,7 @@ namespace ChessSharp
             NewList();
             ServerFunctions SV = new ServerFunctions();
             dynamic games = SV.RefreshLobby();
-
+            logout = true;
             for (int i = 0; i < games.Count; i++)
             {
                 gameLists.Add(new GameList() { username = games[i].username, totalPlayers = games[i].playerCount + "/2", gameId = games[i].gameId });
