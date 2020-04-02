@@ -91,13 +91,13 @@ namespace ChessSharp
         }
 
 
-        private void Window_ContentRendered(object sender, EventArgs e)
+        private async void Window_ContentRendered(object sender, EventArgs e)
         {
 
             
             if(player.Color == false)
             {
-                WaitForOpponent();
+                await Task.Run(() => WaitForOpponent());
             }
             
 
@@ -352,7 +352,7 @@ namespace ChessSharp
         }
 
 
-        private void Promotion(object sender, RoutedEventArgs e)
+        private async void Promotion(object sender, RoutedEventArgs e)
         {
 
 
@@ -386,7 +386,7 @@ namespace ChessSharp
 
             SendMessage(moveInfo);
             currColor = !currColor;
-            WaitForOpponent();
+            await Task.Run(() => WaitForOpponent());
 
         }
 
@@ -426,22 +426,106 @@ namespace ChessSharp
             ServerFunctions SV = new ServerFunctions();
             //dynamic getMove = await SV.GetMove();
             dynamic getMove = null;
-            moveInfo = null;
+            moveInfo = new Movement();
 
-            while (moveInfo == null)
+            while (getMove == null || getMove["lastMove"] == LoginPage.username)
             {
-                moveInfo = SV.GetMove();
+                getMove = SV.GetMove();
             }
+
+            if (getMove["check"] == 1)
+            {
+                moveInfo.check = true;
+            }
+            else
+            {
+                moveInfo.check = false;
+            }
+
+            if(getMove["checkmate"] == 1)
+            {
+                moveInfo.checkMate = true;
+            }
+            else
+            {
+                moveInfo.checkMate = false;
+            }
+
+            if(getMove["enPassant"] == 1)
+            {
+                moveInfo.enPassant = true;
+            }
+            else
+            {
+                moveInfo.enPassant = false;
+            }
+
+            if(getMove["promotion"] == 1)
+            {
+                moveInfo.promotion = true;
+            }
+            else
+            {
+                moveInfo.promotion = false;
+            }
+
+            if(getMove["castling"] == 1)
+            {
+                moveInfo.castling = true;
+            }
+            else
+            {
+                moveInfo.castling = false;
+            }
+
+            if(getMove["forfeit"] == 1)
+            {
+                moveInfo.forfeit = true;
+            }
+            else
+            {
+                moveInfo.forfeit = false;
+            }
+            if(getMove["askForDraw"] == 1)
+            {
+                moveInfo.askForDraw = true;
+            }
+            else
+            {
+                moveInfo.askForDraw = false;
+            }
+            
+            moveInfo.endX = getMove["endX"];
+            moveInfo.endY = getMove["endY"];
+            moveInfo.startX = getMove["startX"];
+            moveInfo.startY = getMove["startY"];
+            moveInfo.rookStartX = getMove["rookStartX"];
+            moveInfo.rookStartY = getMove["rookStartY"];
+            moveInfo.rookEndX = getMove["rookEndX"];
+            moveInfo.rookEndY = getMove["rookEndY"];
+            moveInfo.pawnX = getMove["pawnX"];
+            moveInfo.pawnY = getMove["pawnY"];
+            moveInfo.pawnEvolvesTo = getMove["pawnEvolvesTo"];
+            moveInfo.username = getMove["lastMove"];
+            
 
             board.UpdateEnemyPieces(moveInfo, Highlights);
 
-            this.Dispatcher.Invoke(() => board.Update(FullScreen));
+           /* this.Dispatcher.Invoke(() =>
             
+
+            );*/
+
+            Application.Current.Dispatcher.Invoke((Action)delegate {
+                board.Update(FullScreen);
+            });
 
             if (moveInfo.checkMate == true)
             {
                 EndGame();
             }
+
+
             //while ()
 
             /*            'ifcheck' => $row["ifcheck"], 

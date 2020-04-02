@@ -691,7 +691,7 @@ namespace ChessSharp
             //promotion
             else if (moveInfo.promotion == true)
             {
-                switch(moveInfo.pawnEvolvesTo)
+                switch (moveInfo.pawnEvolvesTo)
                 {
                     case "Queen":
                         Board[moveInfo.endX, moveInfo.endY] = new Queen(Board[moveInfo.startX, moveInfo.startY].Color, 50);
@@ -714,14 +714,28 @@ namespace ChessSharp
             {
                 Board[moveInfo.endX, moveInfo.endY] = Board[moveInfo.startX, moveInfo.startY];
                 Board[moveInfo.startX, moveInfo.startY] = null;
+
+                if(Board[moveInfo.endX, moveInfo.endY] is King)
+                {
+                    if(Board[moveInfo.endX, moveInfo.endY].Color == true)
+                    {
+                        whiteKing.X = moveInfo.endX;
+                        whiteKing.Y = moveInfo.endY;
+                    }
+                    else
+                    {
+                        blackKing.X = moveInfo.endX;
+                        blackKing.Y = moveInfo.endY;
+                    }
+                }
             }
 
             // checks
             if (moveInfo.check == true)
             {
                 Point king = new Point();
-                Rectangle rect = new Rectangle();
-                if(Board[moveInfo.endX, moveInfo.endY].Color == true)
+                //Rectangle rect = new Rectangle();
+                if (Board[moveInfo.endX, moveInfo.endY].Color == true)
                 {
                     king = blackKing;
                 }
@@ -730,8 +744,34 @@ namespace ChessSharp
                     king = whiteKing;
                 }
 
-                rect = (System.Windows.Shapes.Rectangle)Highlights.Children[(8 * king.X) + king.Y];
-                rect.Fill = System.Windows.Media.Brushes.Red;
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Rectangle rect = (System.Windows.Shapes.Rectangle)Highlights.Children[(8 * king.X) + king.Y];
+                    rect.Fill = System.Windows.Media.Brushes.Red;
+                });
+
+            }
+            else
+            {
+                Point king = new Point();
+                //Rectangle rect = new Rectangle();
+                if (Board[moveInfo.endX, moveInfo.endY].Color == true)
+                {
+                    king = whiteKing;
+                }
+                else
+                {
+                    king = blackKing;
+                }
+
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Rectangle rect = (System.Windows.Shapes.Rectangle)Highlights.Children[(8 * king.X) + king.Y];
+                    if (rect.Fill == Brushes.Red)
+                    {
+                        rect.Fill = System.Windows.Media.Brushes.Transparent;
+                    }
+                });
             }
 
         }
