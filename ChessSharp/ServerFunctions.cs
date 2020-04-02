@@ -272,7 +272,6 @@ namespace ChessSharp
                 temp = jsonStr;
             }
 
-
             response.Close();
             return temp;
         }

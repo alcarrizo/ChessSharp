@@ -29,10 +29,30 @@ $result = mysqli_query($conn, $sql);
 		while($row = mysqli_fetch_assoc($result)) {
 			if(strcmp($row["gameId"], $data->gameId) == 0){
 				if(strcmp($row["lastMove"], $data->username) == 0){
-
+						$move = array(
+						'check' => $row["ifcheck"], 
+						'checkMate' => $row["checkMate"],
+						'forfeit' => $row["forfeit"],
+						'askForDraw' => $row["askForDraw"],
+						'startX' => $row["startX"],
+						'startY' => $row["startY"],
+						'endX' => $row["endX"],
+						'endY' => $row["endY"],
+						'enPassant' => $row["enPassant"],
+						'pawnX' => $row["pawnX"],
+						'pawnY' => $row["pawnY"],
+						'castling' => $row["castling"],
+						'rookStartX' => $row["rookStartX"],
+						'rookStartY' => $row["rookStartY"],
+						'rookEndX' => $row["rookEndX"],
+						'rookEndY' => $row["rookEndY"],
+						'promotion' => $row["promotion"],
+						'pawnEvolvesTo' => $row["pawnEvolvesTo"],
+						'lastMove' => $row["lastMove"]
+						);
 				}else
 					$move = array(
-						'ifcheck' => $row["ifcheck"], 
+						'check' => $row["ifcheck"], 
 						'checkMate' => $row["checkMate"],
 						'forfeit' => $row["forfeit"],
 						'askForDraw' => $row["askForDraw"],

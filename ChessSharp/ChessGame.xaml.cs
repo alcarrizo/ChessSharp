@@ -386,6 +386,7 @@ namespace ChessSharp
             // converts object into a json message
             string result = Newtonsoft.Json.JsonConvert.SerializeObject(moveInfo);
             SV.SendMove(result);
+            WaitForOpponent();
             //SV.GetMove();
             //converts json message back into class
             //Movement temp = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
@@ -396,7 +397,7 @@ namespace ChessSharp
         private void WaitForOpponent()
         {
             ServerFunctions SV = new ServerFunctions();
-            //dynamic getMove = SV.GetMove();
+            dynamic getMove = SV.GetMove();
             //while ()
 
             /*            'ifcheck' => $row["ifcheck"], 

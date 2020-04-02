@@ -24,6 +24,9 @@ if (mysqli_num_rows($result) > 0) {
 		$sql2 = "DELETE FROM playerlobby WHERE gameId = '$data->gameId'";
 		mysqli_query($conn, $sql2);
 		
+		$sql2 = "DELETE FROM playerlobby WHERE username = '$data->username'";
+		mysqli_query($conn, $sql2);
+		
 	}
 }
 
