@@ -242,7 +242,7 @@ namespace ChessSharp
             response.Close();
         }
 
-        public dynamic GetMove()
+        public Movement GetMove()
         {
             string gameId2 = GameLobby.gameId;
             string username2 = LoginPage.username;
@@ -263,18 +263,19 @@ namespace ChessSharp
             }
             WebResponse response = request.GetResponse();
 
-            dynamic temp = "";
+            Movement temp = new Movement();
             using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
                 var result = streamReader.ReadToEnd();
-                dynamic jsonStr = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+                temp = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
 
-                temp = jsonStr;
+                //temp = jsonStr;
             }
 
 
             response.Close();
             return temp;
+
         }
     }
 }

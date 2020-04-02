@@ -155,6 +155,8 @@ namespace ChessSharp
                 cg.Show();
                 logout = false;
                 this.Close();
+
+              //  cg.WaitForOpponent();
             }
             else
             {

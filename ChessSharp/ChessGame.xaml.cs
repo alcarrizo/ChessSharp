@@ -55,14 +55,16 @@ namespace ChessSharp
             board.Update(FullScreen);
 
             currPlay = p1;
+            DrawGameArea();
+            SetUpHighlights();
         }
 
         public ChessGame(bool control)
         {
 
-            
+
             InitializeComponent();
-            
+
             // changes the rotation of the grid depending on what pieces you control
             if (control == true)
             {
@@ -84,18 +86,20 @@ namespace ChessSharp
 
             //currPlay = p1;
             currColor = true;
-            if(control == false)
-            {
-                WaitForOpponent();
-            }
+            DrawGameArea();
+            SetUpHighlights();
         }
 
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
 
-            DrawGameArea();
-            SetUpHighlights();
+            
+            if(player.Color == false)
+            {
+                WaitForOpponent();
+            }
+            
 
         }
 
@@ -135,7 +139,7 @@ namespace ChessSharp
 
                 nextIsOdd = !nextIsOdd;
                 nextX += SpaceSize;
-                if (nextX >= GameArea.ActualWidth)
+                if (nextX >= GameArea.Width)
                 {
                     nextX = 0;
                     nextY += SpaceSize;
@@ -143,7 +147,7 @@ namespace ChessSharp
                     nextIsOdd = (rowCounter % 2 != 0);
                 }
 
-                if (nextY >= GameArea.ActualHeight)
+                if (nextY >= GameArea.Height)
                     doneDrawingBackground = true;
             }
         }
@@ -155,7 +159,7 @@ namespace ChessSharp
         private Brush brush;
         Movement moveInfo;
 
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void  Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
             Image g = (Image)e.Source;
@@ -212,8 +216,9 @@ namespace ChessSharp
                         {
                             if (board.EnemyChecks(end, Highlights, moveInfo))
                             {
-                                EndGame();
                                 SendMessage(moveInfo);
+                                EndGame();
+                                
                             }
                             else
                             {
@@ -238,19 +243,24 @@ namespace ChessSharp
                                  }
                                  FullScreen.RenderTransform = ro;*/
                                 currColor = !currColor;
-                                WaitForOpponent();
+
                                 SendMessage(moveInfo);
+
                             }
+                            board.Update(FullScreen);
+                            //await GetEnemyMove();
+                            await Task.Run(() => WaitForOpponent());
                         }
                     }
-
-
-                    board.Update(FullScreen);
 
                 }
             }
         }
 
+        private void updateBoard()
+        {
+            board.Update(FullScreen);
+        }
         // brings up the end game options
         private void EndGame()
         {
@@ -341,7 +351,7 @@ namespace ChessSharp
             return temp;
         }
 
-        
+
         private void Promotion(object sender, RoutedEventArgs e)
         {
 
@@ -404,18 +414,31 @@ namespace ChessSharp
 
         }
 
+        private Task GetEnemyMove()
+        {
+            return new Task(new Action(WaitForOpponent));
+        }
+
         // function to make player wait for the server to send the information from the opponents move
-        private async void WaitForOpponent()
+        //private void WaitForOpponent()
+        public void WaitForOpponent()
         {
             ServerFunctions SV = new ServerFunctions();
-            dynamic getMove = await SV.GetMove();
+            //dynamic getMove = await SV.GetMove();
+            dynamic getMove = null;
+            moveInfo = null;
 
-            Movement temp = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(getMove);
+            while (moveInfo == null)
+            {
+                moveInfo = SV.GetMove();
+            }
 
             board.UpdateEnemyPieces(moveInfo, Highlights);
-            board.Update(FullScreen);
 
-            if(moveInfo.checkMate == true)
+            this.Dispatcher.Invoke(() => board.Update(FullScreen));
+            
+
+            if (moveInfo.checkMate == true)
             {
                 EndGame();
             }
@@ -441,8 +464,9 @@ namespace ChessSharp
 						'pawnEvolvesTo' => $row["pawnEvolvesTo"],
 						'lastMove' => $row["lastMove"]
             */
+
         }
 
-
+        
     }
 }
