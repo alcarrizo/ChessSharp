@@ -64,14 +64,25 @@ namespace ChessSharp
             if (loginBar.Background == Brushes.Gray)  //Check for Sign in 
             {
                 
-                if (PlayerLoginInfo["login"] == true)
+                if (PlayerLoginInfo["login"] == true && PlayerLoginInfo["playeronline"] == false)
                 {
                     username = Username_tb.Text.ToLower();
                     ((LoginWindow)App.Current.MainWindow).ShowLobby(); //Change to lobby screen
                 }
                 else
                 {
-                    DisplayInvalidLoginMB();
+                    if (PlayerLoginInfo["playeronline"] == true)
+                    {
+
+                        username = Username_tb.Text.ToLower();
+                        DisplayAlreadyOnlineMB();
+                        SV.SignOutUser();
+                        SV.CloseGame("none");
+                    }
+                    else
+                    {
+                        DisplayInvalidLoginMB();
+                    }                
                 }
             }
             else   //Check for sign up
@@ -89,8 +100,19 @@ namespace ChessSharp
             }
         }
 
-    
 
+        private void DisplayAlreadyOnlineMB()
+        {
+            string msgtext = "User Not logged out Properly. Press 'OK' and try again.";
+            string txt = "Invalid Login Attempt";
+            MessageBoxButton button = MessageBoxButton.OK;
+            MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
+            switch (result)
+            {
+                case MessageBoxResult.OK:
+                    break;
+            }
+        }
         private void DisplayInvalidLoginMB()
         {
             string msgtext = "Username/Password incorrect!";
