@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
-
+using System.Windows.Media;
 
 namespace ChessSharp
 {
@@ -27,6 +28,7 @@ namespace ChessSharp
             ServerFunctions SV = new ServerFunctions();
             dynamic games = SV.RefreshLobby();
             logout = true;
+            refresh.Background = new SolidColorBrush(Colors.Blue);
             for (int i = 0; i < games.Count; i++)
             {
                 gameLists.Add(new GameList() { username = games[i].username, totalPlayers = games[i].playerCount + "/2", gameId = games[i].gameId });
@@ -77,7 +79,7 @@ namespace ChessSharp
                 App.Current.Windows[intCounter].Close();
         }
 
-
+        
 
         public class GameList
         {
@@ -186,6 +188,7 @@ namespace ChessSharp
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
+            
             gameLists.Clear();
             ServerFunctions SV = new ServerFunctions();
             dynamic games = SV.RefreshLobby();

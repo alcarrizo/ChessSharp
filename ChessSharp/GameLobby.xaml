@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChessSharp"
         mc:Ignorable="d"
-        Title="Chess#" Height="450" Width="800" Closing="GameLobby_Closing" WindowStartupLocation="CenterScreen">
+        Title="Chess#" Height="450" Width="800" Closing="GameLobby_Closing" WindowStartupLocation="CenterScreen" >
     
     <Grid>
         <DockPanel x:Name="dockToolBar" HorizontalAlignment="Left" Height="40" LastChildFill="False" VerticalAlignment="Top" Width="792">
@@ -15,6 +15,7 @@
         </DockPanel>
         <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="532,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="GameButton_Click_1"/>
         <ListView IsSynchronizedWithCurrentItem="True" Name="lbUsers" ItemsSource="{Binding}"  Margin="0,92,177,44">
+            
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Creator">
@@ -44,7 +45,7 @@
             
 
         </ListView>
-        <Button x:Name="refresh" Content="Button" HorizontalAlignment="Left" Margin="423,59,0,0" VerticalAlignment="Top" Width="75" Click="Refresh_Click"/>
+        <Button x:Name="refresh" Content="Refresh List" HorizontalAlignment="Left" Margin="457,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="Refresh_Click"/>
 
     </Grid>
 </Window>
