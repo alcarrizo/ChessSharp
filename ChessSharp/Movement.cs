@@ -9,11 +9,21 @@ namespace ChessSharp
 {
     public class Movement
     {
-        public bool check { get; set; }
-        public bool checkMate { get; set; }
-        public bool forfeit { get; set; }
+        public Movement()
+        {
+            check = false;
+            checkMate = false;
+            forfeit = false;
+            askForDraw = false;
+            enPassant = false;
+            castling = false;
+            promotion = false;
+        }
+        public bool? check { get; set; }
+        public bool? checkMate { get; set; }
+        public bool? forfeit { get; set; }
 
-        public bool askForDraw { get; set; }
+        public bool? askForDraw { get; set; }
         public int startX { get; set; }
 
         public int startY { get; set; }
@@ -22,13 +32,13 @@ namespace ChessSharp
 
         public int endY { get; set; }
 
-        public bool enPassant { get; set; }
+        public bool? enPassant { get; set; }
 
         public int pawnX { get; set; }
 
         public int pawnY { get; set; }
 
-        public bool castling { get; set; }
+        public bool? castling { get; set; }
 
         public int rookStartX { get; set; }
 
@@ -38,7 +48,7 @@ namespace ChessSharp
 
         public int rookEndY { get; set; }
 
-        public bool promotion { get; set; }
+        public bool? promotion { get; set; }
 
         public string pawnEvolvesTo { get; set; }
 

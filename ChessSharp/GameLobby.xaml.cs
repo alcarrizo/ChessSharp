@@ -104,7 +104,7 @@ namespace ChessSharp
                 case MessageBoxResult.Yes:
                     gameCreated = true;
                     CreateGame();
-                    ChessGame cg = new ChessGame();
+                    ChessGame cg = new ChessGame(true);
                     cg.Show();
                     logout = false;
                     this.Close();
@@ -153,10 +153,12 @@ namespace ChessSharp
 
             if (s == "Join")
             {
-                ChessGame cg = new ChessGame();
+                ChessGame cg = new ChessGame(false);
                 cg.Show();
                 logout = false;
                 this.Close();
+
+              //  cg.WaitForOpponent();
             }
             else
             {

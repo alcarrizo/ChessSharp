@@ -98,12 +98,13 @@ namespace ChessSharp
                         blackKing.X = end.X;
                         blackKing.Y = end.Y;
                     }
-
+                    moveInfo.castling = true;
                 }
                 // checks for en passant
                 else if (Board[start.X, start.Y] is Pawn && IsEnPassant(start, end, Board, moveInfo))
                 {
                     move = true;
+                    moveInfo.enPassant = true;
                 }
 
                 if (move == true)
@@ -658,9 +659,173 @@ namespace ChessSharp
         }
 
 
+        public void UpdateEnemyPieces(Movement moveInfo, Piece[,] Board, Grid Highlights)
+        {
+            Pawn tempPawn2 = null;
+
+            //castling
+            if (moveInfo.castling == true)
+            {
+                Board[moveInfo.rookEndX, moveInfo.rookEndY] = Board[moveInfo.rookStartX, moveInfo.rookStartY];
+                Board[moveInfo.rookStartX, moveInfo.rookStartY] = null;
+
+                Board[moveInfo.endX, moveInfo.endY] = Board[moveInfo.startX, moveInfo.startY];
+                Board[moveInfo.startX, moveInfo.startY] = null;
+
+                if (Board[moveInfo.endX, moveInfo.endY].Color == true)
+                {
+                    whiteKing.X = moveInfo.endX;
+                    whiteKing.Y = moveInfo.endY;
+                }
+                else
+                {
+                    blackKing.X = moveInfo.endX;
+                    blackKing.Y = moveInfo.endY;
+                }
+            }
+            //enpassant
+            else if (moveInfo.enPassant == true)
+            {
+                Board[moveInfo.endX, moveInfo.endY] = Board[moveInfo.startX, moveInfo.startY];
+                Board[moveInfo.startX, moveInfo.startY] = null;
+
+                Board[moveInfo.pawnX, moveInfo.pawnY] = null;
+            }
+            //promotion
+            else if (moveInfo.promotion == true)
+            {
+                switch (moveInfo.pawnEvolvesTo)
+                {
+                    case "Queen":
+                        Board[moveInfo.endX, moveInfo.endY] = new Queen(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        break;
+                    case "Knight":
+                        Board[moveInfo.endX, moveInfo.endY] = new Knight(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        break;
+                    case "Bishop":
+                        Board[moveInfo.endX, moveInfo.endY] = new Bishop(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        break;
+                    case "Rook":
+                        Board[moveInfo.endX, moveInfo.endY] = new Rook(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        break;
+                }
+
+                Board[moveInfo.startX, moveInfo.startY] = null;
+            }
+            //regular move
+            else
+            {
+                
+
+                if(Board[moveInfo.startX, moveInfo.startY] is King)
+                {
+                    if(Board[moveInfo.startX, moveInfo.startY].Color == true)
+                    {
+                        whiteKing.X = moveInfo.endX;
+                        whiteKing.Y = moveInfo.endY;
+                    }
+                    else
+                    {
+                        blackKing.X = moveInfo.endX;
+                        blackKing.Y = moveInfo.endY;
+                    }
+
+                    Application.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        Rectangle rect = (System.Windows.Shapes.Rectangle)Highlights.Children[(8 * moveInfo.startX) + moveInfo.startY];
+                        if (rect.Fill == Brushes.Red)
+                        {
+                            rect.Fill = System.Windows.Media.Brushes.Transparent;
+                        }
+                    });
+
+                }
+                else if (Board[moveInfo.startX, moveInfo.startY] is Pawn)
+                {
+                    
+                    if (Math.Abs(moveInfo.startY - moveInfo.endY) == 2 && ((moveInfo.startX > 0 && Board[moveInfo.endX - 1, moveInfo.endY] is Pawn) || (moveInfo.startX < width - 1 && Board[moveInfo.endX + 1, moveInfo.endY] is Pawn)))
+                    {
+                        if (tempPawn2 != null)
+                        {
+                            if (tempPawn2.enPassant == true)
+                            {
+                                tempPawn2.enPassant = false;
+                            }
+                        }
+                        tempPawn2 = Board[moveInfo.startX, moveInfo.startY] as Pawn;
+                        tempPawn2.enPassant = true;
+
+                    }
+                }
+                else
+                {
+                    if (tempPawn2 != null)
+                    {
+                        if (tempPawn2.enPassant == true)
+                        {
+                            tempPawn2.enPassant = false;
+                        }
+                        tempPawn2 = null;
+                    }
+                }
+
+                Board[moveInfo.endX, moveInfo.endY] = Board[moveInfo.startX, moveInfo.startY];
+                Board[moveInfo.startX, moveInfo.startY] = null;
+            }
+
+            // checks
+            if (moveInfo.check == true)
+            {
+                Point king = new Point();
+                //Rectangle rect = new Rectangle();
+                if (Board[moveInfo.endX, moveInfo.endY].Color == true)
+                {
+                    king = blackKing;
+                }
+                else
+                {
+                    king = whiteKing;
+                }
+
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Rectangle rect = (System.Windows.Shapes.Rectangle)Highlights.Children[(8 * king.X) + king.Y];
+                    rect.Fill = System.Windows.Media.Brushes.Red;
+                });
+
+            }
+            else
+            {
+                Point king = new Point();
+                //Rectangle rect = new Rectangle();
+                if (Board[moveInfo.endX, moveInfo.endY].Color == true)
+                {
+                    king = whiteKing;
+                }
+                else
+                {
+                    king = blackKing;
+                }
+                
+
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Rectangle rect = (System.Windows.Shapes.Rectangle)Highlights.Children[(8 * king.X) + king.Y];
+                    if (rect.Fill == Brushes.Red)
+                    {
+                        rect.Fill = System.Windows.Media.Brushes.Transparent;
+                    }
+                });
+            }
+
+        }
+
+
         public List<Point> checkPieces = new List<Point>();
 
         public Pawn tempPawn { get; set; }
+
+
     }
 
 }

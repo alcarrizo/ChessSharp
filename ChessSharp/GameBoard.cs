@@ -165,6 +165,12 @@ namespace ChessSharp
             return image;
         }
 
+        public void UpdateEnemyPieces(Movement moveInfo,Grid Highlights)
+        {
+
+            Game.UpdateEnemyPieces(moveInfo, Board, Highlights);
+
+        }
 
         public Piece[,] Board { get; private set; }
         public Game Game { get; private set; }

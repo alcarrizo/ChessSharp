@@ -263,17 +263,20 @@ namespace ChessSharp
             }
             WebResponse response = request.GetResponse();
 
-            dynamic temp = "";
+            dynamic temp;
+            string result;
             using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
-                var result = streamReader.ReadToEnd();
-                dynamic jsonStr = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+                result = streamReader.ReadToEnd();
+               // moveInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
+                temp = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
 
-                temp = jsonStr;
+                //temp = jsonStr;
             }
 
             response.Close();
             return temp;
+
         }
     }
 }

@@ -29,9 +29,9 @@ namespace ChessSharp
 
         private Player p1 = new Player("Player1", true);
         private Player p2 = new Player("Player2", false);
-        private Player p3;
-        private Player p4;
+        private Player player;
         private Player currPlay;
+        private bool currColor;
         private RotateTransform ro;
         private int ID;
 
@@ -55,25 +55,26 @@ namespace ChessSharp
             board.Update(FullScreen);
 
             currPlay = p1;
+            DrawGameArea();
+            SetUpHighlights();
         }
 
-        public ChessGame(String name, bool control, int ID)
+        public ChessGame(bool control)
         {
 
-            
+
             InitializeComponent();
-            this.ID = ID;
-            
-            // How to change the rotation of the grid
+
+            // changes the rotation of the grid depending on what pieces you control
             if (control == true)
             {
                 ro = new RotateTransform(180);
-                p3 = new Player(name, control);
+                player = new Player(LoginPage.username, control);
             }
             else
             {
                 ro = new RotateTransform(0);
-                p4 = new Player(name, control);
+                player = new Player(LoginPage.username, control);
             }
 
 
@@ -82,16 +83,23 @@ namespace ChessSharp
             FullScreen.RenderTransform = ro;
             board.Update(FullScreen);
 
-            
-            currPlay = p1;
+
+            //currPlay = p1;
+            currColor = true;
+            DrawGameArea();
+            SetUpHighlights();
         }
 
 
-        private void Window_ContentRendered(object sender, EventArgs e)
+        private async void Window_ContentRendered(object sender, EventArgs e)
         {
 
-            DrawGameArea();
-            SetUpHighlights();
+
+            if (player.Color == false)
+            {
+                await Task.Run(() => WaitForOpponent());
+            }
+
 
         }
 
@@ -131,7 +139,7 @@ namespace ChessSharp
 
                 nextIsOdd = !nextIsOdd;
                 nextX += SpaceSize;
-                if (nextX >= GameArea.ActualWidth)
+                if (nextX >= GameArea.Width)
                 {
                     nextX = 0;
                     nextY += SpaceSize;
@@ -139,7 +147,7 @@ namespace ChessSharp
                     nextIsOdd = (rowCounter % 2 != 0);
                 }
 
-                if (nextY >= GameArea.ActualHeight)
+                if (nextY >= GameArea.Height)
                     doneDrawingBackground = true;
             }
         }
@@ -151,14 +159,17 @@ namespace ChessSharp
         private Brush brush;
         Movement moveInfo;
 
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
             Image g = (Image)e.Source;
             moveInfo = new Movement();
 
 
-            if (clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g)) && board.ControlPiece(new Point(Grid.GetColumn(g), Grid.GetRow(g)), currPlay))
+
+            if (clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g))
+                && board.ControlPiece(new Point(Grid.GetColumn(g), Grid.GetRow(g)), player)
+                && (player.Color == currColor))
             {
                 startBlockIndex = cBoard.Children.IndexOf(g);
                 clicked = true;
@@ -173,7 +184,8 @@ namespace ChessSharp
             }
             else if (clicked)
             {
-
+                moveInfo.username = LoginPage.username;
+                moveInfo.gameId = GameLobby.gameId;
                 clicked = false;
                 end.X = Grid.GetColumn(g);
                 end.Y = Grid.GetRow(g);
@@ -206,45 +218,52 @@ namespace ChessSharp
                         {
                             if (board.EnemyChecks(end, Highlights, moveInfo))
                             {
-                                EndGame();
                                 SendMessage(moveInfo);
+                                EndGame();
+
                             }
                             else
                             {
-                                if (currPlay.Equals(p1))
-                                {
-                                    currPlay = p2;
+                                /* if (currPlay.Equals(p1))
+                                 {
+                                     currPlay = p2;
 
-                                }
-                                else
-                                {
-                                    currPlay = p1;
+                                 }
+                                 else
+                                 {
+                                     currPlay = p1;
 
-                                }
+                                 }
 
-                                if (currPlay.Color == true)
-                                {
-                                    ro = new RotateTransform(180);
-                                }
-                                else
-                                {
-                                    ro = new RotateTransform(0);
-                                }
-                                FullScreen.RenderTransform = ro;
-                                moveInfo.username = LoginPage.username;
-                                moveInfo.gameId = GameLobby.gameId;
+                                 if (currPlay.Color == true)
+                                 {
+                                     ro = new RotateTransform(180);
+                                 }
+                                 else
+                                 {
+                                     ro = new RotateTransform(0);
+                                 }
+                                 FullScreen.RenderTransform = ro;*/
+
+                                currColor = !currColor;
                                 SendMessage(moveInfo);
+                                await Task.Run(() => WaitForOpponent());
+
                             }
+                            board.Update(FullScreen);
+
+
                         }
                     }
-
-
-                    board.Update(FullScreen);
 
                 }
             }
         }
 
+        private void updateBoard()
+        {
+            board.Update(FullScreen);
+        }
         // brings up the end game options
         private void EndGame()
         {
@@ -253,12 +272,21 @@ namespace ChessSharp
             {
                 case MessageBoxResult.OK:
                     {
+                        currColor = true;
                         board = new GameBoard(cBoard, ro);
                         ResetHighlights();
+                        board.Update(FullScreen);
+                        newGame = true;
 
-                        currPlay = p1;
+                        if(player.Color == false)
+                        {
+                            WaitForOpponent();
+                        }
+
+                        //currPlay = p1;
+                        
                         //p1.Color = !p1.Color;
-                        //p2.Color = !p1.Color;
+                        //p2.Color = !p2.Color;
                     }
                     break;
             }
@@ -334,8 +362,8 @@ namespace ChessSharp
             return temp;
         }
 
-        
-        private void Promotion(object sender, RoutedEventArgs e)
+
+        private async void Promotion(object sender, RoutedEventArgs e)
         {
 
 
@@ -347,10 +375,12 @@ namespace ChessSharp
             board.ChangePiece(end, name);
             if (board.EnemyChecks(end, Highlights, moveInfo))
             {
+                SendMessage(moveInfo);
                 EndGame();
+
             }
 
-            if (currPlay.Equals(p1))
+            /*if (currPlay.Equals(p1))
             {
                 currPlay = p2;
                 ro = new RotateTransform(0);
@@ -361,10 +391,14 @@ namespace ChessSharp
                 currPlay = p1;
                 ro = new RotateTransform(180);
                 FullScreen.RenderTransform = ro;
-            }
+            }*/
             board.Update(FullScreen);
             FullScreen.Children.Remove(PromoteGrid);
             cBoard.IsHitTestVisible = true;
+
+            SendMessage(moveInfo);
+            currColor = !currColor;
+            await Task.Run(() => WaitForOpponent());
 
         }
 
@@ -386,18 +420,140 @@ namespace ChessSharp
             // converts object into a json message
             string result = Newtonsoft.Json.JsonConvert.SerializeObject(moveInfo);
             SV.SendMove(result);
-            WaitForOpponent();
             //SV.GetMove();
             //converts json message back into class
             //Movement temp = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
 
         }
 
+        private dynamic temp = null; // used to prevent one player from recieving the same message over and over again after a new game starts
+        bool newGame = false;
+
         // function to make player wait for the server to send the information from the opponents move
-        private void WaitForOpponent()
+        //private void WaitForOpponent()
+        public async void WaitForOpponent()
         {
             ServerFunctions SV = new ServerFunctions();
-            dynamic getMove = SV.GetMove();
+            //dynamic getMove = await SV.GetMove();
+            dynamic getMove = null;
+            
+            moveInfo = new Movement();
+
+            while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true))
+            {
+                await Task.Delay(750);
+                getMove = SV.GetMove();
+            }
+
+            if(newGame == true)
+            {
+                newGame = false;
+               // temp = null;
+            }
+
+            if (getMove["check"] == 1)
+            {
+                moveInfo.check = true;
+            }
+            else
+            {
+                moveInfo.check = false;
+            }
+
+            if (getMove["checkMate"] == 1)
+            {
+                moveInfo.checkMate = true;
+            }
+            else
+            {
+                moveInfo.checkMate = false;
+            }
+
+            if (getMove["enPassant"] == 1)
+            {
+                moveInfo.enPassant = true;
+            }
+            else
+            {
+                moveInfo.enPassant = false;
+            }
+
+            if (getMove["promotion"] == 1)
+            {
+                moveInfo.promotion = true;
+            }
+            else
+            {
+                moveInfo.promotion = false;
+            }
+
+            if (getMove["castling"] == 1)
+            {
+                moveInfo.castling = true;
+            }
+            else
+            {
+                moveInfo.castling = false;
+            }
+
+            if (getMove["forfeit"] == 1)
+            {
+                moveInfo.forfeit = true;
+            }
+            else
+            {
+                moveInfo.forfeit = false;
+            }
+            if (getMove["askForDraw"] == 1)
+            {
+                moveInfo.askForDraw = true;
+            }
+            else
+            {
+                moveInfo.askForDraw = false;
+            }
+
+            moveInfo.endX = getMove["endX"];
+            moveInfo.endY = getMove["endY"];
+            moveInfo.startX = getMove["startX"];
+            moveInfo.startY = getMove["startY"];
+            moveInfo.rookStartX = getMove["rookStartX"];
+            moveInfo.rookStartY = getMove["rookStartY"];
+            moveInfo.rookEndX = getMove["rookEndX"];
+            moveInfo.rookEndY = getMove["rookEndY"];
+            moveInfo.pawnX = getMove["pawnX"];
+            moveInfo.pawnY = getMove["pawnY"];
+            moveInfo.pawnEvolvesTo = getMove["pawnEvolvesTo"];
+            moveInfo.username = getMove["lastMove"];
+
+
+            board.UpdateEnemyPieces(moveInfo, Highlights);
+
+            /* this.Dispatcher.Invoke(() =>
+
+
+             );*/
+
+            currColor = !currColor;
+
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                board.Update(FullScreen);
+            });
+
+
+            if (moveInfo.checkMate == true)
+            {
+               // temp = getMove;
+                await Task.Run(() =>
+               Application.Current.Dispatcher.Invoke((Action)delegate
+                 {
+                     EndGame();
+                 })
+                  );
+            }
+
+
             //while ()
 
             /*            'ifcheck' => $row["ifcheck"], 
@@ -420,6 +576,7 @@ namespace ChessSharp
 						'pawnEvolvesTo' => $row["pawnEvolvesTo"],
 						'lastMove' => $row["lastMove"]
             */
+
         }
 
 
