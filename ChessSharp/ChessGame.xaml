@@ -4,11 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="750" Width="750" ContentRendered="Window_ContentRendered" Background="Beige" ButtonBase.Click="Promotion" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="750" Width="750" ContentRendered="Window_ContentRendered" Background="Beige" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
     <Grid Name ="FullScreen" RenderTransformOrigin="0.5,0.5" >
         <Border BorderBrush="Black" BorderThickness="5" Width="570px" Height="570px" VerticalAlignment ="Center" HorizontalAlignment="Center">
-            <Canvas Name ="GameArea" Width="560px" Height="560px"  ClipToBounds="True" VerticalAlignment ="Center" HorizontalAlignment="Center">
-                <Grid Background="Transparent" Panel.ZIndex="2" Height="560px" Width="560px">
+            <Canvas Name ="GameArea" RenderTransformOrigin="0.5,0.5"  Width="560px" Height="560px"  ClipToBounds="True" VerticalAlignment ="Center" HorizontalAlignment="Center">
+                <Grid Name ="GameGrid" RenderTransformOrigin="0.5,0.5" Background="Transparent" Panel.ZIndex="2" Height="560px" Width="560px">
 
                     <Grid  Name="Highlights"  Background="Transparent" Panel.ZIndex="3" RenderTransformOrigin="0.5,0.5" >
                         <Grid.ColumnDefinitions>
@@ -58,5 +58,9 @@
                 </Grid>
             </Canvas>
         </Border>
+        <Button x:Name="Forfeit_Button" Click="Forfeit_Button_Click" Content="Forfeit" HorizontalAlignment="Left" Margin="561,661,0,0" VerticalAlignment="Top" Width="75" Height="50"/>
+        <Button x:Name="Draw_Button" Click="Draw_Button_Click" Content="Draw" HorizontalAlignment="Left" Margin="636,661,0,0" VerticalAlignment="Top" Width="75" Height="50" />
+        <Label x:Name="YourName" Content="Unknown" FontSize="20" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="299,664,0,0" VerticalAlignment="Top" Height="38" Width="96"/>
+        <Label x:Name="OppName" Content="Unknown" FontSize="20" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="299,20,0,0" VerticalAlignment="Top" Height="38" Width="96"/>
     </Grid>
 </Window>

@@ -120,7 +120,7 @@ namespace ChessSharp
             return Board[end.X, end.Y] is Pawn;
         }
 
-        public void Update(Grid FullScreen)
+        public void Update()
         {
             Grid.Children.Clear();
 
@@ -140,7 +140,7 @@ namespace ChessSharp
                     Grid.SetRow(image, j);
 
                     image.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5); // sets the rotation point of the image to the center of the image
-                    image.RenderTransform = FullScreen.RenderTransform;         // Applies the relevant rotation
+                    image.RenderTransform = Ro;         // Applies the relevant rotation
                     //image.RenderTransform += ro;         // Applies the relevant rotation
 
 
