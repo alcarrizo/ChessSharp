@@ -33,6 +33,7 @@ namespace ChessSharp
         private Player currPlay;
         private bool currColor;
         private RotateTransform ro;
+        bool twoPlayer = false;
 
         // for local playing if we decide to implement that
         public ChessGame()
@@ -182,7 +183,7 @@ namespace ChessSharp
 
 
 
-            if (clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g))
+            if (twoPlayer == true && clicked == false && !board.CheckNull(Grid.GetColumn(g), Grid.GetRow(g))
                 && board.ControlPiece(new Point(Grid.GetColumn(g), Grid.GetRow(g)), player)
                 && (player.Color == currColor))
             {
@@ -433,7 +434,7 @@ namespace ChessSharp
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic getInfo = null;
-            if(getInfo == null || getInfo["playerCount"] == 1)
+            while(getInfo == null || getInfo["playerCount"] == 1)
             {
                 await Task.Delay(750);
                 getInfo = SV.GetSessionDetails();
@@ -447,6 +448,7 @@ namespace ChessSharp
             {
                 OppName.Content = getInfo["username"];
             }
+            twoPlayer = true;
         }
 
 
