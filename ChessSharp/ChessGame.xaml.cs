@@ -433,7 +433,7 @@ namespace ChessSharp
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic getInfo = null;
-            if(getInfo["playerCount"] == 1)
+            if(getInfo == null || getInfo["playerCount"] == 1)
             {
                 await Task.Delay(750);
                 getInfo = SV.GetSessionDetails();
