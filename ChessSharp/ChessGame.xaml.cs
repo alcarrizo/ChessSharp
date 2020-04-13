@@ -96,11 +96,13 @@ namespace ChessSharp
             if (player.Color == true)
             {
                 YourName.Background = Brushes.White;
+                
             }
             else
             {
                 OppName.Background = Brushes.White;
             }
+            GetSessionInfo();
         }
 
 
@@ -413,6 +415,7 @@ namespace ChessSharp
 
         }
 
+
         private void SendMessage(Movement moveInfo)
         {
             ServerFunctions SV = new ServerFunctions();
@@ -426,6 +429,28 @@ namespace ChessSharp
 
         }
 
+        private async void GetSessionInfo()
+        {
+            ServerFunctions SV = new ServerFunctions();
+            dynamic getInfo = null;
+            if(getInfo["playerCount"] == 1)
+            {
+                await Task.Delay(750);
+                getInfo = SV.GetSessionDetails();
+            }
+
+            if(player.Color == true)
+            {
+                OppName.Content = getInfo["joinedUser"];
+            }
+            else
+            {
+                OppName.Content = getInfo["username"];
+            }
+        }
+
+
+
         bool newGame = false;
 
         // function to make player wait for the server to send the information from the opponents move
@@ -437,7 +462,7 @@ namespace ChessSharp
 
             moveInfo = new Movement();
 
-            while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true) 
+            while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true)
                 || (getMove["forfeit"] == 1 && newGame == true))
             {
                 await Task.Delay(750);
