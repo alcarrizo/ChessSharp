@@ -278,5 +278,43 @@ namespace ChessSharp
             return temp;
 
         }
+
+        public dynamic GetSessionDetails()
+        {
+            string gameId2 = GameLobby.gameId;
+            string username2 = LoginPage.username;
+            var request = (HttpWebRequest)WebRequest.Create(host + "/getSessionDetails.php");
+            request.ContentType = "application/json";
+            request.Method = "POST";
+
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string json = new JavaScriptSerializer().Serialize(new
+                {
+                    username = username2,
+                    gameId = gameId2
+                });
+
+                streamWriter.Write(json);
+
+            }
+            WebResponse response = request.GetResponse();
+
+            dynamic temp;
+            string result;
+            using (var streamReader = new StreamReader(response.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+                temp = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+            }
+            /*      'username' => temp["username"],
+				    'gameId' => temp["gameId"],
+				    'playerCount' => temp["playerCount"],
+				    'joinedUser' => temp["joinedUser"]
+            */
+            response.Close();
+            return temp;
+
+        }
     }
 }
