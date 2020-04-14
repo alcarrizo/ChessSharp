@@ -34,6 +34,8 @@ namespace ChessSharp
         private bool currColor;
         private RotateTransform ro;
         bool twoPlayer = false;
+        bool oppLeftGame = false;
+        bool closed = false; // used to tell if you are the person who closed the window
 
         // for local playing if we decide to implement that
         public ChessGame()
@@ -97,7 +99,7 @@ namespace ChessSharp
             if (player.Color == true)
             {
                 YourName.Background = Brushes.White;
-                
+
             }
             else
             {
@@ -109,15 +111,57 @@ namespace ChessSharp
 
         private async void Window_ContentRendered(object sender, EventArgs e)
         {
-
+            ServerFunctions SV = new ServerFunctions();
+            dynamic checkSession = SV.GetSessionDetails();
+            bool left = false;
 
             if (player.Color == false)
             {
                 await Task.Run(() => WaitForOpponent());
             }
 
+            while (left == false && closed == false)
+            {
+                await Task.Delay(1000);
+                await Task.Run(() => left = DidOpponentLeave());
+            }
+            if (left == true && closed == false)
+            {
+                oppLeftGame = true;
+                await Task.Run(() =>
+                   Application.Current.Dispatcher.Invoke((Action)delegate
+                   {
+                       EndGame();
+                   })
+                      );
+            }
+
+
+
+
+
+
+
 
         }
+
+        public bool DidOpponentLeave()
+        {
+            ServerFunctions SV = new ServerFunctions();
+            dynamic checkSession = SV.GetSessionDetails();
+
+            if (checkSession != null)
+            {
+
+                return false;
+
+            }
+            else
+            {
+                return true;
+            }
+        }
+
 
         private void SetUpHighlights()
         {
@@ -263,37 +307,69 @@ namespace ChessSharp
         // brings up the end game options
         private void EndGame()
         {
+            ServerFunctions SV = new ServerFunctions();
             MessageBoxResult result = MessageBoxResult.Cancel;
-            if (moveInfo.checkMate == true)
-            {
-                result = MessageBox.Show("Checkmate");
-            }
-            else if (moveInfo.forfeit == true)
-            {
-                result = MessageBox.Show(moveInfo.username + " Forfeits the Match");
 
-            }
-            switch (result)
+            if (oppLeftGame == true)
             {
-                case MessageBoxResult.OK:
+                if (closed == true)
+                {
+                    this.Close();
+                }
+                else
+                {
+                    result = MessageBox.Show("Opponent has left the game");
+
+                    switch (result)
                     {
-                        currColor = true;
-                        board = new GameBoard(cBoard, ro);
-                        ResetHighlights();
-                        board.Update();
-                        newGame = true;
+                        case MessageBoxResult.OK:
+                            {
 
-                        if (player.Color == true)
-                        {
-                            YourName.Background = Brushes.White;
-                        }
-                        else
-                        {
-                            OppName.Background = Brushes.Transparent;
-                            WaitForOpponent();
-                        }
+                                if (oppLeftGame == true)
+                                {
+                                    this.Close();
+                                }
+
+                                break;
+                            }
                     }
-                    break;
+                }
+            }
+            else
+            {
+                if (moveInfo.checkMate == true)
+                {
+                    result = MessageBox.Show("Checkmate");
+                }
+                else if (moveInfo.forfeit == true)
+                {
+                    result = MessageBox.Show(moveInfo.username + " Forfeits the Match");
+
+                }
+                switch (result)
+                {
+                    case MessageBoxResult.OK:
+                        {
+
+
+                            currColor = true;
+                            board = new GameBoard(cBoard, ro);
+                            ResetHighlights();
+                            board.Update();
+                            newGame = true;
+
+                            if (player.Color == true)
+                            {
+                                YourName.Background = Brushes.White;
+                            }
+                            else
+                            {
+                                OppName.Background = Brushes.Transparent;
+                                WaitForOpponent();
+                            }
+                        }
+                        break;
+                }
             }
         }
 
@@ -408,7 +484,7 @@ namespace ChessSharp
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-
+            closed = true;
             ServerFunctions SV = new ServerFunctions();
             SV.CloseGame(GameLobby.gameId);
             GameLobby gl = new GameLobby();
@@ -434,13 +510,13 @@ namespace ChessSharp
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic getInfo = null;
-            while(getInfo == null || getInfo["playerCount"] == 1)
+            while (getInfo == null || getInfo["playerCount"] == 1)
             {
                 await Task.Delay(750);
                 getInfo = SV.GetSessionDetails();
             }
 
-            if(player.Color == true)
+            if (player.Color == true)
             {
                 OppName.Content = getInfo["joinedUser"];
             }
@@ -461,15 +537,42 @@ namespace ChessSharp
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic getMove = null;
+            dynamic checkSession = null;
+
+
 
             moveInfo = new Movement();
+
+
 
             while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true)
                 || (getMove["forfeit"] == 1 && newGame == true))
             {
                 await Task.Delay(750);
+
+                checkSession = null;
+                checkSession = SV.GetSessionDetails();
+                /*if (checkSession == null && closed == false)
+                {
+                    oppLeftGame = true;
+                    break;
+
+                }*/
+
                 getMove = SV.GetMove();
+
+
             }
+            /*if (checkSession == null && closed == false)
+            {
+                await Task.Run(() =>
+                   Application.Current.Dispatcher.Invoke((Action)delegate
+                   {
+                       EndGame();
+                   })
+                      );
+            }*/
+
 
             if (newGame == true)
             {
@@ -591,6 +694,7 @@ namespace ChessSharp
                     OppName.Background = Brushes.Transparent;
                 });
             }
+
             //while ()
 
             /*            'ifcheck' => $row["ifcheck"], 
