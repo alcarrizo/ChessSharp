@@ -36,6 +36,7 @@ namespace ChessSharp
         bool twoPlayer = false;
         bool oppLeftGame = false;
         bool closed = false; // used to tell if you are the person who closed the window
+        bool draw = false;
 
         // for local playing if we decide to implement that
         public ChessGame()
@@ -346,6 +347,10 @@ namespace ChessSharp
                     result = MessageBox.Show(moveInfo.username + " Forfeits the Match");
 
                 }
+                else if(draw == true)
+                {
+                    result = MessageBox.Show(moveInfo.username + " It's a draw");
+                }
                 switch (result)
                 {
                     case MessageBoxResult.OK:
@@ -537,41 +542,20 @@ namespace ChessSharp
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic getMove = null;
-            dynamic checkSession = null;
-
-
-
             moveInfo = new Movement();
 
 
 
             while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true)
-                || (getMove["forfeit"] == 1 && newGame == true))
+                || (getMove["forfeit"] == 1 && newGame == true) || (getMove["askForDraw"] == 1 && newGame == true))
             {
                 await Task.Delay(750);
 
-                checkSession = null;
-                checkSession = SV.GetSessionDetails();
-                /*if (checkSession == null && closed == false)
-                {
-                    oppLeftGame = true;
-                    break;
-
-                }*/
 
                 getMove = SV.GetMove();
 
 
             }
-            /*if (checkSession == null && closed == false)
-            {
-                await Task.Run(() =>
-                   Application.Current.Dispatcher.Invoke((Action)delegate
-                   {
-                       EndGame();
-                   })
-                      );
-            }*/
 
 
             if (newGame == true)
@@ -664,6 +648,28 @@ namespace ChessSharp
                })
                   );
             }
+            else if (moveInfo.askForDraw == true)
+            {
+                if (draw == true)
+                {
+                    await Task.Run(() =>
+                    Application.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        EndGame();
+                    })
+                       );
+
+                }
+                else
+                {
+                    await Task.Run(() =>
+                   Application.Current.Dispatcher.Invoke((Action)delegate
+                   {
+                       AskForDraw();
+                   })
+                      );
+                }
+            }
 
             else
             {
@@ -720,10 +726,45 @@ namespace ChessSharp
 
         }
 
+        private async void AskForDraw()
+        {
+            MessageBoxResult result = MessageBoxResult.No;
+            result = MessageBox.Show("Your opponent has asked for a draw do you accept?", "Draw", MessageBoxButton.YesNo);
+
+            moveInfo = new Movement();
+
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    {
+                        draw = true;
+                        moveInfo.askForDraw = true;
+                        SendMessage(moveInfo);
+                        await Task.Run(() =>
+                   Application.Current.Dispatcher.Invoke((Action)delegate
+                   {
+                       EndGame();
+                   })
+                      );
+                        break;
+                    }
+                case MessageBoxResult.No:
+                    {
+                        moveInfo.askForDraw = false;
+                        SendMessage(moveInfo);
+                        await Task.Run(() => WaitForOpponent());
+                        break;
+                    }
+
+            }
+
+
+        }
+
         private async void Draw_Button_Click(object sender, RoutedEventArgs e)
         {
             moveInfo = new Movement();
-
+            draw = true;
             moveInfo.askForDraw = true;
             moveInfo.username = LoginPage.username;
             moveInfo.gameId = GameLobby.gameId;
