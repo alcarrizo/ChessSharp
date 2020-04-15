@@ -18,19 +18,19 @@ namespace ChessSharp
             enPassant = false;
             castling = false;
             promotion = false;
-            //Draw = false;
-            //askForRematch = false;
-           // Rematch = false;
+            Draw = false;
+            askForRematch = false;
+            Rematch = false;
         }
         public bool? check { get; set; }
         public bool? checkMate { get; set; }
         public bool? forfeit { get; set; }
 
-       // public bool? Draw { get; set; }
+        public bool? Draw { get; set; }
 
-        //public bool? askForRematch { get; set; }
+        public bool? askForRematch { get; set; }
 
-       // public bool? Rematch { get; set; }
+        public bool? Rematch { get; set; }
         public bool? askForDraw { get; set; }
         public int startX { get; set; }
 

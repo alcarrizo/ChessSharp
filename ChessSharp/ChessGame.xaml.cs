@@ -37,6 +37,7 @@ namespace ChessSharp
         bool oppLeftGame = false;
         bool closed = false; // used to tell if you are the person who closed the window
         bool draw = false;
+        bool rematch = false;
 
         // for local playing if we decide to implement that
         public ChessGame()
@@ -338,22 +339,23 @@ namespace ChessSharp
             }
             else
             {
+
                 if (moveInfo.checkMate == true)
                 {
-                    result = MessageBox.Show("Checkmate");
+                    result = MessageBox.Show("Checkmate. Rematch?", "Checkmate", MessageBoxButton.YesNo);
                 }
                 else if (moveInfo.forfeit == true)
                 {
-                    result = MessageBox.Show(moveInfo.username + " Forfeits the Match");
+                    result = MessageBox.Show(moveInfo.username + " Forfeits the Match, Rematch?", "Forfeit", MessageBoxButton.YesNo);
 
                 }
-                else if(draw == true)
+                else if (draw == true)
                 {
-                    result = MessageBox.Show(moveInfo.username + " It's a draw");
+                    result = MessageBox.Show("It's a draw, Rematch?", "Draw", MessageBoxButton.YesNo);
                 }
                 switch (result)
                 {
-                    case MessageBoxResult.OK:
+                    case MessageBoxResult.Yes:
                         {
 
 
@@ -374,6 +376,14 @@ namespace ChessSharp
                             }
                         }
                         break;
+
+                    case MessageBoxResult.No:
+                        {
+
+                            this.Close();
+                        }
+                        break;
+
                 }
             }
         }
@@ -547,7 +557,7 @@ namespace ChessSharp
 
 
             while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true)
-                || (getMove["forfeit"] == 1 && newGame == true) || (getMove["askForDraw"] == 1 && newGame == true))
+                || (getMove["forfeit"] == 1 && newGame == true) || (getMove["Draw"] == 1 && newGame == true))
             {
                 await Task.Delay(750);
 
@@ -624,6 +634,31 @@ namespace ChessSharp
             {
                 moveInfo.askForDraw = false;
             }
+            if (getMove["Draw"] == 1)
+            {
+                moveInfo.Draw = true;
+            }
+            else
+            {
+                moveInfo.Draw = false;
+            }
+
+            if (getMove["askForRematch"] == 1)
+            {
+                moveInfo.askForRematch = true;
+            }
+            else
+            {
+                moveInfo.askForRematch = false;
+            }
+            if (getMove["Rematch"] == 1)
+            {
+                moveInfo.Rematch = true;
+            }
+            else
+            {
+                moveInfo.Rematch = false;
+            }
 
             moveInfo.endX = getMove["endX"];
             moveInfo.endY = getMove["endY"];
@@ -648,29 +683,38 @@ namespace ChessSharp
                })
                   );
             }
-            else if (moveInfo.askForDraw == true)
+            else if (moveInfo.Draw == true)
             {
-                if (draw == true)
-                {
-                    await Task.Run(() =>
-                    Application.Current.Dispatcher.Invoke((Action)delegate
-                    {
-                        EndGame();
-                    })
-                       );
-
-                }
-                else
-                {
-                    await Task.Run(() =>
+                draw = true;
+                await Task.Run(() =>
                    Application.Current.Dispatcher.Invoke((Action)delegate
                    {
-                       AskForDraw();
+                       EndGame();
                    })
                       );
-                }
             }
+            else if (moveInfo.Rematch == true)
+            {
+                rematch = true;
+                await Task.Run(() =>
+                   Application.Current.Dispatcher.Invoke((Action)delegate
+                   {
+                       EndGame();
+                   })
+                      );
+            }
+            else if (moveInfo.askForDraw == true)
+            {
 
+                AskForDraw();
+
+            }
+            else if (moveInfo.askForRematch == true)
+            {
+
+                AskForRematch();
+
+            }
             else
             {
                 board.UpdateEnemyPieces(moveInfo, Highlights);
@@ -704,41 +748,48 @@ namespace ChessSharp
             //while ()
 
             /*            'ifcheck' => $row["ifcheck"], 
-						'checkMate' => $row["checkMate"],
-						'forfeit' => $row["forfeit"],
-						'askForDraw' => $row["askForDraw"],
-						'startX' => $row["startX"],
-						'startY' => $row["startY"],
-						'endX' => $row["endX"],
-						'endY' => $row["endY"],
-						'enPassant' => $row["enPassant"],
-						'pawnX' => $row["pawnX"],
-						'pawnY' => $row["pawnY"],
-						'castling' => $row["castling"],
-						'rookStartX' => $row["rookStartX"],
-						'rookStartY' => $row["rookStartY"],
-						'rookEndX' => $row["rookEndX"],
-						'rookEndY' => $row["rookEndY"],
-						'promotion' => $row["promotion"],
-						'pawnEvolvesTo' => $row["pawnEvolvesTo"],
-						'lastMove' => $row["lastMove"]
+                        'checkMate' => $row["checkMate"],
+                        'forfeit' => $row["forfeit"],
+                        'askForDraw' => $row["askForDraw"],
+                        'startX' => $row["startX"],
+                        'startY' => $row["startY"],
+                        'endX' => $row["endX"],
+                        'endY' => $row["endY"],
+                        'enPassant' => $row["enPassant"],
+                        'pawnX' => $row["pawnX"],
+                        'pawnY' => $row["pawnY"],
+                        'castling' => $row["castling"],
+                        'rookStartX' => $row["rookStartX"],
+                        'rookStartY' => $row["rookStartY"],
+                        'rookEndX' => $row["rookEndX"],
+                        'rookEndY' => $row["rookEndY"],
+                        'promotion' => $row["promotion"],
+                        'pawnEvolvesTo' => $row["pawnEvolvesTo"],
+                        'lastMove' => $row["lastMove"]
             */
 
         }
 
         private async void AskForDraw()
         {
-            MessageBoxResult result = MessageBoxResult.No;
-            result = MessageBox.Show("Your opponent has asked for a draw do you accept?", "Draw", MessageBoxButton.YesNo);
-
             moveInfo = new Movement();
+            moveInfo.username = LoginPage.username;
+            moveInfo.gameId = GameLobby.gameId;
+
+            MessageBoxResult result = MessageBoxResult.No;
+
+            result = MessageBox.Show("Your opponent has asked for a draw do you accept?", "Ask For Draw", MessageBoxButton.YesNo);
 
             switch (result)
             {
                 case MessageBoxResult.Yes:
                     {
+
                         draw = true;
-                        moveInfo.askForDraw = true;
+                        moveInfo.Draw = true;
+
+                        draw = true;
+                        moveInfo.Draw = true;
                         SendMessage(moveInfo);
                         await Task.Run(() =>
                    Application.Current.Dispatcher.Invoke((Action)delegate
@@ -750,7 +801,10 @@ namespace ChessSharp
                     }
                 case MessageBoxResult.No:
                     {
-                        moveInfo.askForDraw = false;
+
+                        moveInfo.Draw = false;
+
+
                         SendMessage(moveInfo);
                         await Task.Run(() => WaitForOpponent());
                         break;
@@ -761,8 +815,53 @@ namespace ChessSharp
 
         }
 
+        private async void AskForRematch()
+        {
+            moveInfo = new Movement();
+            moveInfo.username = LoginPage.username;
+            moveInfo.gameId = GameLobby.gameId;
+
+            MessageBoxResult result = MessageBoxResult.No;
+
+            result = MessageBox.Show("Your opponent has asked for a rematch do you accept?", "Ask For Rematch", MessageBoxButton.YesNo);
+
+
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    {
+
+                        rematch = true;
+                        moveInfo.Rematch = true;
+
+                        draw = true;
+                        moveInfo.Draw = true;
+                        SendMessage(moveInfo);
+                        await Task.Run(() =>
+                   Application.Current.Dispatcher.Invoke((Action)delegate
+                   {
+                       EndGame();
+                   })
+                      );
+                        break;
+                    }
+                case MessageBoxResult.No:
+                    {
+
+
+                        moveInfo.Draw = false;
+
+                        SendMessage(moveInfo);
+                        await Task.Run(() => WaitForOpponent());
+                        break;
+                    }
+
+            }
+
+        }
         private async void Draw_Button_Click(object sender, RoutedEventArgs e)
         {
+
             moveInfo = new Movement();
             draw = true;
             moveInfo.askForDraw = true;
@@ -770,6 +869,7 @@ namespace ChessSharp
             moveInfo.gameId = GameLobby.gameId;
 
             SendMessage(moveInfo);
+            currColor = false;
             await Task.Run(() => WaitForOpponent());
         }
 
