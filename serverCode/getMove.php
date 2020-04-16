@@ -21,7 +21,7 @@ $sql = "SELECT gameId,lastMove,ifcheck,
 			startX,startY,endX,endY,enPassant,
 			pawnX,pawnY,castling,rookStartX,
 			rookStartY,rookEndX,rookEndY,promotion,
-			pawnEvolvesTo FROM movement";
+			pawnEvolvesTo,Draw,askForRematch,Rematch FROM movement";
 
 $result = mysqli_query($conn, $sql);
 
@@ -48,7 +48,10 @@ $result = mysqli_query($conn, $sql);
 						'rookEndY' => $row["rookEndY"],
 						'promotion' => $row["promotion"],
 						'pawnEvolvesTo' => $row["pawnEvolvesTo"],
-						'lastMove' => $row["lastMove"]
+						'lastMove' => $row["lastMove"],
+						'Draw' => $row["Draw"],
+						'askForRematch' => $row["askForRematch"],
+						'Rematch' => $row["Rematch"]
 						);
 				}else
 					$move = array(
@@ -70,7 +73,10 @@ $result = mysqli_query($conn, $sql);
 						'rookEndY' => $row["rookEndY"],
 						'promotion' => $row["promotion"],
 						'pawnEvolvesTo' => $row["pawnEvolvesTo"],
-						'lastMove' => $row["lastMove"]
+						'lastMove' => $row["lastMove"],
+						'Draw' => $row["Draw"],
+						'askForRematch' => $row["askForRematch"],
+						'Rematch' => $row["Rematch"]
 						);
 						
 			}
