@@ -23,7 +23,7 @@ $sql = "SELECT gameId,lastMove,ifcheck,
 		startX,startY,endX,endY,enPassant,
 		pawnX,pawnY,castling,rookStartX,
 		rookStartY,rookEndX,rookEndY,promotion,
-		pawnEvolvesTo FROM movement";
+		pawnEvolvesTo,Draw,askForRematch,Rematch FROM movement";
 $result = mysqli_query($conn, $sql);	
 $inDB = 0;
 
@@ -49,7 +49,10 @@ $inDB = 0;
 				rookEndX = '$data->rookEndX', 
 				rookEndY = '$data->rookEndY', 
 				promotion = '$data->promotion', 
-				pawnEvolvesTo = '$data->pawnEvolvesTo' 
+				pawnEvolvesTo = '$data->pawnEvolvesTo',
+				Draw = '$data->Draw', 
+				askForRematch = '$data->askForRematch', 
+				Rematch = '$data->Rematch' 
 				Where gameId ='$data->gameId'";
 				if (mysqli_query($conn, $sql3)) {
 						echo "done";
@@ -66,14 +69,15 @@ $inDB = 0;
 												startX,startY,endX,endY,enPassant,
 												pawnX,pawnY,castling,rookStartX,
 												rookStartY ,rookEndX,rookEndY, 
-												promotion,pawnEvolvesTo)
+												promotion,pawnEvolvesTo,Draw,askForRematch,Rematch)
 					VALUES ('$data->gameId', '$data->username', '$data->check', 
 							'$data->checkMate','$data->forfeit','$data->askForDraw',
 							'$data->startX','$data->startY','$data->endX', '$data->endY',
 							'$data->enPassant','$data->pawnX', '$data->pawnY',
 							'$data->castling','$data->rookStartX','$data->rookStartY',
 							'$data->rookEndX','$data->rookEndY', '$data->promotion',
-							'$data->pawnEvolvesTo')";
+							'$data->pawnEvolvesTo', '$data->Draw', '$data->askForRematch',
+							'$data->Rematch' )";
 				if (mysqli_query($conn, $sql2)) {
 						echo "done";
 				} else {

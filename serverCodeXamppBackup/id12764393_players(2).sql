@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.5
+-- version 5.0.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Apr 02, 2020 at 02:08 PM
--- Server version: 10.3.16-MariaDB
--- PHP Version: 7.3.12
+-- Host: 127.0.0.1
+-- Generation Time: Apr 17, 2020 at 01:17 AM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.4.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -48,16 +48,11 @@ CREATE TABLE `movement` (
   `rookEndX` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `rookEndY` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `promotion` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pawnEvolvesTo` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+  `pawnEvolvesTo` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `Draw` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `askForRematch` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `Rematch` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `movement`
---
-
-INSERT INTO `movement` (`gameId`, `lastMove`, `ifcheck`, `checkMate`, `forfeit`, `askForDraw`, `startX`, `startY`, `endX`, `endY`, `enPassant`, `pawnX`, `pawnY`, `castling`, `rookStartX`, `rookStartY`, `rookEndX`, `rookEndY`, `promotion`, `pawnEvolvesTo`) VALUES
-('sj60a7btvo', 'den', '1', '', '', '', '4', '0', '0', '4', '', '0', '0', '', '0', '0', '0', '0', '', ''),
-('qdco4m186t', 's', '', '', '', '', '3', '7', '4', '6', '', '0', '0', '', '0', '0', '0', '0', '', '');
 
 -- --------------------------------------------------------
 
@@ -68,16 +63,6 @@ INSERT INTO `movement` (`gameId`, `lastMove`, `ifcheck`, `checkMate`, `forfeit`,
 CREATE TABLE `onlineplayers` (
   `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `onlineplayers`
---
-
-INSERT INTO `onlineplayers` (`username`) VALUES
-('den'),
-('admin1'),
-('a'),
-('s');
 
 -- --------------------------------------------------------
 
@@ -91,13 +76,6 @@ CREATE TABLE `playerlobby` (
   `joinedUser` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `playerCount` int(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `playerlobby`
---
-
-INSERT INTO `playerlobby` (`username`, `gameId`, `joinedUser`, `playerCount`) VALUES
-('a', 'qdco4m186t', 's', 2);
 
 -- --------------------------------------------------------
 

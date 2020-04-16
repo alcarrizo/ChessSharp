@@ -16,7 +16,7 @@ $json = file_get_contents('php://input');
 $data = json_decode($json);
 
 
-$sql = "SELECT gameId FROM playerlobby";
+$sql = "SELECT gameId,username FROM playerlobby";
 $result = mysqli_query($conn, $sql);
 
 if (mysqli_num_rows($result) > 0) {

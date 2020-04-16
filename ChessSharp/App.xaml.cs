@@ -25,8 +25,9 @@ namespace ChessSharp
 
         private void SignOutUser()
         {
+            
             string name = LoginPage.username;
-            var request = (HttpWebRequest)WebRequest.Create("https://chesssharp.000webhostapp.com/userOffline.php");
+            var request = (HttpWebRequest)WebRequest.Create(ServerFunctions.host);
             request.ContentType = "application/json";
             request.Method = "POST";
 
@@ -53,7 +54,7 @@ namespace ChessSharp
         private void CloseGame()
         {
             string name = LoginPage.username;
-            var request = (HttpWebRequest)WebRequest.Create("https://chesssharp.000webhostapp.com/closeGame.php");
+            var request = (HttpWebRequest)WebRequest.Create(ServerFunctions.host);
             request.ContentType = "application/json";
             request.Method = "POST";
 
