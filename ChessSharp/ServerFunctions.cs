@@ -268,9 +268,8 @@ namespace ChessSharp
             using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
                 result = streamReader.ReadToEnd();
-               // moveInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
+                // moveInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
                 temp = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
-
                 //temp = jsonStr;
             }
 
