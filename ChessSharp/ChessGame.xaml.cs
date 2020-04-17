@@ -36,12 +36,11 @@ namespace ChessSharp
         private bool twoPlayer = false;
         private bool oppLeftGame = false;
         private bool closed = false; // used to tell if you are the person who closed the window
-        private bool draw = false;
-        private bool rematch = false;
+        private bool checking = false;
         private bool forfietOrDraw;
         private bool waitingOnOpponent = false;
+        private bool rematch = false;
 
-        // for local playing if we decide to implement that
         public ChessGame(bool control)
         {
 
@@ -87,13 +86,8 @@ namespace ChessSharp
 
         private async void Window_ContentRendered(object sender, EventArgs e)
         {
-            ServerFunctions SV = new ServerFunctions();
-            dynamic checkSession = SV.GetSessionDetails();
 
 
-            bool left = false;
-            forfietOrDraw = false;
-            
 
             if (player.Color == false)
             {
@@ -101,7 +95,20 @@ namespace ChessSharp
                 await Task.Run(() => WaitForOpponent());
             }
 
-            while (left == false && closed == false && forfietOrDraw == false )
+            checking = true;
+            await Task.Run(() => endChecks());
+
+        }
+
+        private async void endChecks()
+        {
+            ServerFunctions SV = new ServerFunctions();
+            dynamic checkSession = SV.GetSessionDetails();
+            forfietOrDraw = false;
+            bool left = false;
+
+
+            while (left == false && closed == false && forfietOrDraw == false)
             {
                 await Task.Delay(1000);
                 await Task.Run(() => left = DidOpponentLeave());
@@ -111,6 +118,7 @@ namespace ChessSharp
             if (left == true && closed == false)
             {
                 oppLeftGame = true;
+                checking = false;
                 await Task.Run(() =>
                    Application.Current.Dispatcher.Invoke((Action)delegate
                    {
@@ -120,10 +128,12 @@ namespace ChessSharp
             }
             else if (moveInfo.askForDraw == true)
             {
+                checking = false;
                 AskForDraw();
             }
-            else if(forfietOrDraw == true)
+            else if (forfietOrDraw == true)
             {
+                checking = false;
                 await Task.Run(() =>
                    Application.Current.Dispatcher.Invoke((Action)delegate
                    {
@@ -132,12 +142,14 @@ namespace ChessSharp
                       );
             }
 
+            
         }
 
         public bool DidOpponentLeave()
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic checkSession = SV.GetSessionDetails();
+
 
             if (checkSession != null)
             {
@@ -342,7 +354,7 @@ namespace ChessSharp
                     result = MessageBox.Show(moveInfo.username + " Forfeits the Match, Rematch?", "Forfeit", MessageBoxButton.YesNo);
 
                 }
-                else if (draw == true)
+                else if (moveInfo.Draw == true)
                 {
                     forfietOrDraw = false;
                     result = MessageBox.Show("It's a draw, Rematch?", "Draw", MessageBoxButton.YesNo);
@@ -352,12 +364,18 @@ namespace ChessSharp
                     case MessageBoxResult.Yes:
                         {
 
-
+                            
                             currColor = true;
                             board = new GameBoard(cBoard, ro);
                             ResetHighlights();
                             board.Update();
                             newGame = true;
+
+                            if (checking == false)
+                            {
+                                checking = true;
+                                await Task.Run(() => endChecks());
+                            }
 
                             if (player.Color == true)
                             {
@@ -372,6 +390,9 @@ namespace ChessSharp
                                     await Task.Run(() => WaitForOpponent());
                                 }
                             }
+
+                            
+                            
                         }
                         break;
 
@@ -551,7 +572,8 @@ namespace ChessSharp
             dynamic getInfo = SV.GetMove();
 
             if (getInfo == null || getInfo["lastMove"] == LoginPage.username || getInfo["playerCount"] == 1
-                || (getInfo["forfeit"] == 1 && newGame == true) || (getInfo["askForDraw"] == 1 && newGame == true))
+                || (getInfo["forfeit"] == 1 && newGame == true) || (getInfo["askForDraw"] == 1 && newGame == true)
+                || (getInfo["Draw"] == 1 && newGame == true))
             {
                 return false;
             }
@@ -574,12 +596,11 @@ namespace ChessSharp
             }
             else if (getInfo["Draw"] == 1)
             {
-
-                draw = true;
+                moveInfo.Draw = true;
 
                 return true;
             }
-            
+
             return false;
         }
 
@@ -828,11 +849,8 @@ namespace ChessSharp
                 case MessageBoxResult.Yes:
                     {
 
-                        draw = true;
                         moveInfo.Draw = true;
 
-                        draw = true;
-                        moveInfo.Draw = true;
                         SendMessage(moveInfo);
                         await Task.Run(() =>
                    Application.Current.Dispatcher.Invoke((Action)delegate
@@ -882,7 +900,6 @@ namespace ChessSharp
                         rematch = true;
                         moveInfo.Rematch = true;
 
-                        draw = true;
                         moveInfo.Draw = true;
                         SendMessage(moveInfo);
                         await Task.Run(() =>
@@ -916,8 +933,8 @@ namespace ChessSharp
         {
 
             moveInfo = new Movement();
-            draw = true;
             moveInfo.askForDraw = true;
+            moveInfo.Draw = true;
             moveInfo.username = LoginPage.username;
             moveInfo.gameId = GameLobby.gameId;
 

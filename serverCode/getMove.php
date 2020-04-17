@@ -78,14 +78,18 @@ $result = mysqli_query($conn, $sql);
 						'askForRematch' => $row["askForRematch"],
 						'Rematch' => $row["Rematch"]
 						);
-						
+				echo json_encode($move);
 			}
+			else{
+				echo null;
+			}
+				
 		}
 	}
 
 
 
-echo json_encode($move);
+
 	
 mysqli_close($conn);
 ?>
