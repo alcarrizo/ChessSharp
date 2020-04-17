@@ -769,9 +769,13 @@ namespace ChessSharp
                     }
                 }
 
-                Board[moveInfo.endX, moveInfo.endY] = Board[moveInfo.startX, moveInfo.startY];
-                Board[moveInfo.startX, moveInfo.startY] = null;
+                
             }
+
+            Piece Temp = Board[moveInfo.startX, moveInfo.startY];
+            Board[moveInfo.startX, moveInfo.startY] = null;
+            Board[moveInfo.endX, moveInfo.endY] = Temp;
+            
 
             // checks
             if (moveInfo.check == true)

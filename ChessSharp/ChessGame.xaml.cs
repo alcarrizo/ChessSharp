@@ -33,41 +33,15 @@ namespace ChessSharp
         private Player currPlay;
         private bool currColor;
         private RotateTransform ro;
-        bool twoPlayer = false;
-        bool oppLeftGame = false;
-        bool closed = false; // used to tell if you are the person who closed the window
-        bool draw = false;
-        bool rematch = false;
+        private bool twoPlayer = false;
+        private bool oppLeftGame = false;
+        private bool closed = false; // used to tell if you are the person who closed the window
+        private bool draw = false;
+        private bool rematch = false;
+        private bool forfietOrDraw;
+        private bool waitingOnOpponent = false;
 
         // for local playing if we decide to implement that
-        public ChessGame()
-        {
-
-            InitializeComponent();
-
-            // How to change the rotation of the grid
-            ro = new RotateTransform(180);
-            //RotateTransform ro = new RotateTransform(0);
-
-
-            //cBoard.RenderTransform = ro;
-            //Highlights.RenderTransform = ro;
-
-            board = new GameBoard(cBoard, ro);
-            //view = new GameView(board, cBoard);
-            GameGrid.RenderTransform = ro;
-            board.Update();
-
-            if (player.Color == true)
-            {
-                YourName.Background = Brushes.White;
-            }
-
-            currPlay = p1;
-            DrawGameArea();
-            SetUpHighlights();
-        }
-
         public ChessGame(bool control)
         {
 
@@ -115,18 +89,25 @@ namespace ChessSharp
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic checkSession = SV.GetSessionDetails();
+
+
             bool left = false;
+            forfietOrDraw = false;
+            
 
             if (player.Color == false)
             {
+                waitingOnOpponent = true;
                 await Task.Run(() => WaitForOpponent());
             }
 
-            while (left == false && closed == false)
+            while (left == false && closed == false && forfietOrDraw == false )
             {
                 await Task.Delay(1000);
                 await Task.Run(() => left = DidOpponentLeave());
+                await Task.Run(() => forfietOrDraw = ForfeitOrDraw());
             }
+
             if (left == true && closed == false)
             {
                 oppLeftGame = true;
@@ -137,13 +118,19 @@ namespace ChessSharp
                    })
                       );
             }
-
-
-
-
-
-
-
+            else if (moveInfo.askForDraw == true)
+            {
+                AskForDraw();
+            }
+            else if(forfietOrDraw == true)
+            {
+                await Task.Run(() =>
+                   Application.Current.Dispatcher.Invoke((Action)delegate
+                   {
+                       EndGame();
+                   })
+                      );
+            }
 
         }
 
@@ -290,7 +277,11 @@ namespace ChessSharp
 
                                 currColor = !currColor;
                                 SendMessage(moveInfo);
-                                await Task.Run(() => WaitForOpponent());
+                                if (waitingOnOpponent == false)
+                                {
+                                    waitingOnOpponent = true;
+                                    await Task.Run(() => WaitForOpponent());
+                                }
 
                             }
 
@@ -307,10 +298,11 @@ namespace ChessSharp
         }
 
         // brings up the end game options
-        private void EndGame()
+        private async void EndGame()
         {
             ServerFunctions SV = new ServerFunctions();
             MessageBoxResult result = MessageBoxResult.Cancel;
+
 
             if (oppLeftGame == true)
             {
@@ -346,11 +338,13 @@ namespace ChessSharp
                 }
                 else if (moveInfo.forfeit == true)
                 {
+                    forfietOrDraw = false;
                     result = MessageBox.Show(moveInfo.username + " Forfeits the Match, Rematch?", "Forfeit", MessageBoxButton.YesNo);
 
                 }
                 else if (draw == true)
                 {
+                    forfietOrDraw = false;
                     result = MessageBox.Show("It's a draw, Rematch?", "Draw", MessageBoxButton.YesNo);
                 }
                 switch (result)
@@ -372,7 +366,11 @@ namespace ChessSharp
                             else
                             {
                                 OppName.Background = Brushes.Transparent;
-                                WaitForOpponent();
+                                if (waitingOnOpponent == false)
+                                {
+                                    waitingOnOpponent = true;
+                                    await Task.Run(() => WaitForOpponent());
+                                }
                             }
                         }
                         break;
@@ -492,7 +490,12 @@ namespace ChessSharp
             YourName.Background = Brushes.Transparent;
             OppName.Background = Brushes.White;
             currColor = !currColor;
-            await Task.Run(() => WaitForOpponent());
+            waitingOnOpponent = true;
+            if (waitingOnOpponent == false)
+            {
+                waitingOnOpponent = true;
+                await Task.Run(() => WaitForOpponent());
+            }
 
         }
 
@@ -542,6 +545,43 @@ namespace ChessSharp
             twoPlayer = true;
         }
 
+        private bool ForfeitOrDraw()
+        {
+            ServerFunctions SV = new ServerFunctions();
+            dynamic getInfo = SV.GetMove();
+
+            if (getInfo == null || getInfo["lastMove"] == LoginPage.username || getInfo["playerCount"] == 1
+                || (getInfo["forfeit"] == 1 && newGame == true) || (getInfo["askForDraw"] == 1 && newGame == true))
+            {
+                return false;
+            }
+
+            moveInfo = new Movement();
+            moveInfo.username = LoginPage.username;
+            moveInfo.gameId = GameLobby.gameId;
+
+            if (getInfo["askForDraw"] == 1)
+            {
+                moveInfo.askForDraw = true;
+
+                return true;
+            }
+            else if (getInfo["forfeit"] == 1)
+            {
+                moveInfo.forfeit = true;
+
+                return true;
+            }
+            else if (getInfo["Draw"] == 1)
+            {
+
+                draw = true;
+
+                return true;
+            }
+            
+            return false;
+        }
 
 
         bool newGame = false;
@@ -555,9 +595,11 @@ namespace ChessSharp
             moveInfo = new Movement();
 
 
+            /*while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true)
+                || (getMove["forfeit"] == 1 && newGame == true) || (getMove["Draw"] == 1 && newGame == true))*/
 
             while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true)
-                || (getMove["forfeit"] == 1 && newGame == true) || (getMove["Draw"] == 1 && newGame == true))
+                || getMove["forfeit"] == 1 || getMove["Draw"] == 1 || getMove["askForDraw"] == 1)
             {
                 await Task.Delay(750);
 
@@ -673,7 +715,7 @@ namespace ChessSharp
             moveInfo.pawnEvolvesTo = getMove["pawnEvolvesTo"];
             moveInfo.username = getMove["lastMove"];
 
-            if (moveInfo.forfeit == true)
+            /*if (moveInfo.forfeit == true)
             {
                 // temp = getMove;
                 await Task.Run(() =>
@@ -692,8 +734,8 @@ namespace ChessSharp
                        EndGame();
                    })
                       );
-            }
-            else if (moveInfo.Rematch == true)
+            }*/
+            if (moveInfo.Rematch == true)
             {
                 rematch = true;
                 await Task.Run(() =>
@@ -703,12 +745,12 @@ namespace ChessSharp
                    })
                       );
             }
-            else if (moveInfo.askForDraw == true)
+            /*else if (moveInfo.askForDraw == true)
             {
 
                 AskForDraw();
 
-            }
+            }*/
             else if (moveInfo.askForRematch == true)
             {
 
@@ -745,6 +787,7 @@ namespace ChessSharp
                 });
             }
 
+            waitingOnOpponent = false;
             //while ()
 
             /*            'ifcheck' => $row["ifcheck"], 
@@ -806,7 +849,12 @@ namespace ChessSharp
 
 
                         SendMessage(moveInfo);
-                        await Task.Run(() => WaitForOpponent());
+                        waitingOnOpponent = true;
+                        if (waitingOnOpponent == false)
+                        {
+                            waitingOnOpponent = true;
+                            await Task.Run(() => WaitForOpponent());
+                        }
                         break;
                     }
 
@@ -852,7 +900,12 @@ namespace ChessSharp
                         moveInfo.Draw = false;
 
                         SendMessage(moveInfo);
-                        await Task.Run(() => WaitForOpponent());
+                        waitingOnOpponent = true;
+                        if (waitingOnOpponent == false)
+                        {
+                            waitingOnOpponent = true;
+                            await Task.Run(() => WaitForOpponent());
+                        }
                         break;
                     }
 
@@ -869,11 +922,16 @@ namespace ChessSharp
             moveInfo.gameId = GameLobby.gameId;
 
             SendMessage(moveInfo);
-            currColor = false;
-            await Task.Run(() => WaitForOpponent());
+            currColor = !currColor;
+            waitingOnOpponent = true;
+            if (waitingOnOpponent == false)
+            {
+                waitingOnOpponent = true;
+                await Task.Run(() => WaitForOpponent());
+            }
         }
 
-        private async void Forfeit_Button_Click(object sender, RoutedEventArgs e)
+        private void Forfeit_Button_Click(object sender, RoutedEventArgs e)
         {
             moveInfo = new Movement();
 

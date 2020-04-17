@@ -229,7 +229,7 @@ namespace ChessSharp
             request.Method = "POST";
             using (var streamWriter = new StreamWriter(request.GetRequestStream()))
             {
-                
+
                 streamWriter.Write(json);
 
             }
@@ -268,8 +268,11 @@ namespace ChessSharp
             using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
                 result = streamReader.ReadToEnd();
-               // moveInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
+                // moveInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Movement>(result);
+
+
                 temp = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+
 
                 //temp = jsonStr;
             }
@@ -305,7 +308,9 @@ namespace ChessSharp
             using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
                 result = streamReader.ReadToEnd();
+
                 temp = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+
             }
             /*      'username' => temp["username"],
 				    'gameId' => temp["gameId"],
