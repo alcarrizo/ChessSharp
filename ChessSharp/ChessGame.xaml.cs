@@ -60,7 +60,9 @@ namespace ChessSharp
             }
 
 
-            board = new GameBoard(cBoard, ro);
+            DrawGameArea();
+
+            board = new GameBoard(cBoard, GameArea, ro);
 
             GameArea.RenderTransform = ro;
 
@@ -68,7 +70,7 @@ namespace ChessSharp
 
 
             currColor = true;
-            DrawGameArea();
+
             SetUpHighlights();
             YourName.Content = LoginPage.username;
             if (player.Color == true)
@@ -112,37 +114,40 @@ namespace ChessSharp
             {
                 await Task.Delay(1000);
                 await Task.Run(() => left = DidOpponentLeave());
-                await Task.Run(() => forfietOrDraw = ForfeitOrDraw());
+                await Task.Run(() => forfietOrDraw = ForfeitOrDraw().Result);
             }
 
-            if (left == true && closed == false)
+            if (closed == false)
             {
-                oppLeftGame = true;
-                checking = false;
-                await Task.Run(() =>
-                   Application.Current.Dispatcher.Invoke((Action)delegate
-                   {
-                       EndGame();
-                   })
-                      );
-            }
-            else if (moveInfo.askForDraw == true)
-            {
-                checking = false;
-                AskForDraw();
-            }
-            else if (forfietOrDraw == true)
-            {
-                checking = false;
-                await Task.Run(() =>
-                   Application.Current.Dispatcher.Invoke((Action)delegate
-                   {
-                       EndGame();
-                   })
-                      );
+                if (left == true)
+                {
+                    oppLeftGame = true;
+                    checking = false;
+                    await Task.Run(() =>
+                       Application.Current.Dispatcher.Invoke((Action)delegate
+                       {
+                           EndGame();
+                       })
+                          );
+                }
+                else if (moveInfo.askForDraw == true)
+                {
+                    checking = false;
+                    AskForDraw();
+                }
+                else if (forfietOrDraw == true)
+                {
+                    checking = false;
+
+                    await Task.Run(() =>
+                       Application.Current.Dispatcher.Invoke((Action)delegate
+                       {
+                           EndGame();
+                       })
+                          );
+                }
             }
 
-            
         }
 
         public bool DidOpponentLeave()
@@ -283,6 +288,17 @@ namespace ChessSharp
                                 EndGame();
 
                             }
+                            else if (moveInfo.Draw == true)
+                            {
+                                await Task.Run(() =>
+                                Application.Current.Dispatcher.Invoke((Action)delegate
+                                    {
+                                        board.Update();
+                                    })
+                                  );
+                                SendMessage(moveInfo);
+                                EndGame();
+                            }
                             else
                             {
 
@@ -364,9 +380,9 @@ namespace ChessSharp
                     case MessageBoxResult.Yes:
                         {
 
-                            
+
                             currColor = true;
-                            board = new GameBoard(cBoard, ro);
+                            board = new GameBoard(cBoard, GameArea, ro);
                             ResetHighlights();
                             board.Update();
                             newGame = true;
@@ -391,8 +407,8 @@ namespace ChessSharp
                                 }
                             }
 
-                            
-                            
+
+
                         }
                         break;
 
@@ -566,17 +582,30 @@ namespace ChessSharp
             twoPlayer = true;
         }
 
-        private bool ForfeitOrDraw()
+        private async Task<bool> ForfeitOrDraw()
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic getInfo = SV.GetMove();
 
             if (getInfo == null || getInfo["lastMove"] == LoginPage.username || getInfo["playerCount"] == 1
                 || (getInfo["forfeit"] == 1 && newGame == true) || (getInfo["askForDraw"] == 1 && newGame == true)
-                || (getInfo["Draw"] == 1 && newGame == true))
+                || (getInfo["Draw"] == 1 && newGame == true) || (getInfo["Draw"] != 1 && getInfo["forfeit"] != 1 && getInfo["askForDraw"] != 1))
             {
                 return false;
             }
+
+            moveInfo.endX = getInfo["endX"];
+            moveInfo.endY = getInfo["endY"];
+            moveInfo.startX = getInfo["startX"];
+            moveInfo.startY = getInfo["startY"];
+
+            await Task.Run(() =>
+               Application.Current.Dispatcher.Invoke((Action)delegate
+               {
+                   board.UpdateEnemyPieces(moveInfo, Highlights);
+                   board.Update();
+               })
+                  );
 
             moveInfo = new Movement();
             moveInfo.username = LoginPage.username;
