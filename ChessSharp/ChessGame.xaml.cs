@@ -504,34 +504,48 @@ namespace ChessSharp
         private async void Promotion(object sender, RoutedEventArgs e)
         {
 
+            FullScreen.Children.Remove(PromoteGrid);
+            cBoard.IsHitTestVisible = true;
 
             Button temp = (Button)e.Source;
             string name = (string)temp.Content;
 
             moveInfo.pawnEvolvesTo = name;
 
-            board.ChangePiece(end, name);
+            board.ChangePiece(end, name,moveInfo);
             if (board.EnemyChecks(end, Highlights, moveInfo))
             {
+
                 SendMessage(moveInfo);
                 EndGame();
 
             }
-
-
-            board.Update();
-            FullScreen.Children.Remove(PromoteGrid);
-            cBoard.IsHitTestVisible = true;
-
-            SendMessage(moveInfo);
-            YourName.Background = Brushes.Transparent;
-            OppName.Background = Brushes.White;
-            currColor = !currColor;
-            waitingOnOpponent = true;
-            if (waitingOnOpponent == false)
+            else if (moveInfo.Draw == true)
             {
+                await Task.Run(() =>
+                                Application.Current.Dispatcher.Invoke((Action)delegate
+                                {
+                                    board.Update();
+                                })
+                                  );
+                SendMessage(moveInfo);
+                EndGame();
+            }
+            else
+            {
+                board.Update();
+
+
+                SendMessage(moveInfo);
+                YourName.Background = Brushes.Transparent;
+                OppName.Background = Brushes.White;
+                currColor = !currColor;
                 waitingOnOpponent = true;
-                await Task.Run(() => WaitForOpponent());
+                if (waitingOnOpponent == false)
+                {
+                    waitingOnOpponent = true;
+                    await Task.Run(() => WaitForOpponent());
+                }
             }
 
         }
@@ -593,7 +607,15 @@ namespace ChessSharp
             {
                 return false;
             }
-
+            if (getInfo["promotion"] == 1)
+            {
+                moveInfo.promotion = true;
+            }
+            else
+            {
+                moveInfo.promotion = false;
+            }
+            moveInfo.pawnEvolvesTo = getInfo["pawnEvolvesTo"];
             moveInfo.endX = getInfo["endX"];
             moveInfo.endY = getInfo["endY"];
             moveInfo.startX = getInfo["startX"];

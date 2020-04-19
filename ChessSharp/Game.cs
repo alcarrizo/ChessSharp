@@ -759,6 +759,7 @@ namespace ChessSharp
         public void UpdateEnemyPieces(Movement moveInfo, Piece[,] Board, Grid Highlights, List<Piece> livePieces, List<Piece> whitePieces, List<Piece> blackPieces)
         {
             Pawn tempPawn2 = null;
+            Piece tempPiece = null;
 
             //castling
             if (moveInfo.castling == true)
@@ -792,23 +793,37 @@ namespace ChessSharp
             //promotion
             else if (moveInfo.promotion == true)
             {
+                tempPiece = Board[moveInfo.startX, moveInfo.startY];
                 switch (moveInfo.pawnEvolvesTo)
                 {
                     case "Queen":
-                        Board[moveInfo.endX, moveInfo.endY] = new Queen(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        Board[moveInfo.startX, moveInfo.startY] = new Queen(Board[moveInfo.startX, moveInfo.startY].Color, 50);
                         break;
                     case "Knight":
-                        Board[moveInfo.endX, moveInfo.endY] = new Knight(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        Board[moveInfo.startX, moveInfo.startY] = new Knight(Board[moveInfo.startX, moveInfo.startY].Color, 50);
                         break;
                     case "Bishop":
-                        Board[moveInfo.endX, moveInfo.endY] = new Bishop(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        Board[moveInfo.startX, moveInfo.startY] = new Bishop(Board[moveInfo.startX, moveInfo.startY].Color, 50);
                         break;
                     case "Rook":
-                        Board[moveInfo.endX, moveInfo.endY] = new Rook(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        Board[moveInfo.startX, moveInfo.startY] = new Rook(Board[moveInfo.startX, moveInfo.startY].Color, 50);
                         break;
                 }
 
-                Board[moveInfo.startX, moveInfo.startY] = null;
+                livePieces.Remove(tempPiece);
+                livePieces.Add(Board[moveInfo.startX, moveInfo.startY]);
+
+                if (tempPiece.Color == true)
+                {
+                    whitePieces.Remove(tempPiece);
+                    whitePieces.Add(Board[moveInfo.startX, moveInfo.startY]);
+                }
+                else
+                {
+                    blackPieces.Remove(tempPiece);
+                    blackPieces.Add(Board[moveInfo.startX, moveInfo.startY]);
+                }
+
             }
             //regular move
             else
@@ -870,9 +885,7 @@ namespace ChessSharp
 
             }
 
-            Piece tempPiece = null;
-
-            if (Board[moveInfo.endX, moveInfo.endY] != null && Board[moveInfo.startX, moveInfo.startY].Color != Board[moveInfo.endX, moveInfo.endY].Color)
+            if (Board[moveInfo.endX, moveInfo.endY] != null && Board[moveInfo.startX, moveInfo.startY] != null && Board[moveInfo.startX, moveInfo.startY].Color != Board[moveInfo.endX, moveInfo.endY].Color)
             {
                 tempPiece = Board[moveInfo.endX, moveInfo.endY];
             }

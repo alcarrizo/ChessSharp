@@ -23,7 +23,7 @@ namespace ChessSharp
         public GameBoard(Grid grid, Canvas canvas, RotateTransform ro)
         {
             this.Board = new Piece[height, width];
-            Board[0, 0] = new Rook(true, 1);
+           /* Board[0, 0] = new Rook(true, 1);
             Board[1, 0] = new Knight(true, 1);
             Board[2, 0] = new Bishop(true, 1);
             Board[3, 0] = new King(true, 1);
@@ -44,20 +44,21 @@ namespace ChessSharp
             Board[5, height - 1] = new Bishop(false, 4);
             Board[6, height - 1] = new Knight(false, 4);
             Board[7, height - 1] = new Rook(false, 4);
-
-            /*
+            */
+            
             Board[3, 0] = new King(true, 1);
             Board[3, 1] = new Bishop(false, 1);
-            Board[6, 1] = new Bishop(true, 1);
-            Board[4, 1] = new Knight(false, 1);
-            Board[3, height - 1] = new King(false, 2);*/
+            //Board[6, 1] = new Bishop(true, 1);
+            //Board[4, 1] = new Knight(false, 1);
+            Board[3, height - 1] = new King(false, 2);
+            Board[5, height - 2] = new Pawn(true, 2);
 
             this.Grid = grid;
             this.Canvas = canvas;
 
             Game = new Game(3, 0, 3, height - 1, canvas, Grid);
 
-            
+
 
             Images = new ImageSelector();
             Ro = ro;
@@ -146,9 +147,10 @@ namespace ChessSharp
 
 
 
-        public void ChangePiece(Point end, string name)
+        public void ChangePiece(Point end, string name,Movement moveInfo)
         {
             name = name.ToUpper();
+            Piece tempPiece = Board[end.X, end.Y];
             switch (name)
             {
                 case "QUEEN":
@@ -172,6 +174,35 @@ namespace ChessSharp
                     }
                     break;
             }
+
+            livePieces.Remove(tempPiece);
+            livePieces.Add(Board[end.X, end.Y]);
+
+            if (tempPiece.Color == true)
+            {
+                whitePieces.Remove(tempPiece);
+                whitePieces.Add(Board[end.X, end.Y]);
+            }
+            else
+            {
+                blackPieces.Remove(tempPiece);
+                blackPieces.Add(Board[end.X, end.Y]);
+            }
+
+
+            bool tempBool = false;
+
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                tempBool = Game.InsufficientMaterial(livePieces, whitePieces, blackPieces, Board);
+            });
+
+
+            if (tempBool)
+            {
+                moveInfo.Draw = true;
+            }
+
             ID++;
         }
 
