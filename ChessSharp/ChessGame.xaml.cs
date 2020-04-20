@@ -41,6 +41,9 @@ namespace ChessSharp
         private bool waitingOnOpponent = false;
         private bool rematch = false;
 
+        private SolidColorBrush odd = Brushes.Gray;
+        private SolidColorBrush even = Brushes.White;
+
         public ChessGame(bool control)
         {
 
@@ -61,17 +64,17 @@ namespace ChessSharp
 
 
             DrawGameArea();
-
             board = new GameBoard(cBoard, GameArea, ro);
 
             GameArea.RenderTransform = ro;
 
             board.Update();
 
-
             currColor = true;
 
             SetUpHighlights();
+
+
             YourName.Content = LoginPage.username;
             if (player.Color == true)
             {
@@ -83,8 +86,29 @@ namespace ChessSharp
                 OppName.Background = Brushes.White;
             }
             GetSessionInfo();
+
+            
         }
 
+        private void ClearCanvas()
+        {
+            List<int> num = new List<int>();
+            for(int i = 0; i < GameArea.Children.Count; i++)
+            {
+                if(GameArea.Children[i] is Rectangle)
+                {
+                    num.Add(i);
+                    
+                }
+            }
+
+           num.Reverse();
+
+            foreach(var number in num)
+            {
+                GameArea.Children.RemoveAt(number);
+            }
+        }
 
         private async void Window_ContentRendered(object sender, EventArgs e)
         {
@@ -191,17 +215,21 @@ namespace ChessSharp
             int rowCounter = 0;
             bool nextIsOdd = false;
 
+            
+
             while (doneDrawingBackground == false)
             {
                 Rectangle rect = new Rectangle
                 {
                     Width = SpaceSize,
                     Height = SpaceSize,
-                    Fill = nextIsOdd ? Brushes.Gray : Brushes.White
+                    Fill = nextIsOdd ? odd : even
                 };
                 GameArea.Children.Add(rect);
                 Canvas.SetTop(rect, nextY);
                 Canvas.SetLeft(rect, nextX);
+
+                
 
                 nextIsOdd = !nextIsOdd;
                 nextX += SpaceSize;
