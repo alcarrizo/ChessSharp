@@ -5,17 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChessSharp"
         mc:Ignorable="d"
-        Title="Chess#" Height="450" Width="800" Closing="GameLobby_Closing" WindowStartupLocation="CenterScreen" >
+        Title="Chess#" Height="450" Width="800" Closing="GameLobby_Closing" Background="#696969" WindowStartupLocation="CenterScreen" >
+    
     
     <Grid>
+        
         <DockPanel x:Name="dockToolBar" HorizontalAlignment="Left" Height="40" LastChildFill="False" VerticalAlignment="Top" Width="792">
             <Button x:Name="logoutButton" Content="Logout" Height="40"  Width="75" DockPanel.Dock="Right" Click="LogoutButton_Click"/>
-            <Image Height="40" VerticalAlignment="Top" Width="100"/>
+            <Image x:Name="Logo" Stretch="Fill"  Height="40" VerticalAlignment="Top" Width="100" Source="logo.jpg"/>
             <TextBlock x:Name="titleText" Height="40" TextWrapping="Wrap" Text="Welcome to ChessSharp! Hope you enjoy your stay." VerticalAlignment="Top" Width="319"/>
         </DockPanel>
         <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="532,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="GameButton_Click_1"/>
         <ListView IsSynchronizedWithCurrentItem="True" Name="lbUsers" ItemsSource="{Binding}"  Margin="0,92,177,44">
-            
+            <ListView.Background>
+                <ImageBrush ImageSource="Resources\background.jpg"/>
+            </ListView.Background>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Creator">
@@ -45,7 +49,9 @@
             
 
         </ListView>
-        <Button x:Name="refresh" Content="Refresh List" HorizontalAlignment="Left" Margin="457,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="Refresh_Click"/>
+        <Button x:Name="refresh"  Content="Refresh List" HorizontalAlignment="Left" Margin="457,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="Refresh_Click"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="1137,71,-420,0" VerticalAlignment="Top" Width="75"/>
 
     </Grid>
+    
 </Window>
