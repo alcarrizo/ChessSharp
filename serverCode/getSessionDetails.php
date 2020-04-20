@@ -29,13 +29,18 @@ $result = mysqli_query($conn, $sql);
 				    'playerCount' => $row["playerCount"],
 				    'joinedUser' => $row["joinedUser"]
 					);
+					
+				echo json_encode($newdata);
+			}else{
+				
+				echo "null";
+			
 			}
 
 			
 		}
 	}
 	
-	echo json_encode($newdata);
 	
 mysqli_close($conn);
 ?>
