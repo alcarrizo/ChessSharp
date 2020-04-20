@@ -14,6 +14,10 @@ namespace ChessSharp
 {
     class Game
     {
+        public Grid Grid { get; private set; }
+
+        public Canvas Canvas { get; private set; }
+
         int height = 8;
         int width = 8;
 
@@ -21,13 +25,17 @@ namespace ChessSharp
         Point blackKing;
 
 
-        public Game(int wkx, int wky, int bkx, int bky)
+        public Game(int wkx, int wky, int bkx, int bky, Canvas canvas, Grid grid)
         {
             whiteKing.X = wkx;
             whiteKing.Y = wky;
             blackKing.X = bkx;
             blackKing.Y = bky;
             tempPawn = null;
+
+            this.Grid = grid;
+            this.Canvas = canvas;
+
         }
 
 
@@ -658,10 +666,100 @@ namespace ChessSharp
             return check;
         }
 
+        public void RemovePieces(Piece temp, Movement moveInfo, List<Piece> livePieces, List<Piece> whitePieces, List<Piece> blackPieces, Piece[,] Board)
+        {
+            livePieces.Remove(temp);
+            if (temp.Color == true)
+            {
+                whitePieces.Remove(temp);
+            }
+            else
+            {
+                blackPieces.Remove(temp);
+            }
 
-        public void UpdateEnemyPieces(Movement moveInfo, Piece[,] Board, Grid Highlights)
+            bool tempBool = false;
+
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                tempBool = InsufficientMaterial(livePieces, whitePieces, blackPieces, Board);
+            });
+
+
+            if (tempBool)
+            {
+                moveInfo.Draw = true;
+            }
+
+        }
+        public bool InsufficientMaterial(List<Piece> livePieces, List<Piece> whitePieces, List<Piece> blackPieces, Piece[,] Board)
+        {
+            if (livePieces.Count == 2)
+            {
+                return true;
+            }
+            else if (livePieces.Count == 3)
+            {
+                foreach (var piece in livePieces)
+                {
+                    if (piece is Bishop || piece is Knight)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else if (whitePieces.Count == 2 && blackPieces.Count == 2)
+            {
+                List<Piece> Bishops = livePieces.FindAll(p => p is Bishop);
+
+                if (Bishops.Count == 2)
+                {
+                    Point whiteBishop = new Point();
+                    Point blackBishop = new Point();
+
+                    for (int i = 0; i < Grid.ColumnDefinitions.Count; i++)
+                    {
+                        for (int j = 0; j < Grid.RowDefinitions.Count; j++)
+                        {
+                            if (Board[i, j] is Bishop)
+                            {
+                                if (Board[i, j].Color == true)
+                                {
+                                    whiteBishop.X = i;
+                                    whiteBishop.Y = j;
+                                }
+                                else
+                                {
+                                    blackBishop.X = i;
+                                    blackBishop.Y = j;
+                                }
+                            }
+                        }
+                    }
+
+                    Rectangle rect1 = new Rectangle();
+                    Rectangle rect2 = new Rectangle();
+
+
+                    rect1 = (Rectangle)Canvas.Children[(blackBishop.X + (blackBishop.Y * 8))];
+                    rect2 = (Rectangle)Canvas.Children[(whiteBishop.X + (whiteBishop.Y * 8))];
+
+
+
+                    if (rect1.Fill == rect2.Fill)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public void UpdateEnemyPieces(Movement moveInfo, Piece[,] Board, Grid Highlights, List<Piece> livePieces, List<Piece> whitePieces, List<Piece> blackPieces)
         {
             Pawn tempPawn2 = null;
+            Piece tempPiece = null;
 
             //castling
             if (moveInfo.castling == true)
@@ -689,37 +787,52 @@ namespace ChessSharp
                 Board[moveInfo.endX, moveInfo.endY] = Board[moveInfo.startX, moveInfo.startY];
                 Board[moveInfo.startX, moveInfo.startY] = null;
 
+                RemovePieces(Board[moveInfo.pawnX, moveInfo.pawnY], moveInfo, livePieces, whitePieces, blackPieces, Board);
                 Board[moveInfo.pawnX, moveInfo.pawnY] = null;
             }
             //promotion
             else if (moveInfo.promotion == true)
             {
+                tempPiece = Board[moveInfo.startX, moveInfo.startY];
                 switch (moveInfo.pawnEvolvesTo)
                 {
                     case "Queen":
-                        Board[moveInfo.endX, moveInfo.endY] = new Queen(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        Board[moveInfo.startX, moveInfo.startY] = new Queen(Board[moveInfo.startX, moveInfo.startY].Color, 50);
                         break;
                     case "Knight":
-                        Board[moveInfo.endX, moveInfo.endY] = new Knight(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        Board[moveInfo.startX, moveInfo.startY] = new Knight(Board[moveInfo.startX, moveInfo.startY].Color, 50);
                         break;
                     case "Bishop":
-                        Board[moveInfo.endX, moveInfo.endY] = new Bishop(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        Board[moveInfo.startX, moveInfo.startY] = new Bishop(Board[moveInfo.startX, moveInfo.startY].Color, 50);
                         break;
                     case "Rook":
-                        Board[moveInfo.endX, moveInfo.endY] = new Rook(Board[moveInfo.startX, moveInfo.startY].Color, 50);
+                        Board[moveInfo.startX, moveInfo.startY] = new Rook(Board[moveInfo.startX, moveInfo.startY].Color, 50);
                         break;
                 }
 
-                Board[moveInfo.startX, moveInfo.startY] = null;
+                livePieces.Remove(tempPiece);
+                livePieces.Add(Board[moveInfo.startX, moveInfo.startY]);
+
+                if (tempPiece.Color == true)
+                {
+                    whitePieces.Remove(tempPiece);
+                    whitePieces.Add(Board[moveInfo.startX, moveInfo.startY]);
+                }
+                else
+                {
+                    blackPieces.Remove(tempPiece);
+                    blackPieces.Add(Board[moveInfo.startX, moveInfo.startY]);
+                }
+
             }
             //regular move
             else
             {
-                
 
-                if(Board[moveInfo.startX, moveInfo.startY] is King)
+
+                if (Board[moveInfo.startX, moveInfo.startY] is King)
                 {
-                    if(Board[moveInfo.startX, moveInfo.startY].Color == true)
+                    if (Board[moveInfo.startX, moveInfo.startY].Color == true)
                     {
                         whiteKing.X = moveInfo.endX;
                         whiteKing.Y = moveInfo.endY;
@@ -742,7 +855,7 @@ namespace ChessSharp
                 }
                 else if (Board[moveInfo.startX, moveInfo.startY] is Pawn)
                 {
-                    
+
                     if (Math.Abs(moveInfo.startY - moveInfo.endY) == 2 && ((moveInfo.startX > 0 && Board[moveInfo.endX - 1, moveInfo.endY] is Pawn) || (moveInfo.startX < width - 1 && Board[moveInfo.endX + 1, moveInfo.endY] is Pawn)))
                     {
                         if (tempPawn2 != null)
@@ -769,14 +882,22 @@ namespace ChessSharp
                     }
                 }
 
-                
+
             }
 
-            Piece Temp = Board[moveInfo.startX, moveInfo.startY];
-            Board[moveInfo.startX, moveInfo.startY] = null;
-            Board[moveInfo.endX, moveInfo.endY] = Temp;
-            
+            if (Board[moveInfo.endX, moveInfo.endY] != null && Board[moveInfo.startX, moveInfo.startY] != null && Board[moveInfo.startX, moveInfo.startY].Color != Board[moveInfo.endX, moveInfo.endY].Color)
+            {
+                tempPiece = Board[moveInfo.endX, moveInfo.endY];
+            }
 
+            Piece temp = Board[moveInfo.startX, moveInfo.startY];
+            Board[moveInfo.startX, moveInfo.startY] = null;
+            Board[moveInfo.endX, moveInfo.endY] = temp;
+
+            if (tempPiece != null)
+            {
+                RemovePieces(tempPiece, moveInfo, livePieces, whitePieces, blackPieces, Board);
+            }
             // checks
             if (moveInfo.check == true)
             {
@@ -810,7 +931,7 @@ namespace ChessSharp
                 {
                     king = blackKing;
                 }
-                
+
 
                 Application.Current.Dispatcher.Invoke((Action)delegate
                 {

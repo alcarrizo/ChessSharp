@@ -16,8 +16,11 @@ namespace ChessSharp
     {
         int height = 8;
         int width = 8;
+        private List<Piece> livePieces;
+        private List<Piece> whitePieces;
+        private List<Piece> blackPieces;
 
-        public GameBoard(Grid grid, RotateTransform ro)
+        public GameBoard(Grid grid, Canvas canvas, RotateTransform ro)
         {
             this.Board = new Piece[height, width];
             Board[0, 0] = new Rook(true, 1);
@@ -42,12 +45,54 @@ namespace ChessSharp
             Board[6, height - 1] = new Knight(false, 4);
             Board[7, height - 1] = new Rook(false, 4);
 
-            Game = new Game(3, 0, 3, height - 1);
+            this.Grid = grid;
+            this.Canvas = canvas;
 
-            Grid = grid;
+            Game = new Game(3, 0, 3, height - 1, canvas, Grid);
+
+
+
             Images = new ImageSelector();
             Ro = ro;
             ID = 5;
+
+            livePieces = new List<Piece>();
+            whitePieces = new List<Piece>();
+            blackPieces = new List<Piece>();
+
+            getPieces();
+
+        }
+
+        private void getPieces()
+        {
+            for (int i = 0; i < Grid.ColumnDefinitions.Count; i++)
+            {
+                for (int j = 0; j < Grid.RowDefinitions.Count; j++)
+                {
+                    if (Board[i, j] != null)
+                    {
+                        // white Pieces
+                        if (Board[i, j].Color == true)
+                        {
+                            whitePieces.Add(Board[i, j]);
+                            livePieces.Add(Board[i, j]);
+                        }
+                        //black Pieces
+                        else
+                        {
+                            blackPieces.Add(Board[i, j]);
+                            livePieces.Add(Board[i, j]);
+                        }
+                    }
+                }
+
+            }
+        }
+
+        public void RemovePiece(Piece temp, Movement moveInfo)
+        {
+            Game.RemovePieces(temp, moveInfo, livePieces, whitePieces, blackPieces, Board);
 
         }
 
@@ -70,11 +115,19 @@ namespace ChessSharp
 
         public bool Move(Point start, Point end, Grid Highlights, Player currPlay, Movement moveInfo)
         {
-
+            Piece tempPiece = null;
             bool move = false;
+            if (Board[end.X, end.Y] != null && Board[start.X, start.Y].Color != Board[end.X, end.Y].Color)
+            {
+                tempPiece = Board[end.X, end.Y];
+            }
             if (Game.Move(start, end, Board, Highlights, moveInfo))
             {
                 move = true;
+                if (tempPiece != null)
+                {
+                    RemovePiece(tempPiece, moveInfo);
+                }
             }
             return move;
         }
@@ -86,9 +139,10 @@ namespace ChessSharp
 
 
 
-        public void ChangePiece(Point end, string name)
+        public void ChangePiece(Point end, string name, Movement moveInfo)
         {
             name = name.ToUpper();
+            Piece tempPiece = Board[end.X, end.Y];
             switch (name)
             {
                 case "QUEEN":
@@ -112,6 +166,35 @@ namespace ChessSharp
                     }
                     break;
             }
+
+            livePieces.Remove(tempPiece);
+            livePieces.Add(Board[end.X, end.Y]);
+
+            if (tempPiece.Color == true)
+            {
+                whitePieces.Remove(tempPiece);
+                whitePieces.Add(Board[end.X, end.Y]);
+            }
+            else
+            {
+                blackPieces.Remove(tempPiece);
+                blackPieces.Add(Board[end.X, end.Y]);
+            }
+
+
+            bool tempBool = false;
+
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                tempBool = Game.InsufficientMaterial(livePieces, whitePieces, blackPieces, Board);
+            });
+
+
+            if (tempBool)
+            {
+                moveInfo.Draw = true;
+            }
+
             ID++;
         }
 
@@ -119,6 +202,7 @@ namespace ChessSharp
         {
             return Board[end.X, end.Y] is Pawn;
         }
+
 
         public void Update()
         {
@@ -141,7 +225,7 @@ namespace ChessSharp
 
                     image.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5); // sets the rotation point of the image to the center of the image
                     image.RenderTransform = Ro;         // Applies the relevant rotation
-                    //image.RenderTransform += ro;         // Applies the relevant rotation
+                                                        //image.RenderTransform += ro;         // Applies the relevant rotation
 
 
                     Grid.Children.Add(image);
@@ -165,16 +249,18 @@ namespace ChessSharp
             return image;
         }
 
-        public void UpdateEnemyPieces(Movement moveInfo,Grid Highlights)
+        public void UpdateEnemyPieces(Movement moveInfo, Grid Highlights)
         {
 
-            Game.UpdateEnemyPieces(moveInfo, Board, Highlights);
+            Game.UpdateEnemyPieces(moveInfo, Board, Highlights, livePieces, whitePieces, blackPieces);
 
         }
 
         public Piece[,] Board { get; private set; }
         public Game Game { get; private set; }
         public Grid Grid { get; private set; }
+
+        public Canvas Canvas { get; private set; }
         public Grid Promote { get; set; }
         public ImageSelector Images { get; private set; }
 

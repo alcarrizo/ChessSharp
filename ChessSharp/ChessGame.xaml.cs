@@ -36,12 +36,11 @@ namespace ChessSharp
         private bool twoPlayer = false;
         private bool oppLeftGame = false;
         private bool closed = false; // used to tell if you are the person who closed the window
-        private bool draw = false;
-        private bool rematch = false;
+        private bool checking = false;
         private bool forfietOrDraw;
         private bool waitingOnOpponent = false;
+        private bool rematch = false;
 
-        // for local playing if we decide to implement that
         public ChessGame(bool control)
         {
 
@@ -61,7 +60,9 @@ namespace ChessSharp
             }
 
 
-            board = new GameBoard(cBoard, ro);
+            DrawGameArea();
+
+            board = new GameBoard(cBoard, GameArea, ro);
 
             GameArea.RenderTransform = ro;
 
@@ -69,7 +70,7 @@ namespace ChessSharp
 
 
             currColor = true;
-            DrawGameArea();
+
             SetUpHighlights();
             YourName.Content = LoginPage.username;
             if (player.Color == true)
@@ -87,13 +88,8 @@ namespace ChessSharp
 
         private async void Window_ContentRendered(object sender, EventArgs e)
         {
-            ServerFunctions SV = new ServerFunctions();
-            dynamic checkSession = SV.GetSessionDetails();
 
 
-            bool left = false;
-            forfietOrDraw = false;
-            
 
             if (player.Color == false)
             {
@@ -101,35 +97,55 @@ namespace ChessSharp
                 await Task.Run(() => WaitForOpponent());
             }
 
-            while (left == false && closed == false && forfietOrDraw == false )
+            checking = true;
+            await Task.Run(() => endChecks());
+
+        }
+
+        private async void endChecks()
+        {
+            ServerFunctions SV = new ServerFunctions();
+            dynamic checkSession = SV.GetSessionDetails();
+            forfietOrDraw = false;
+            bool left = false;
+
+
+            while (left == false && closed == false && forfietOrDraw == false)
             {
                 await Task.Delay(1000);
                 await Task.Run(() => left = DidOpponentLeave());
-                await Task.Run(() => forfietOrDraw = ForfeitOrDraw());
+                await Task.Run(() => forfietOrDraw = ForfeitOrDraw().Result);
             }
 
-            if (left == true && closed == false)
+            if (closed == false)
             {
-                oppLeftGame = true;
-                await Task.Run(() =>
-                   Application.Current.Dispatcher.Invoke((Action)delegate
-                   {
-                       EndGame();
-                   })
-                      );
-            }
-            else if (moveInfo.askForDraw == true)
-            {
-                AskForDraw();
-            }
-            else if(forfietOrDraw == true)
-            {
-                await Task.Run(() =>
-                   Application.Current.Dispatcher.Invoke((Action)delegate
-                   {
-                       EndGame();
-                   })
-                      );
+                if (left == true)
+                {
+                    oppLeftGame = true;
+                    checking = false;
+                    await Task.Run(() =>
+                       Application.Current.Dispatcher.Invoke((Action)delegate
+                       {
+                           EndGame();
+                       })
+                          );
+                }
+                else if (moveInfo.askForDraw == true)
+                {
+                    checking = false;
+                    AskForDraw();
+                }
+                else if (forfietOrDraw == true)
+                {
+                    checking = false;
+
+                    await Task.Run(() =>
+                       Application.Current.Dispatcher.Invoke((Action)delegate
+                       {
+                           EndGame();
+                       })
+                          );
+                }
             }
 
         }
@@ -138,6 +154,7 @@ namespace ChessSharp
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic checkSession = SV.GetSessionDetails();
+
 
             if (checkSession != null)
             {
@@ -271,6 +288,17 @@ namespace ChessSharp
                                 EndGame();
 
                             }
+                            else if (moveInfo.Draw == true)
+                            {
+                                await Task.Run(() =>
+                                Application.Current.Dispatcher.Invoke((Action)delegate
+                                    {
+                                        board.Update();
+                                    })
+                                  );
+                                SendMessage(moveInfo);
+                                EndGame();
+                            }
                             else
                             {
 
@@ -342,7 +370,7 @@ namespace ChessSharp
                     result = MessageBox.Show(moveInfo.username + " Forfeits the Match, Rematch?", "Forfeit", MessageBoxButton.YesNo);
 
                 }
-                else if (draw == true)
+                else if (moveInfo.Draw == true)
                 {
                     forfietOrDraw = false;
                     result = MessageBox.Show("It's a draw, Rematch?", "Draw", MessageBoxButton.YesNo);
@@ -354,10 +382,16 @@ namespace ChessSharp
 
 
                             currColor = true;
-                            board = new GameBoard(cBoard, ro);
+                            board = new GameBoard(cBoard, GameArea, ro);
                             ResetHighlights();
                             board.Update();
                             newGame = true;
+
+                            if (checking == false)
+                            {
+                                checking = true;
+                                await Task.Run(() => endChecks());
+                            }
 
                             if (player.Color == true)
                             {
@@ -372,6 +406,9 @@ namespace ChessSharp
                                     await Task.Run(() => WaitForOpponent());
                                 }
                             }
+
+
+
                         }
                         break;
 
@@ -467,34 +504,48 @@ namespace ChessSharp
         private async void Promotion(object sender, RoutedEventArgs e)
         {
 
+            FullScreen.Children.Remove(PromoteGrid);
+            cBoard.IsHitTestVisible = true;
 
             Button temp = (Button)e.Source;
             string name = (string)temp.Content;
 
             moveInfo.pawnEvolvesTo = name;
 
-            board.ChangePiece(end, name);
+            board.ChangePiece(end, name,moveInfo);
             if (board.EnemyChecks(end, Highlights, moveInfo))
             {
+
                 SendMessage(moveInfo);
                 EndGame();
 
             }
-
-
-            board.Update();
-            FullScreen.Children.Remove(PromoteGrid);
-            cBoard.IsHitTestVisible = true;
-
-            SendMessage(moveInfo);
-            YourName.Background = Brushes.Transparent;
-            OppName.Background = Brushes.White;
-            currColor = !currColor;
-            waitingOnOpponent = true;
-            if (waitingOnOpponent == false)
+            else if (moveInfo.Draw == true)
             {
+                await Task.Run(() =>
+                                Application.Current.Dispatcher.Invoke((Action)delegate
+                                {
+                                    board.Update();
+                                })
+                                  );
+                SendMessage(moveInfo);
+                EndGame();
+            }
+            else
+            {
+                board.Update();
+
+
+                SendMessage(moveInfo);
+                YourName.Background = Brushes.Transparent;
+                OppName.Background = Brushes.White;
+                currColor = !currColor;
                 waitingOnOpponent = true;
-                await Task.Run(() => WaitForOpponent());
+                if (waitingOnOpponent == false)
+                {
+                    waitingOnOpponent = true;
+                    await Task.Run(() => WaitForOpponent());
+                }
             }
 
         }
@@ -545,16 +596,38 @@ namespace ChessSharp
             twoPlayer = true;
         }
 
-        private bool ForfeitOrDraw()
+        private async Task<bool> ForfeitOrDraw()
         {
             ServerFunctions SV = new ServerFunctions();
             dynamic getInfo = SV.GetMove();
 
             if (getInfo == null || getInfo["lastMove"] == LoginPage.username || getInfo["playerCount"] == 1
-                || (getInfo["forfeit"] == 1 && newGame == true) || (getInfo["askForDraw"] == 1 && newGame == true))
+                || (getInfo["forfeit"] == 1 && newGame == true) || (getInfo["askForDraw"] == 1 && newGame == true)
+                || (getInfo["Draw"] == 1 && newGame == true) || (getInfo["Draw"] != 1 && getInfo["forfeit"] != 1 && getInfo["askForDraw"] != 1))
             {
                 return false;
             }
+            if (getInfo["promotion"] == 1)
+            {
+                moveInfo.promotion = true;
+            }
+            else
+            {
+                moveInfo.promotion = false;
+            }
+            moveInfo.pawnEvolvesTo = getInfo["pawnEvolvesTo"];
+            moveInfo.endX = getInfo["endX"];
+            moveInfo.endY = getInfo["endY"];
+            moveInfo.startX = getInfo["startX"];
+            moveInfo.startY = getInfo["startY"];
+
+            await Task.Run(() =>
+               Application.Current.Dispatcher.Invoke((Action)delegate
+               {
+                   board.UpdateEnemyPieces(moveInfo, Highlights);
+                   board.Update();
+               })
+                  );
 
             moveInfo = new Movement();
             moveInfo.username = LoginPage.username;
@@ -574,12 +647,11 @@ namespace ChessSharp
             }
             else if (getInfo["Draw"] == 1)
             {
-
-                draw = true;
+                moveInfo.Draw = true;
 
                 return true;
             }
-            
+
             return false;
         }
 
@@ -828,11 +900,8 @@ namespace ChessSharp
                 case MessageBoxResult.Yes:
                     {
 
-                        draw = true;
                         moveInfo.Draw = true;
 
-                        draw = true;
-                        moveInfo.Draw = true;
                         SendMessage(moveInfo);
                         await Task.Run(() =>
                    Application.Current.Dispatcher.Invoke((Action)delegate
@@ -882,7 +951,6 @@ namespace ChessSharp
                         rematch = true;
                         moveInfo.Rematch = true;
 
-                        draw = true;
                         moveInfo.Draw = true;
                         SendMessage(moveInfo);
                         await Task.Run(() =>
@@ -916,8 +984,8 @@ namespace ChessSharp
         {
 
             moveInfo = new Movement();
-            draw = true;
             moveInfo.askForDraw = true;
+            moveInfo.Draw = true;
             moveInfo.username = LoginPage.username;
             moveInfo.gameId = GameLobby.gameId;
 

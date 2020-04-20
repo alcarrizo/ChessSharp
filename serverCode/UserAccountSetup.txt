@@ -1,0 +1,22 @@
+# Privileges for `id12764393_webbdev`@`%`
+
+GRANT ALL PRIVILEGES ON *.* TO 'id12764393_webbdev'@'%' IDENTIFIED BY PASSWORD '*34DA036B17B9E073D5B2339F56A41081B4A82B79' WITH GRANT OPTION;
+
+GRANT ALL PRIVILEGES ON `id12764393_players`.* TO 'id12764393_webbdev'@'%' WITH GRANT OPTION;
+
+
+# Privileges for `root`@`127.0.0.1`
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' WITH GRANT OPTION;
+
+
+# Privileges for `root`@`::1`
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'::1' WITH GRANT OPTION;
+
+
+# Privileges for `root`@`localhost`
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+
+GRANT PROXY ON ''@'%' TO 'root'@'localhost' WITH GRANT OPTION;
