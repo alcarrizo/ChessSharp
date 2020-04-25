@@ -17,6 +17,11 @@
         </DockPanel>
         <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="532,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="GameButton_Click_1"/>
         <ListView IsSynchronizedWithCurrentItem="True" Name="lbUsers" ItemsSource="{Binding}"  Margin="0,92,177,44" >
+            <ListView.Resources>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="Background" Value="White"/>
+                </Style>
+            </ListView.Resources>
             <ListView.Background>
                 <ImageBrush ImageSource="Resources\logo.jpg"/>
             </ListView.Background>
@@ -28,7 +33,7 @@
                             <Setter Property="IsEnabled" Value="False"/>
                             <Style.Triggers>
                                 <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                                    <Setter Property="TextElement.Foreground" Value="Green"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
