@@ -312,6 +312,9 @@ namespace ChessSharp
                         {
                             if (board.EnemyChecks(end, Highlights, moveInfo))
                             {
+
+                                    board.Update();
+
                                 SendMessage(moveInfo);
                                 EndGame();
 
