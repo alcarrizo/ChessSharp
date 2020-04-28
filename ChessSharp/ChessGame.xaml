@@ -4,8 +4,37 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow"  Height="750" Width="750" ContentRendered="Window_ContentRendered" Background="#696969" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" x:Name="gameWindow"  Height="750" Width="750" ContentRendered="Window_ContentRendered" Background="#696969" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
     <Grid Name ="FullScreen" RenderTransformOrigin="0.5,0.5" >
+        <DockPanel x:Name="dockToolBar" HorizontalAlignment="Left" Height="40" LastChildFill="False" VerticalAlignment="Top" Width="742">
+            <ToolBarTray DockPanel.Dock="Right">
+                <ToolBar>
+                    <Label>Settings</Label>
+                    <ComboBox x:Name="combo1" Margin="1,4,1,0" VerticalAlignment="Top" SelectionChanged="ComboBox_SelectionChanged">
+                        <ComboBox x:Name="combo2">
+                            <CheckBox x:Name="check1" Checked="check1_Checked">
+                                <TextBlock>Gray</TextBlock>
+                            </CheckBox>
+                            <CheckBox x:Name="check2">
+                                <TextBlock>Blue</TextBlock>
+                            </CheckBox>
+                            <CheckBox x:Name="check3" Checked="check3_Checked">
+                                <TextBlock>Red</TextBlock>
+                            </CheckBox>
+                            <CheckBox x:Name="check4">
+                                <TextBlock>Green</TextBlock>
+                            </CheckBox>
+                        </ComboBox>
+                        <ComboBox x:Name="combo3" Text="Gameboard Color" IsEditable="True" SelectionChanged="combo3_SelectionChanged">
+                            <CheckBox x:Name="check5">
+                                <TextBlock>Red/Blue</TextBlock>
+                            </CheckBox>
+                        </ComboBox>
+                    </ComboBox>
+
+                </ToolBar>
+            </ToolBarTray>
+        </DockPanel>
         <Border BorderBrush="Black" BorderThickness="5" Width="570px" Height="570px" VerticalAlignment ="Center" HorizontalAlignment="Center">
             <Canvas Name ="GameArea" RenderTransformOrigin="0.5,0.5"  Width="560px" Height="560px"  ClipToBounds="True" VerticalAlignment ="Center" HorizontalAlignment="Center">
                 <Grid Name ="GameGrid" RenderTransformOrigin="0.5,0.5" Background="Transparent" Panel.ZIndex="2" Height="560px" Width="560px">

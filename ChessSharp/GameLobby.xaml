@@ -21,6 +21,9 @@
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="Background" Value="White"/>
                 </Style>
+                <Style TargetType="{x:Type ListView}">
+                    <Setter Property="Background" Value="Beige"/>
+                </Style>
             </ListView.Resources>
             <ListView.Background>
                 <ImageBrush ImageSource="Resources\logo.jpg"/>
@@ -34,7 +37,9 @@
                             <Style.Triggers>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="TextElement.Foreground" Value="Green"/>
+                                    <Setter Property="Background" Value="AliceBlue"/>
                                 </Trigger>
+                                
                             </Style.Triggers>
                         </Style>
                     </GridView.ColumnHeaderContainerStyle>
@@ -42,12 +47,12 @@
                         
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=username}"/>
+                                <TextBlock Text="{Binding Path=username}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="Players" Width="75">
+                    <GridViewColumn Header="Players" Width="75" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=totalPlayers}"/>

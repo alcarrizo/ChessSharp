@@ -50,6 +50,8 @@ namespace ChessSharp
 
             InitializeComponent();
 
+            
+
             // changes the rotation of the grid depending on what pieces you control
             if (control == true)
             {
@@ -1040,6 +1042,36 @@ namespace ChessSharp
 
             SendMessage(moveInfo);
             EndGame();
+        }
+
+        private void combo3_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(combo3.SelectedIndex == 0)
+            {
+                ClearCanvas();
+                even = Brushes.Red;
+                odd = Brushes.Blue;
+                DrawGameArea();
+            }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void check1_Checked(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void check3_Checked(object sender, RoutedEventArgs e)
+        {
+            gameWindow.Background = Brushes.Red;
+            if(check3.IsChecked == false)
+            {
+
+            }
         }
     }
 }
