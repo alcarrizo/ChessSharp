@@ -87,24 +87,24 @@ namespace ChessSharp
             }
             GetSessionInfo();
 
-            
+
         }
 
         private void ClearCanvas()
         {
             List<int> num = new List<int>();
-            for(int i = 0; i < GameArea.Children.Count; i++)
+            for (int i = 0; i < GameArea.Children.Count; i++)
             {
-                if(GameArea.Children[i] is Rectangle)
+                if (GameArea.Children[i] is Rectangle)
                 {
                     num.Add(i);
-                    
+
                 }
             }
 
-           num.Reverse();
+            num.Reverse();
 
-            foreach(var number in num)
+            foreach (var number in num)
             {
                 GameArea.Children.RemoveAt(number);
             }
@@ -215,7 +215,7 @@ namespace ChessSharp
             int rowCounter = 0;
             bool nextIsOdd = false;
 
-            
+
 
             while (doneDrawingBackground == false)
             {
@@ -229,7 +229,7 @@ namespace ChessSharp
                 Canvas.SetTop(rect, nextY);
                 Canvas.SetLeft(rect, nextX);
 
-                
+
 
                 nextIsOdd = !nextIsOdd;
                 nextX += SpaceSize;
@@ -313,7 +313,7 @@ namespace ChessSharp
                             if (board.EnemyChecks(end, Highlights, moveInfo))
                             {
 
-                                    board.Update();
+                                board.Update();
 
                                 SendMessage(moveInfo);
                                 EndGame();
@@ -361,6 +361,13 @@ namespace ChessSharp
         {
             ServerFunctions SV = new ServerFunctions();
             MessageBoxResult result = MessageBoxResult.Cancel;
+
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                cBoard.IsHitTestVisible = false;
+            }
+                      ) ;
+
 
 
             if (oppLeftGame == true)
@@ -452,6 +459,13 @@ namespace ChessSharp
 
                 }
             }
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                cBoard.IsHitTestVisible = true;
+            }
+                      );
+
+
         }
 
         private void ResetHighlights()
@@ -543,7 +557,7 @@ namespace ChessSharp
 
             moveInfo.pawnEvolvesTo = name;
 
-            board.ChangePiece(end, name,moveInfo);
+            board.ChangePiece(end, name, moveInfo);
             if (board.EnemyChecks(end, Highlights, moveInfo))
             {
 
@@ -924,6 +938,7 @@ namespace ChessSharp
 
             MessageBoxResult result = MessageBoxResult.No;
 
+
             result = MessageBox.Show("Your opponent has asked for a draw do you accept?", "Ask For Draw", MessageBoxButton.YesNo);
 
             switch (result)
@@ -959,7 +974,6 @@ namespace ChessSharp
                     }
 
             }
-
 
         }
 
