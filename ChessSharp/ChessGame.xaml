@@ -12,20 +12,20 @@
                     <Label>Settings</Label>
                     <ComboBox x:Name="combo1" Margin="1,4,1,0" VerticalAlignment="Top" SelectionChanged="ComboBox_SelectionChanged">
                         <ComboBox x:Name="combo2">
-                            <CheckBox x:Name="check1" Checked="check1_Checked">
+                            <CheckBox x:Name="check1" Checked="Check1_Checked">
                                 <TextBlock>Gray</TextBlock>
                             </CheckBox>
-                            <CheckBox x:Name="check2">
+                            <CheckBox x:Name="check2" Checked="Check2_Checked">
                                 <TextBlock>Blue</TextBlock>
                             </CheckBox>
-                            <CheckBox x:Name="check3" Checked="check3_Checked">
+                            <CheckBox x:Name="check3" Checked="Check3_Checked">
                                 <TextBlock>Red</TextBlock>
                             </CheckBox>
                             <CheckBox x:Name="check4">
                                 <TextBlock>Green</TextBlock>
                             </CheckBox>
                         </ComboBox>
-                        <ComboBox x:Name="combo3" Text="Gameboard Color" IsEditable="True" SelectionChanged="combo3_SelectionChanged">
+                        <ComboBox x:Name="combo3" Text="Gameboard Color" IsEditable="True" SelectionChanged="Combo3_SelectionChanged">
                             <CheckBox x:Name="check5">
                                 <TextBlock>Red/Blue</TextBlock>
                             </CheckBox>

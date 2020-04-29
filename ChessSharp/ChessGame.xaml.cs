@@ -1058,7 +1058,7 @@ namespace ChessSharp
             EndGame();
         }
 
-        private void combo3_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Combo3_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if(combo3.SelectedIndex == 0)
             {
@@ -1074,18 +1074,41 @@ namespace ChessSharp
 
         }
 
-        private void check1_Checked(object sender, RoutedEventArgs e)
+        private void Check1_Checked(object sender, RoutedEventArgs e)
         {
+            BrushConverter bc = new BrushConverter();
+            gameWindow.Background = (Brush)bc.ConvertFrom("#696969");
+            
+            if (check1.IsChecked == true)
+            {
+                check2.IsChecked = false;
+                check3.IsChecked = false;
+                check4.IsChecked = false;
+            }
+        }
+
+        private void Check3_Checked(object sender, RoutedEventArgs e)
+        {
+            gameWindow.Background = Brushes.Red;
+            if(check3.IsChecked == true)
+            {
+                check1.IsChecked = false;
+                check2.IsChecked = false;
+                check4.IsChecked = false;
+            }
             
         }
 
-        private void check3_Checked(object sender, RoutedEventArgs e)
+        private void Check2_Checked(object sender, RoutedEventArgs e)
         {
-            gameWindow.Background = Brushes.Red;
-            if(check3.IsChecked == false)
+            gameWindow.Background = Brushes.Blue;
+            if (check2.IsChecked == true)
             {
-
+                check1.IsChecked = false;
+                check3.IsChecked = false;
+                check4.IsChecked = false;
             }
+
         }
     }
 }
