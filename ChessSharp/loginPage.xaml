@@ -57,6 +57,7 @@
             <Label x:Name="Age_Label" Content="Age" HorizontalAlignment="Left" Margin="10,242,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
             <TextBox x:Name="Age_tb" HorizontalAlignment="Left" Height="23" Margin="10,268,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="220" Visibility="Hidden"/>
             <PasswordBox x:Name="Password_tb" MaxLength="26" HorizontalAlignment="Left" Height="23" Margin="10,219,0,0"  VerticalAlignment="Top" Width="220"/>
+            <Image HorizontalAlignment="Left" Source="iconfinder_Chess_3525372.ico" Height="105" Margin="67,-1,0,0" VerticalAlignment="Top" Width="120"/>
         </Grid>
     </Border>
 </Page>
