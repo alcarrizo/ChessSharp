@@ -43,6 +43,7 @@ namespace ChessSharp
 
         private SolidColorBrush odd = Brushes.Gray;
         private SolidColorBrush even = Brushes.White;
+        
 
         public ChessGame(bool control)
         {
@@ -89,7 +90,7 @@ namespace ChessSharp
             }
             GetSessionInfo();
 
-
+            
         }
 
         private void ClearCanvas()
@@ -1061,18 +1062,16 @@ namespace ChessSharp
 
         private void Combo3_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(combo3.SelectedIndex == 0)
-            {
-                ClearCanvas();
-                even = Brushes.Red;
-                odd = Brushes.Blue;
-                DrawGameArea();
-            }
+            
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if(combo1.Text != null)
+            {
+                combo1.SelectedIndex = -1;
+                combo1.Text = null;
+            }
         }
 
         private void Check1_Checked(object sender, RoutedEventArgs e)
@@ -1110,6 +1109,75 @@ namespace ChessSharp
                 check4.IsChecked = false;
             }
 
+        }
+
+        private void Check4_Checked(object sender, RoutedEventArgs e)
+        {
+            gameWindow.Background = Brushes.Green;
+            if (check4.IsChecked == true)
+            {
+                check1.IsChecked = false;
+                check3.IsChecked = false;
+                check2.IsChecked = false;
+            }
+        }
+
+        private void Check6_Checked(object sender, RoutedEventArgs e)
+        {
+            BrushConverter bc = new BrushConverter();
+            ClearCanvas();
+            even = Brushes.White;
+            odd = (SolidColorBrush)bc.ConvertFrom("#696969");
+            DrawGameArea();
+            if(check6.IsChecked == true)
+            {
+                check5.IsChecked = false;
+                check7.IsChecked = false;
+                check8.IsChecked = false;
+            }
+        
+        }
+
+        private void Check5_Checked(object sender, RoutedEventArgs e)
+        {
+            ClearCanvas();
+            even = Brushes.Red;
+            odd = Brushes.Blue;
+            DrawGameArea();
+            if(check5.IsChecked == true)
+            {
+                check6.IsChecked = false;
+                check7.IsChecked = false;
+                check8.IsChecked = false;
+            }
+        }
+
+        private void Check7_Checked(object sender, RoutedEventArgs e)
+        {
+            ClearCanvas();
+            even = Brushes.Chocolate;
+            odd = Brushes.Beige;
+            DrawGameArea();
+            if (check7.IsChecked == true)
+            {
+                check6.IsChecked = false;
+                check5.IsChecked = false;
+                check8.IsChecked = false;
+            }
+        }
+
+        private void Check8_Checked(object sender, RoutedEventArgs e)
+        {
+            ClearCanvas();
+            even = Brushes.LightSeaGreen;
+            odd = Brushes.LightYellow;
+            DrawGameArea();
+            if (check8.IsChecked == true)
+            {
+                check6.IsChecked = false;
+                check7.IsChecked = false;
+                check5.IsChecked = false;
+            }
         }
     }
 }

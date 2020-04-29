@@ -11,7 +11,12 @@
                 <ToolBar>
                     <Label>Settings</Label>
                     <ComboBox x:Name="combo1" Margin="1,4,1,0" VerticalAlignment="Top" SelectionChanged="ComboBox_SelectionChanged">
-                        <ComboBox x:Name="combo2">
+                        <ComboBox.Resources>
+                            <Style TargetType="{x:Type ComboBoxItem}">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ComboBox.Resources>
+                        <ComboBox x:Name="combo2" IsEditable="True" Text="Background Color">
                             <CheckBox x:Name="check1" Checked="Check1_Checked">
                                 <TextBlock>Gray</TextBlock>
                             </CheckBox>
@@ -21,14 +26,24 @@
                             <CheckBox x:Name="check3" Checked="Check3_Checked">
                                 <TextBlock>Red</TextBlock>
                             </CheckBox>
-                            <CheckBox x:Name="check4">
+                            <CheckBox x:Name="check4" Checked="Check4_Checked">
                                 <TextBlock>Green</TextBlock>
                             </CheckBox>
                         </ComboBox>
-                        <ComboBox x:Name="combo3" Text="Gameboard Color" IsEditable="True" SelectionChanged="Combo3_SelectionChanged">
-                            <CheckBox x:Name="check5">
+                        <ComboBox x:Name="combo3" Text="Gameboard Color" IsEditable="True" SelectionChanged="Combo3_SelectionChanged" >
+                            <CheckBox x:Name="check5" Checked="Check5_Checked">
                                 <TextBlock>Red/Blue</TextBlock>
                             </CheckBox>
+                            <CheckBox x:Name="check6" Checked="Check6_Checked">
+                                <TextBlock>White/Gray</TextBlock>
+                            </CheckBox>
+                            <CheckBox x:Name="check7" Checked="Check7_Checked">
+                                <TextBlock>Biege/Chocolate</TextBlock>
+                            </CheckBox>
+                            <CheckBox x:Name="check8" Checked="Check8_Checked">
+                                <TextBlock>Light Green/Yellow</TextBlock>
+                            </CheckBox>
+                            
                         </ComboBox>
                     </ComboBox>
 
