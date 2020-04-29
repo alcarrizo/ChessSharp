@@ -425,6 +425,8 @@ namespace ChessSharp
                             board.Update();
                             newGame = true;
 
+
+
                             if (checking == false)
                             {
                                 checking = true;
@@ -434,15 +436,28 @@ namespace ChessSharp
                             if (player.Color == true)
                             {
                                 YourName.Background = Brushes.White;
+                                if (waitingOnOpponent == false)
+                                {
+                                    waitingOnOpponent = true;
+                                    await Task.Run(() => WaitForOpponent());
+                                }
                             }
                             else
                             {
+                                moveInfo.Rematch = true;
+                                SendMessage(moveInfo);
                                 OppName.Background = Brushes.Transparent;
                                 if (waitingOnOpponent == false)
                                 {
                                     waitingOnOpponent = true;
                                     await Task.Run(() => WaitForOpponent());
                                 }
+                                Application.Current.Dispatcher.Invoke((Action)delegate
+                                {
+                                    cBoard.IsHitTestVisible = true;
+                                }
+          );
+
                             }
 
 
@@ -459,11 +474,6 @@ namespace ChessSharp
 
                 }
             }
-            Application.Current.Dispatcher.Invoke((Action)delegate
-            {
-                cBoard.IsHitTestVisible = true;
-            }
-                      );
 
 
         }
@@ -585,7 +595,6 @@ namespace ChessSharp
                 YourName.Background = Brushes.Transparent;
                 OppName.Background = Brushes.White;
                 currColor = !currColor;
-                waitingOnOpponent = true;
                 if (waitingOnOpponent == false)
                 {
                     waitingOnOpponent = true;
@@ -716,7 +725,8 @@ namespace ChessSharp
                 || (getMove["forfeit"] == 1 && newGame == true) || (getMove["Draw"] == 1 && newGame == true))*/
 
             while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true)
-                || getMove["forfeit"] == 1 || getMove["Draw"] == 1 || getMove["askForDraw"] == 1)
+                || getMove["forfeit"] == 1 || getMove["Draw"] == 1 || getMove["askForDraw"] == 1
+                || (getMove["Rematch"] == 1 && newGame == true))
             {
                 await Task.Delay(750);
 
@@ -812,7 +822,11 @@ namespace ChessSharp
             }
             if (getMove["Rematch"] == 1)
             {
-                moveInfo.Rematch = true;
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    cBoard.IsHitTestVisible = true;
+                }
+          );
             }
             else
             {
