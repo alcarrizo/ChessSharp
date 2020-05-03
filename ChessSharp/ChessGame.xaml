@@ -38,7 +38,7 @@
                                 <TextBlock>White/Gray</TextBlock>
                             </CheckBox>
                             <CheckBox x:Name="check7" Checked="Check7_Checked">
-                                <TextBlock>Biege/Chocolate</TextBlock>
+                                <TextBlock>Beige/Chocolate</TextBlock>
                             </CheckBox>
                             <CheckBox x:Name="check8" Checked="Check8_Checked">
                                 <TextBlock>Light Green/Yellow</TextBlock>
