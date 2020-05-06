@@ -12,7 +12,7 @@
         
         <DockPanel x:Name="dockToolBar" HorizontalAlignment="Left" Height="40" LastChildFill="False" VerticalAlignment="Top" Width="792">
             <Button x:Name="logoutButton" Content="Logout" Height="40"  Width="75" DockPanel.Dock="Right" Click="LogoutButton_Click"/>
-            <Image x:Name="Logo" Stretch="Fill"  Height="40" VerticalAlignment="Top" Width="100" Source="Resources/background.jpg"/>
+            <Image x:Name="Logo" Stretch="Fill"  Height="40" VerticalAlignment="Top" Width="100" Source="iconfinder_Chess_3525372.ico"/>
             <TextBlock x:Name="titleText" DockPanel.Dock="Bottom" Height="40" TextWrapping="Wrap" Text="Welcome to ChessSharp! Hope you enjoy your stay." FontFamily="Century Gothic" FontWeight= "ExtraBlack" VerticalAlignment="Top" Width="319"/>
         </DockPanel>
         <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="532,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="GameButton_Click_1"/>
