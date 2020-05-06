@@ -10,25 +10,27 @@
     
     <Grid>
         
-        <DockPanel x:Name="dockToolBar" HorizontalAlignment="Left" Height="40" LastChildFill="False" VerticalAlignment="Top" Width="792">
+        <DockPanel x:Name="dockToolBar" HorizontalAlignment="Left" Height="47" LastChildFill="False" VerticalAlignment="Top" Width="792">
             <Button x:Name="logoutButton" Content="Logout" Height="40"  Width="75" DockPanel.Dock="Right" Click="LogoutButton_Click"/>
-            <Image x:Name="Logo" Stretch="Fill"  Height="40" VerticalAlignment="Top" Width="100" Source="iconfinder_Chess_3525372.ico"/>
+            <Image x:Name="Logo"  Height="50" VerticalAlignment="Top" Width="50" Source="iconfinder_Chess_3525372.ico" Stretch="Fill"/>
             <TextBlock x:Name="titleText" DockPanel.Dock="Bottom" Height="40" TextWrapping="Wrap" Text="Welcome to ChessSharp! Hope you enjoy your stay." FontFamily="Century Gothic" FontWeight= "ExtraBlack" VerticalAlignment="Top" Width="319"/>
         </DockPanel>
-        <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="532,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="GameButton_Click_1"/>
-        <ListView IsSynchronizedWithCurrentItem="True" Name="lbUsers" ItemsSource="{Binding}"  Margin="0,92,177,44" >
+        <Button x:Name="gameButton" Content="Create Game" HorizontalAlignment="Left" Margin="532,89,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="GameButton_Click_1"/>
+        <ListView IsSynchronizedWithCurrentItem="True" Name="lbUsers" ItemsSource="{Binding}"  Margin="0,136,177,0" >
             <ListView.Resources>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="Background" Value="White"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 </Style>
                 <Style TargetType="{x:Type ListView}">
                     <Setter Property="Background" Value="Beige"/>
                 </Style>
             </ListView.Resources>
+            
             <ListView.Background>
                 <ImageBrush ImageSource="Resources\logo.jpg"/>
             </ListView.Background>
-            <ListView.View>
+            <ListView.View >
                
                 <GridView AllowsColumnReorder="False" >
                     <GridView.ColumnHeaderContainerStyle>
@@ -44,10 +46,9 @@
                         </Style>
                     </GridView.ColumnHeaderContainerStyle>
                     <GridViewColumn Header="Creator" Width="75" >
-                        
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=username}" />
+                                <TextBlock Text="{Binding Path=username}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -55,7 +56,7 @@
                     <GridViewColumn Header="Players" Width="75" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=totalPlayers}"/>
+                                <TextBlock Text="{Binding Path=totalPlayers}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -71,8 +72,7 @@
             
 
         </ListView>
-        <Button x:Name="refresh"  Content="Refresh List" HorizontalAlignment="Left" Margin="457,45,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="Refresh_Click"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="1137,71,-420,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="refresh"  Content="Refresh List" HorizontalAlignment="Left" Margin="457,89,0,0" VerticalAlignment="Top" Width="75" Height="47" Click="Refresh_Click"/>
 
     </Grid>
     
