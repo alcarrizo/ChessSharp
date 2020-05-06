@@ -71,7 +71,7 @@ namespace ChessSharp
                 }
                 else
                 {
-                    if (PlayerLoginInfo["playeronline"] == true)
+                    if (PlayerLoginInfo["playeronline"] == true && PlayerLoginInfo["login"] == true)
                     {
 
                         username = Username_tb.Text.ToLower();

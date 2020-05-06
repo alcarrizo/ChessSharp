@@ -30,12 +30,12 @@ $result = mysqli_query($conn, $sql);
 					$sql3 = "UPDATE playerlobby SET playerCount='2' Where gameId='$data->gameId'";
 					
 					mysqli_query($conn, $sql3);
-					echo "Join";
+					echo "true";
 				}else{
-					echo "Full";
+					echo "False";
 				}
 			}else{
-			    echo "broken";
+			    echo "False";
 			}
 		}
 	}else{

@@ -148,7 +148,7 @@ namespace ChessSharp
             ServerFunctions SV = new ServerFunctions();
             string s = SV.JoinGameId(id, LoginPage.username);
 
-            if (s == "Join")
+            if (s == "true")
             {
                 ChessGame cg = new ChessGame(false);
                 cg.Show();
