@@ -1089,7 +1089,7 @@ namespace ChessSharp
 
         private void Check3_Checked(object sender, RoutedEventArgs e)
         {
-            gameWindow.Background = Brushes.Red;
+            gameWindow.Background = Brushes.DarkRed;
             if(check3.IsChecked == true)
             {
                 check1.IsChecked = false;
@@ -1101,7 +1101,7 @@ namespace ChessSharp
 
         private void Check2_Checked(object sender, RoutedEventArgs e)
         {
-            gameWindow.Background = Brushes.Blue;
+            gameWindow.Background = Brushes.DarkBlue;
             if (check2.IsChecked == true)
             {
                 check1.IsChecked = false;
@@ -1141,8 +1141,8 @@ namespace ChessSharp
         private void Check5_Checked(object sender, RoutedEventArgs e)
         {
             ClearCanvas();
-            even = Brushes.Red;
-            odd = Brushes.Blue;
+            even = Brushes.DarkRed;
+            odd = Brushes.DarkBlue;
             DrawGameArea();
             if(check5.IsChecked == true)
             {
