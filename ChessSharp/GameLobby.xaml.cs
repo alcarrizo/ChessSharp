@@ -104,7 +104,7 @@ namespace ChessSharp
                     ChessGame cg = new ChessGame(true);
                     cg.Show();
                     logout = false;
-                    //this.Close();
+                    this.Close();
 
                     break;
                 case MessageBoxResult.No:
