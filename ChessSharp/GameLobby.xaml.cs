@@ -53,7 +53,7 @@ namespace ChessSharp
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             string name = LoginPage.username;
-            string msgtext = "Are you sure you want to logout," + name + " ?";
+            string msgtext = "Are you sure you want to logout, " + name + " ?";
             string txt = "Logout Window";
             MessageBoxButton button = MessageBoxButton.YesNo;
             MessageBoxResult result = MessageBox.Show(msgtext, txt, button);
