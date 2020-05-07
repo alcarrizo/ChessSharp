@@ -31,13 +31,8 @@ $result = mysqli_query($conn, $sql);
 					);
 					
 				echo json_encode($newdata);
-			}else{
-				
-				echo "null";
-			
-			}
 
-			
+			}
 		}
 	}
 	

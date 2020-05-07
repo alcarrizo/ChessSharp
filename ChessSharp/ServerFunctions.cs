@@ -138,10 +138,10 @@ namespace ChessSharp
             response.Close();
         }
 
-        public String JoinGameId(string id, string name)
+        public dynamic JoinGameId(string id, string name)
         {
 
-            string temp = "";
+            dynamic temp;
             var request = (HttpWebRequest)WebRequest.Create(host + "/joinSession.php");
             request.ContentType = "application/json";
             request.Method = "POST";
@@ -162,7 +162,9 @@ namespace ChessSharp
             using (var streamReader = new StreamReader(response.GetResponseStream()))
             {
                 var result = streamReader.ReadToEnd();
-                temp = result;
+                dynamic jsonStr = Newtonsoft.Json.JsonConvert.DeserializeObject(result);
+
+                temp = jsonStr;
             }
             Console.WriteLine(temp);
             response.Close();
