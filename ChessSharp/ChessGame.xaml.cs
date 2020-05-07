@@ -139,7 +139,7 @@ namespace ChessSharp
 
             while (left == false && closed == false && forfietOrDraw == false)
             {
-                await Task.Delay(1000);
+                await Task.Delay(3000);
                 await Task.Run(() => left = DidOpponentLeave());
                 await Task.Run(() => forfietOrDraw = ForfeitOrDraw().Result);
             }
@@ -403,12 +403,12 @@ namespace ChessSharp
 
                 if (moveInfo.checkMate == true)
                 {
-                   await Task.Run(() => result = MessageBox.Show(moveInfo.username + "Checkmate. Rematch?", "Checkmate", MessageBoxButton.YesNo));
+                   await Task.Run(() => result = MessageBox.Show("Checkmate. Rematch?", "Checkmate", MessageBoxButton.YesNo));
                 }
                 else if (moveInfo.forfeit == true)
                 {
                     forfietOrDraw = false;
-                    await Task.Run(() => result = MessageBox.Show(moveInfo.username + " Forfeits the Match, Rematch?", "Forfeit", MessageBoxButton.YesNo));
+                    await Task.Run(() => result = MessageBox.Show(" It's a Forfeit, Rematch?", "Forfeit", MessageBoxButton.YesNo));
 
                 }
                 else if (moveInfo.Draw == true)
@@ -648,7 +648,7 @@ namespace ChessSharp
             dynamic getInfo = null;
             while (getInfo == null || getInfo["playerCount"] == 1)
             {
-                await Task.Delay(750);
+                await Task.Delay(3000);
                 getInfo = SV.GetSessionDetails();
             }
 
@@ -740,7 +740,7 @@ namespace ChessSharp
             while (getMove == null || getMove["lastMove"] == LoginPage.username || (getMove["checkMate"] == 1 && newGame == true)
                 || getMove["forfeit"] == 1 || getMove["Draw"] == 1 || getMove["askForDraw"] == 1)
             {
-                await Task.Delay(750);
+                await Task.Delay(3000);
 
 
                 getMove = SV.GetMove();
